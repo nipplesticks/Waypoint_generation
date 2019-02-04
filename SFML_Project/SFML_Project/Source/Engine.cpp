@@ -79,10 +79,6 @@ void Engine::Update(double dt)
 
 void Engine::Draw()
 {
-	static int counter = 0;
-
-	counter++;
-
 	int startX, endX, startY, endY;
 	Camera * cam = Camera::GetActiveCamera();
 	sf::Vector3f camPos = cam->GetPosition();
@@ -94,10 +90,10 @@ void Engine::Draw()
 	startY = ((camPos.y - wndSize.y * 0.5f * (camPos.z)) / (MAP_TILE_SIZE));
 	startY = startY > 0 ? startY : 0;
 
-	endX = startX + (wndSize.x * (camPos.z) / (MAP_TILE_SIZE) + 0.5f) + 1;
+	endX = startX + (wndSize.x * (camPos.z) / (MAP_TILE_SIZE) + 0.5f) + 2;
 	endX = endX < MAP_WIDTH ? endX : MAP_WIDTH;
 
-	endY = startY + (wndSize.y * (camPos.z) / (MAP_TILE_SIZE) + 0.5f) + 1;
+	endY = startY + (wndSize.y * (camPos.z) / (MAP_TILE_SIZE) + 0.5f) + 2;
 	endY = endY < MAP_HEIGHT ? endY : MAP_HEIGHT;
 
 	for (int y = startY; y < endY; y++)
@@ -146,9 +142,9 @@ void Engine::_draw(sf::RenderWindow * wnd, Engine * e)
 		counter++;
 		total += t.Stop(Timer::MILLISECONDS);
 		
-		if (counter > 100)
+		if (total > 1000)
 		{
-			std::cout << "\r" << total / 100.0 << " ms";
+			std::cout << "\r" << total / counter << " ms";
 			counter = 0;
 			total = 0.0;
 		}
@@ -157,8 +153,6 @@ void Engine::_draw(sf::RenderWindow * wnd, Engine * e)
 		wnd->clear();
 
 		e->Draw();
-
-		
 
 		wnd->display();
 	}

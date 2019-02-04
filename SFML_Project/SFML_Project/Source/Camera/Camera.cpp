@@ -47,7 +47,7 @@ void Camera::SetPosition(float x, float y, float z)
 void Camera::SetPosition(const sf::Vector3f & position)
 {
 	m_position = position;
-	m_position.z = m_position.z > 0.01f ? m_position.z : 0.01f;
+	m_position.z = m_position.z > 0.1f ? m_position.z : 0.1f;
 }
 
 void Camera::Translate(float x, float y, float z)
@@ -58,7 +58,7 @@ void Camera::Translate(float x, float y, float z)
 void Camera::Translate(const sf::Vector3f & translation)
 {
 	m_position = m_position + translation;
-	m_position.z = m_position.z > 0.01f ? m_position.z : 0.01f;
+	m_position.z = m_position.z > 0.1f ? m_position.z : 0.1f;
 }
 
 const sf::Vector3f & Camera::GetPosition()
