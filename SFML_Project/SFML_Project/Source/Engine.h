@@ -3,6 +3,7 @@
 #include "../Utility/Timer.h"
 #include <thread>
 #include <vector>
+#include "Texture/Texture.h"
 
 class Engine
 {
@@ -32,6 +33,7 @@ private:
 	std::vector<Entity> m_map;
 
 	Entity m_player;
+	Texture m_texture;
 
 
 private:

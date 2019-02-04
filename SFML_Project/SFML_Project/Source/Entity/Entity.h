@@ -1,6 +1,6 @@
 #pragma once
 #include "../Camera/Camera.h"
-#include <SFML/Graphics.hpp>
+#include "../Texture/Texture.h"
 
 class Entity
 {
@@ -28,6 +28,9 @@ public:
 	const sf::Vector2f & GetPosition() const;
 	const sf::Vector2f & GetSize() const;
 
+	void SetTexture(Texture * texture, bool useRect = false);
+	
+
 	void Update();
 
 	void Draw(sf::RenderWindow * wnd);
@@ -36,6 +39,7 @@ private:
 	sf::RectangleShape m_spr;
 	sf::Vector2f m_position;
 	sf::Vector2f m_size;
+	Texture *	m_pTexture = nullptr;
 	bool m_insideScreen = false;
 
 private:

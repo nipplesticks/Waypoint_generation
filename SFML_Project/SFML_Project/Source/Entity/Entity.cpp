@@ -84,6 +84,17 @@ const sf::Vector2f & Entity::GetSize() const
 	return m_size;
 }
 
+void Entity::SetTexture(Texture * texture, bool useRect)
+{
+	m_pTexture = texture;
+	m_spr.setTexture(m_pTexture->GetTexture());
+	
+	if (useRect)
+	{
+		m_spr.setTextureRect(m_pTexture->GetArea());
+	}
+}
+
 void Entity::Update()
 {
 }

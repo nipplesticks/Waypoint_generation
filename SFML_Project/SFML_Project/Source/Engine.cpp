@@ -21,11 +21,15 @@ Engine::Engine(sf::RenderWindow * window)
 		}
 	}
 
+	sf::IntRect iRect(0, 0, 32, 32);
+
+	m_texture.Load("../Assets/Test.bmp", iRect, {2, 2});
+	
 	m_player.SetPosition(MAP_WIDTH * MAP_TILE_SIZE * 0.5f, MAP_HEIGHT * MAP_TILE_SIZE * 0.5f);
 	m_player.SetColor(255, 255, 255);
+	m_player.SetTexture(&m_texture, true);
 
 	m_camera.SetPosition(MAP_WIDTH * MAP_TILE_SIZE * 0.5f, MAP_HEIGHT * MAP_TILE_SIZE * 0.5f);
-
 }
 
 Engine::~Engine()
