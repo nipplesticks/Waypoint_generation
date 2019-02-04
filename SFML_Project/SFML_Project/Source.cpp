@@ -1,53 +1,33 @@
-#include <SFML/Graphics.hpp>
-#include "Utility/Timer.h"
+#include "Source/Engine.h"
 
-
-int Run(sf::RenderWindow * wnd);
+int WindowProc(sf::RenderWindow::Window * wnd);
 
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(800, 600), "Test");
 
+	Engine e(&window);
 
-	window.setActive(false);
+	e.Run();
 
-	sf::Thread renderThread(&Run, &window);
-	renderThread.launch();
+	WindowProc(&window);
 
-
-	while (window.isOpen())
-	{
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
-	}
-
-
-	renderThread.terminate();
+	e.Terminate();
 
 	return 0;
 }
 
-int Run(sf::RenderWindow * wnd)
+int WindowProc(sf::RenderWindow::Window * wnd)
 {
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
-
-	wnd->setActive();
-
 	while (wnd->isOpen())
 	{
-
-
-
-
-		wnd->clear();
-		wnd->draw(shape);
-		wnd->display();
+		sf::Event event;
+		while (wnd->pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				wnd->close();
+		}
 	}
 
 	return 0;
