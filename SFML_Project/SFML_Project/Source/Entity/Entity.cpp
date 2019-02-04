@@ -4,6 +4,9 @@ Entity::Entity()
 {
 	m_position.x = 0.0f;
 	m_position.y = 0.0f;
+	m_textureFrame.x = 0;
+	m_textureFrame.y = 0;
+
 	m_size.x = 32.0f;
 	m_size.y = 32.0f;
 	m_spr.setFillColor(sf::Color::White);
@@ -95,8 +98,34 @@ void Entity::SetTexture(Texture * texture, bool useRect)
 	}
 }
 
-void Entity::Update()
+void Entity::Update(double dt)
 {
+	if (m_pTexture)
+	{
+		m_time += dt;
+		if (m_time > 1.0f)
+		{
+			m_time = 0.0;
+			m_textureFrame.x++;
+			if (m_textureFrame.x == m_pTexture->GetNrOfFrames().x)
+			{
+				m_textureFrame.x = 0;
+				m_textureFrame.y++;
+				
+				if (m_textureFrame.y == m_pTexture->GetNrOfFrames().y)
+				{
+					m_textureFrame.y = 0;
+				}
+			}
+
+			sf::IntRect r = m_pTexture->GetArea();
+			r.left = m_textureFrame.x * r.width;
+			r.top = m_textureFrame.y * r.height;
+			m_spr.setTextureRect(r);
+		}
+	}
+
+
 }
 
 void Entity::Draw(sf::RenderWindow * wnd)

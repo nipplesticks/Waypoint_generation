@@ -79,6 +79,8 @@ void Engine::Update(double dt)
 		m_camera.Translate(0.0f, 0.0f, -CAMERA_ZOOM_SPEED * dt);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		m_camera.Translate(0.0f, 0.0f, CAMERA_ZOOM_SPEED * dt);
+
+	m_player.Update(dt);
 }
 
 void Engine::Draw()

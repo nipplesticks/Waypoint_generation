@@ -31,7 +31,7 @@ public:
 	void SetTexture(Texture * texture, bool useRect = false);
 	
 
-	void Update();
+	void Update(double dt);
 
 	void Draw(sf::RenderWindow * wnd);
 
@@ -39,7 +39,11 @@ private:
 	sf::RectangleShape m_spr;
 	sf::Vector2f m_position;
 	sf::Vector2f m_size;
+	sf::Vector2u m_textureFrame;
+
 	Texture *	m_pTexture = nullptr;
+	double		m_time = 0.0;
+
 	bool m_insideScreen = false;
 
 private:
