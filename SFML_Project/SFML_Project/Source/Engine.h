@@ -4,6 +4,7 @@
 #include <thread>
 #include <vector>
 #include "Texture/Texture.h"
+#include "Pathfinding/Grid.h"
 
 class Engine
 {
@@ -31,6 +32,8 @@ private:
 	const unsigned int MAP_HEIGHT = 100;
 	
 	std::vector<Entity> m_map;
+
+	Grid * m_grid;
 
 	Entity m_player;
 	Texture m_texture;

@@ -30,6 +30,20 @@ Engine::Engine(sf::RenderWindow * window)
 	m_player.SetTexture(&m_texture, true);
 
 	m_camera.SetPosition(MAP_WIDTH * MAP_TILE_SIZE * 0.5f, MAP_HEIGHT * MAP_TILE_SIZE * 0.5f);
+
+	m_grid = new Grid(sf::Vector2i(MAP_WIDTH, MAP_HEIGHT), { 0.0f, 0.0f }, {32.0f, 32.0f});
+
+	auto path = m_grid->FindPath({ 0.0f, 0.0f }, {320.0f, 320.0f});
+
+	int counter = 0;
+	for (auto & lol : path)
+	{
+		int index = lol.GetGridCoord().x + lol.GetGridCoord().y * MAP_WIDTH;
+		m_map[index].SetColor(255, 255, counter += 5);
+	}
+	m_map[path.front().GetGridCoord().x + path.front().GetGridCoord().y * MAP_WIDTH].SetColor(sf::Color::Blue);
+	m_map[path.back().GetGridCoord().x + path.back().GetGridCoord().y * MAP_WIDTH].SetColor(sf::Color::Blue);
+
 }
 
 Engine::~Engine()
@@ -41,6 +55,8 @@ Engine::~Engine()
 
 	while (!m_drawThread.joinable());
 	m_drawThread.join();
+
+	delete[] m_grid;
 
 }
 

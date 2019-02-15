@@ -91,6 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>sfml-window-d.lib;sfml-system-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -121,6 +122,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -136,12 +138,16 @@
     <ClCompile Include="Source\Camera\Camera.cpp" />
     <ClCompile Include="Source\Engine.cpp" />
     <ClCompile Include="Source\Entity\Entity.cpp" />
+    <ClCompile Include="Source\Pathfinding\Grid.cpp" />
+    <ClCompile Include="Source\Pathfinding\Tile.cpp" />
     <ClCompile Include="Source\Texture\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Camera\Camera.h" />
     <ClInclude Include="Source\Engine.h" />
     <ClInclude Include="Source\Entity\Entity.h" />
+    <ClInclude Include="Source\Pathfinding\Grid.h" />
+    <ClInclude Include="Source\Pathfinding\Tile.h" />
     <ClInclude Include="Source\Texture\Texture.h" />
     <ClInclude Include="Utility\Timer.h" />
   </ItemGroup>
