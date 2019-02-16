@@ -49,7 +49,7 @@ void Grid::_checkTile(const Tile & current,
 		Tile::PathFindingVars pfv;
 		pfv.parentIndex = currentIndex.x + currentIndex.y * m_gridSize.x;
 		pfv.gCost = current.GetPathfindingVars().gCost + addedGCost;
-		pfv.hCost = _calcHValue(current, destination);
+		pfv.hCost = _calcHValue(tile, destination);
 		pfv.fCost = pfv.gCost + pfv.hCost;
 		tile.SetPathfindingVars(pfv);
 		grid[nextTileIndex].SetPathfindingVars(pfv);
@@ -197,8 +197,11 @@ bool Grid::_isValid(const Tile & tile)
 
 float Grid::_calcHValue(const Tile & s, const Tile & d)
 {
-	float deltaX = abs(s.GetGridCoord().x - d.GetGridCoord().x);
-	float deltaY = abs(s.GetGridCoord().y - d.GetGridCoord().y);
+	int deltaX = abs(s.GetGridCoord().x - d.GetGridCoord().x);
+	int deltaY = abs(s.GetGridCoord().y - d.GetGridCoord().y);
 
-	return (deltaX + deltaY) + (-0.414f) * std::min(deltaX, deltaY);		// Need to be better;;
+	// 1.0f = Direct costs
+	// 1.414f = Diagonal costs
+	// 1.0f * (x + y) + (1.414f - 2 * 1.0f) * min(x, y)
+	return (deltaX + deltaY) + (-0.414f) * std::min(deltaX, deltaY);
 }
