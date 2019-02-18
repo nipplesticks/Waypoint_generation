@@ -10,31 +10,6 @@ Character::~Character()
 #include <DirectXMath.h>
 void Character::Update(double dt)
 {
-	if (p_pTexture)
-	{
-		p_time += dt;
-		if (p_time > 1.0f)
-		{
-			p_time = 0.0;
-			p_textureFrame.x++;
-			if (p_textureFrame.x == p_pTexture->GetNrOfFrames().x)
-			{
-				p_textureFrame.x = 0;
-				p_textureFrame.y++;
-
-				if (p_textureFrame.y == p_pTexture->GetNrOfFrames().y)
-				{
-					p_textureFrame.y = 0;
-				}
-			}
-
-			sf::IntRect r = p_pTexture->GetArea();
-			r.left = p_textureFrame.x * r.width;
-			r.top = p_textureFrame.y * r.height;
-			p_spr.setTextureRect(r);
-		}
-	}
-
 	if (!m_path.empty())
 	{
 		const sf::Vector2f & TILE_SIZE = Tile::GetTileSize();
@@ -64,6 +39,54 @@ void Character::Update(double dt)
 		}
 
 		Translate(moveDir);
+
+		if (p_pTexture)
+		{
+			/*p_time += dt;
+			if (p_time > 1.0f)
+			{
+				p_time = 0.0;
+				p_textureFrame.x++;
+				if (p_textureFrame.x == p_pTexture->GetNrOfFrames().x)
+				{
+					p_textureFrame.x = 0;
+					p_textureFrame.y++;
+
+					if (p_textureFrame.y == p_pTexture->GetNrOfFrames().y)
+					{
+						p_textureFrame.y = 0;
+					}
+				}
+
+				sf::IntRect r = p_pTexture->GetArea();
+				r.left = p_textureFrame.x * r.width;
+				r.top = p_textureFrame.y * r.height;
+				p_spr.setTextureRect(r);
+			}*/
+
+			sf::IntRect r = p_pTexture->GetArea();
+			if (xmDir.x < -0.33 && xmDir.y < -0.33f)	// UPLEFT
+				p_textureFrame.y = 7;
+			else if (xmDir.x > 0.33 && xmDir.y < -0.33f)	// UPRIGHT
+				p_textureFrame.y = 1;
+			else if (xmDir.x < -0.33 && xmDir.y >= 0.33f)	// DOWNLEFT
+				p_textureFrame.y = 5;
+			else if (xmDir.x > 0.33 && xmDir.y >= 0.33f)	// DOWNRIGHT
+				p_textureFrame.y = 3;
+			else if (xmDir.y < -0.33f)		// UP
+				p_textureFrame.y = 0;
+			else if (xmDir.y > 0.33f)	// DOWN
+				p_textureFrame.y = 4;
+			else if (xmDir.x > 0.33)	// RIGHT
+				p_textureFrame.y = 2;
+			else if (xmDir.x < -0.33)	// LEFT
+				p_textureFrame.y = 6;
+
+			r.left = p_textureFrame.x * r.width;
+			r.top = p_textureFrame.y * r.height;
+			p_spr.setTextureRect(r);
+		}
+
 	}
 }
 

@@ -7,7 +7,7 @@ Engine::Engine(sf::RenderWindow * window)
 	m_camera.SetAsActive();
 	sf::IntRect iRect(0, 0, 32, 32);
 
-	m_texture.Load("../Assets/Test.bmp", iRect, {2, 2});
+	m_texture.Load("../Assets/Test.bmp", iRect, {1, 8});
 	m_grassTexture.Load("../Assets/Grass.bmp", iRect, {1, 1});
 	m_brickTexture.Load("../Assets/Brick.bmp", iRect, {1, 1});
 
@@ -102,28 +102,37 @@ void Engine::Update(double dt)
 	if (mouseRightThisFrame && !s_mouseRightLastFrame)
 	{
 		std::vector<Tile> playerPath = m_player.GetPath();
-		for (auto & t : playerPath)
-		{
-			int index = t.GetGridCoord().x + t.GetGridCoord().y * MAP_WIDTH;
-			m_map[index].SetColor(sf::Color::White);
-		}
-
+		std::vector<Tile> newPath;
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_pWindow);
 		sf::Vector2u windowSize = m_pWindow->getSize();
 
 		sf::Vector2f clickPos;
 		clickPos.x = (((float)mousePos.x - (float)windowSize.x * 0.5f) * zoom) + m_camera.GetPosition().x;
 		clickPos.y = (((float)mousePos.y - (float)windowSize.y * 0.5f) * zoom) + m_camera.GetPosition().y;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && !playerPath.empty())
+		{
+			sf::Vector2f source = playerPath.back().GetWorldCoord();
+			newPath = m_grid->FindPath(source, clickPos);
+			newPath.insert(newPath.begin(), playerPath.begin(), playerPath.end());
+		}
+		else
+		{
+			for (auto & t : playerPath)
+			{
+				int index = t.GetGridCoord().x + t.GetGridCoord().y * MAP_WIDTH;
+				m_map[index].SetColor(sf::Color::White);
+			}
 
-		std::vector<Tile> path = m_grid->FindPath(m_player.GetPosition() + m_player.GetSize() * 0.5f, clickPos);
+			newPath = m_grid->FindPath(m_player.GetPosition() + m_player.GetSize() * 0.5f, clickPos);
 
-		for (auto & t : path)
+		}
+		for (auto & t : newPath)
 		{
 			int index = t.GetGridCoord().x + t.GetGridCoord().y * MAP_WIDTH;
 			m_map[index].SetColor(sf::Color::Red);
 		}
 
-		m_player.SetPath(path);
+		m_player.SetPath(newPath);
 	}
 
 	Tile t = m_grid->TileFromWorldCoords(m_player.GetPosition() + m_player.GetSize() * 0.5f);
