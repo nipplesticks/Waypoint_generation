@@ -5,7 +5,11 @@ Engine::Engine(sf::RenderWindow * window)
 	m_pWindow = window;
 
 	m_camera.SetAsActive();
+	sf::IntRect iRect(0, 0, 32, 32);
 
+	m_texture.Load("../Assets/Test.bmp", iRect, {2, 2});
+	m_grassTexture.Load("../Assets/Grass.bmp", iRect, {1, 1});
+	m_brickTexture.Load("../Assets/Brick.bmp", iRect, {1, 1});
 
 	for (unsigned int y = 0; y < MAP_HEIGHT; y++)
 	{
@@ -14,35 +18,31 @@ Engine::Engine(sf::RenderWindow * window)
 			Entity e;
 			e.SetPosition(x * MAP_TILE_SIZE, y * MAP_TILE_SIZE);
 			e.SetSize(MAP_TILE_SIZE, MAP_TILE_SIZE);
-			e.SetColor(255 * x / MAP_WIDTH, 255 * y / MAP_HEIGHT, 255 * (x * y) / (MAP_WIDTH * MAP_HEIGHT));
-			e.SetOutlineThickness(-1.0f);
-			e.SetOutlineColor(sf::Color::Black);
+			e.SetColor(sf::Color::White);
+			e.SetTexture(&m_grassTexture);
 			m_map.push_back(e);
 		}
 	}
 
-	sf::IntRect iRect(0, 0, 32, 32);
 
-	m_texture.Load("../Assets/Test.bmp", iRect, {2, 2});
-	
-	m_player.SetPosition(MAP_WIDTH * MAP_TILE_SIZE * 0.5f, MAP_HEIGHT * MAP_TILE_SIZE * 0.5f);
+	//m_player.SetPosition(MAP_WIDTH * MAP_TILE_SIZE * 0.5f, MAP_HEIGHT * MAP_TILE_SIZE * 0.5f);
+	m_player.SetPosition(0, 0);
 	m_player.SetColor(255, 255, 255);
 	m_player.SetTexture(&m_texture, true);
+	m_player.SetSpeed(64.0f);
 
-	m_camera.SetPosition(MAP_WIDTH * MAP_TILE_SIZE * 0.5f, MAP_HEIGHT * MAP_TILE_SIZE * 0.5f);
+	m_camera.SetPosition(0, 0);
 
 	m_grid = new Grid(sf::Vector2i(MAP_WIDTH, MAP_HEIGHT), { 0.0f, 0.0f }, {32.0f, 32.0f});
 
-	auto path = m_grid->FindPath({ 0.0f, 0.0f }, {320.0f, 320.0f});
-
-	int counter = 0;
-	for (auto & lol : path)
+	for (unsigned int y = MAP_HEIGHT / 2 - 5; y < MAP_HEIGHT / 2 + 5; y++)
 	{
-		int index = lol.GetGridCoord().x + lol.GetGridCoord().y * MAP_WIDTH;
-		m_map[index].SetColor(255, 255, counter += 5);
+		for (unsigned int x = MAP_WIDTH / 2 - 5; x < MAP_WIDTH / 2 + 5; x++)
+		{
+			m_map[x + y * MAP_WIDTH].SetTexture(&m_brickTexture);
+			m_grid->Block(sf::Vector2i(x, y));
+		}
 	}
-	m_map[path.front().GetGridCoord().x + path.front().GetGridCoord().y * MAP_WIDTH].SetColor(sf::Color::Blue);
-	m_map[path.back().GetGridCoord().x + path.back().GetGridCoord().y * MAP_WIDTH].SetColor(sf::Color::Blue);
 
 }
 
@@ -71,14 +71,15 @@ void Engine::Run()
 
 void Engine::Update(double dt)
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		m_player.Translate(CAMERA_MOVE_SPEED * dt, 0.0f);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		m_player.Translate(-CAMERA_MOVE_SPEED * dt, 0.0f);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		m_player.Translate(0.0f, -CAMERA_MOVE_SPEED * dt);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		m_player.Translate(0.0f, CAMERA_MOVE_SPEED * dt);
+	static bool s_mouseRightLastFrame = false;
+	static bool timerStart = false;
+	static Timer timer;
+
+	if (s_mouseRightLastFrame && !timerStart)
+	{
+		timer.Start();
+		timerStart = true;
+	}
 
 	float zoom = m_camera.GetPosition().z;
 
@@ -96,7 +97,52 @@ void Engine::Update(double dt)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		m_camera.Translate(0.0f, 0.0f, CAMERA_ZOOM_SPEED * dt);
 
+	bool mouseRightThisFrame = sf::Mouse::isButtonPressed(sf::Mouse::Right);
+
+	if (mouseRightThisFrame && !s_mouseRightLastFrame)
+	{
+		std::vector<Tile> playerPath = m_player.GetPath();
+		for (auto & t : playerPath)
+		{
+			int index = t.GetGridCoord().x + t.GetGridCoord().y * MAP_WIDTH;
+			m_map[index].SetColor(sf::Color::White);
+		}
+
+		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_pWindow);
+		sf::Vector2u windowSize = m_pWindow->getSize();
+
+		sf::Vector2f clickPos;
+		clickPos.x = (((float)mousePos.x - (float)windowSize.x * 0.5f) * zoom) + m_camera.GetPosition().x;
+		clickPos.y = (((float)mousePos.y - (float)windowSize.y * 0.5f) * zoom) + m_camera.GetPosition().y;
+
+		std::vector<Tile> path = m_grid->FindPath(m_player.GetPosition() + m_player.GetSize() * 0.5f, clickPos);
+
+		for (auto & t : path)
+		{
+			int index = t.GetGridCoord().x + t.GetGridCoord().y * MAP_WIDTH;
+			m_map[index].SetColor(sf::Color::Red);
+		}
+
+		m_player.SetPath(path);
+	}
+
+	Tile t = m_grid->TileFromWorldCoords(m_player.GetPosition() + m_player.GetSize() * 0.5f);
+
+	int index = t.GetGridCoord().x + t.GetGridCoord().y * MAP_WIDTH;
+
+	m_map[index].SetColor(sf::Color::White);
+
 	m_player.Update(dt);
+
+	if (s_mouseRightLastFrame && timer.GetTime() > 0.1f)
+	{
+		timerStart = false;
+		s_mouseRightLastFrame = false;
+	}
+	else
+		s_mouseRightLastFrame = mouseRightThisFrame;
+
+
 }
 
 void Engine::Draw()

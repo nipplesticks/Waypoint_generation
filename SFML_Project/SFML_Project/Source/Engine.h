@@ -1,5 +1,5 @@
 #pragma once
-#include "Entity/Entity.h"
+#include "Entity/Character.h"
 #include "../Utility/Timer.h"
 #include <thread>
 #include <vector>
@@ -35,9 +35,10 @@ private:
 
 	Grid * m_grid;
 
-	Entity m_player;
+	Character m_player;
 	Texture m_texture;
-
+	Texture m_grassTexture;
+	Texture m_brickTexture;
 
 private:
 	sf::RenderWindow *	m_pWindow = nullptr;

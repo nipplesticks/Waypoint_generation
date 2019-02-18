@@ -4,12 +4,12 @@ Entity::Entity()
 {
 	m_position.x = 0.0f;
 	m_position.y = 0.0f;
-	m_textureFrame.x = 0;
-	m_textureFrame.y = 0;
+	p_textureFrame.x = 0;
+	p_textureFrame.y = 0;
 
 	m_size.x = 32.0f;
 	m_size.y = 32.0f;
-	m_spr.setFillColor(sf::Color::White);
+	p_spr.setFillColor(sf::Color::White);
 }
 
 Entity::Entity(const sf::Vector2f & position, const sf::Vector2f & size) : Entity()
@@ -29,12 +29,12 @@ void Entity::SetColor(sf::Uint8 r, sf::Uint8 g, sf::Uint8 b, sf::Uint8 a)
 
 void Entity::SetColor(const sf::Color & color)
 {
-	m_spr.setFillColor(color);
+	p_spr.setFillColor(color);
 }
 
 void Entity::SetOutlineThickness(float val)
 {
-	m_spr.setOutlineThickness(val);
+	p_spr.setOutlineThickness(val);
 }
 
 void Entity::SetOutlineColor(sf::Uint8 r, sf::Uint8 g, sf::Uint8 b, sf::Uint8 a)
@@ -44,7 +44,7 @@ void Entity::SetOutlineColor(sf::Uint8 r, sf::Uint8 g, sf::Uint8 b, sf::Uint8 a)
 
 void Entity::SetOutlineColor(const sf::Color & color)
 {
-	m_spr.setOutlineColor(color);
+	p_spr.setOutlineColor(color);
 }
 
 void Entity::SetPosition(float x, float y)
@@ -89,43 +89,13 @@ const sf::Vector2f & Entity::GetSize() const
 
 void Entity::SetTexture(Texture * texture, bool useRect)
 {
-	m_pTexture = texture;
-	m_spr.setTexture(m_pTexture->GetTexture());
+	p_pTexture = texture;
+	p_spr.setTexture(p_pTexture->GetTexture());
 	
 	if (useRect)
 	{
-		m_spr.setTextureRect(m_pTexture->GetArea());
+		p_spr.setTextureRect(p_pTexture->GetArea());
 	}
-}
-
-void Entity::Update(double dt)
-{
-	if (m_pTexture)
-	{
-		m_time += dt;
-		if (m_time > 1.0f)
-		{
-			m_time = 0.0;
-			m_textureFrame.x++;
-			if (m_textureFrame.x == m_pTexture->GetNrOfFrames().x)
-			{
-				m_textureFrame.x = 0;
-				m_textureFrame.y++;
-				
-				if (m_textureFrame.y == m_pTexture->GetNrOfFrames().y)
-				{
-					m_textureFrame.y = 0;
-				}
-			}
-
-			sf::IntRect r = m_pTexture->GetArea();
-			r.left = m_textureFrame.x * r.width;
-			r.top = m_textureFrame.y * r.height;
-			m_spr.setTextureRect(r);
-		}
-	}
-
-
 }
 
 void Entity::Draw(sf::RenderWindow * wnd)
@@ -142,7 +112,7 @@ void Entity::Draw(sf::RenderWindow * wnd)
 		_calcScreenPosition(screenBox);
 
 		if (m_insideScreen)
-			wnd->draw(m_spr);
+			wnd->draw(p_spr);
 	}
 }
 
@@ -160,10 +130,10 @@ void Entity::_calcScreenPosition(const sf::FloatRect & screenBox)
 		screenPos.x += screenBox.width * 0.5f;
 		screenPos.y += screenBox.height * 0.5f;
 
-		m_spr.setSize(screenSize);
-		m_spr.setPosition(screenPos);
+		p_spr.setSize(screenSize);
+		p_spr.setPosition(screenPos);
 
-		sf::FloatRect boundingBox = m_spr.getGlobalBounds();
+		sf::FloatRect boundingBox = p_spr.getGlobalBounds();
 		if (boundingBox.intersects(screenBox))
 			m_insideScreen = true;
 	}

@@ -32,4 +32,12 @@ public:
 		m_StartingTime = m_EndingTime;
 		return MSPerFrame * tu;
 	}
+	double GetTime(TIME_UNIT tu = SECONDS)
+	{
+		QueryPerformanceCounter(&m_EndingTime);
+		LARGE_INTEGER ElapsedMicroseconds;
+		ElapsedMicroseconds.QuadPart = m_EndingTime.QuadPart - m_StartingTime.QuadPart;
+		double MSPerFrame = ((real64)ElapsedMicroseconds.QuadPart / (real64)m_Frequency.QuadPart);
+		return MSPerFrame * tu;
+	}
 };

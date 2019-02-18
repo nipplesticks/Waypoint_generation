@@ -8,6 +8,8 @@ public:
 	Grid(const sf::Vector2i & size, const sf::Vector2f & gridStartPosition, const sf::Vector2f & tileSize);
 	~Grid();
 	std::vector<Tile> FindPath(const sf::Vector2f & source, const sf::Vector2f & destination);
+	void Block(const sf::Vector2i & coord);
+	Tile TileFromWorldCoords(const sf::Vector2f & worldCoord) const;
 
 private:
 	std::vector<Tile> m_grid;

@@ -30,6 +30,26 @@ std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f
 	return _findPath(m_grid, source, destination);
 }
 
+void Grid::Block(const sf::Vector2i & coord)
+{
+	m_grid[coord.x + coord.y * m_gridSize.x].SetPathable(false);
+}
+
+Tile Grid::TileFromWorldCoords(const sf::Vector2f & worldCoord) const
+{
+	sf::Vector2f tileSize = Tile::GetTileSize();
+	sf::Vector2f gridStart = m_grid[0].GetWorldCoord();
+	sf::Vector2f startToSource = worldCoord - gridStart;
+	sf::Vector2i gridSourceIndex = sf::Vector2i(startToSource.x / tileSize.x, startToSource.y / tileSize.y);
+
+	if (gridSourceIndex.x < 0 || gridSourceIndex.x >= m_gridSize.x)
+	{
+		return Tile();
+	}
+
+	return m_grid[gridSourceIndex.x + gridSourceIndex.y * m_gridSize.x];
+}
+
 void Grid::_checkTile(const Tile & current,
 	float addedGCost, int offsetX, int offsetY,
 	const Tile & destination,
@@ -71,11 +91,14 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 	sf::Vector2i gridDestIndex = sf::Vector2i(startToEnd.x / tileSize.x, startToEnd.y / tileSize.y);
 
 
-	if (gridSourceIndex.x < 0 || gridSourceIndex.x >= m_gridSize.x || gridDestIndex.y < 0 || gridSourceIndex.y >= m_gridSize.y)
+	if (gridSourceIndex.x	< 0 || gridSourceIndex.x	>= m_gridSize.x ||
+		gridSourceIndex.y	< 0 || gridSourceIndex.x	>= m_gridSize.y ||
+		gridDestIndex.x		< 0 || gridDestIndex.x		>= m_gridSize.x || 
+		gridDestIndex.y		< 0 || gridDestIndex.y		>= m_gridSize.y)
 		return std::vector<Tile>();
 
 	Tile tileSource = grid[gridSourceIndex.x + gridSourceIndex.y * m_gridSize.x];
-	Tile tileDestination = grid[gridDestIndex.x + gridDestIndex.y * m_gridSize.x];;
+	Tile tileDestination = grid[gridDestIndex.x + gridDestIndex.y * m_gridSize.x];
 
 	if (tileSource.GetSubGrid() != tileDestination.GetSubGrid() || !tileDestination.IsPathable() || !tileSource.IsPathable())
 		return std::vector<Tile>();
@@ -124,6 +147,7 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 			}
 			std::reverse(path.begin(), path.end());
 			path.push_back(tileDestination);
+			path.erase(path.begin());
 			return path;
 		}
 
