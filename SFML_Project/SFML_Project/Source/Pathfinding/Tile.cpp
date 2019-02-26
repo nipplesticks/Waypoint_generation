@@ -120,9 +120,22 @@ bool Tile::operator<(const Tile & other)
 	return m_pfv.fCost < other.m_pfv.fCost;
 }
 
-bool Tile::operator>(const Tile & other)
+//bool Tile::operator>(const Tile & other)
+//{
+//	return !(*this < other);
+//}
+
+std::string Tile::ToString() const
 {
-	return !(*this < other);
+	std::string str = "";
+	str += "GridCoord: " + std::to_string(m_gridCoord.x) + ", " + std::to_string(m_gridCoord.y) + "\n";
+	str += "WorldCoord: " + std::to_string(m_worldCoord.x) + ", " + std::to_string(m_worldCoord.y) + "\n";
+	str += "Size: " + std::to_string(s_size.x) + ", " + std::to_string(s_size.y) + "\n";
+	str += "Pathable: " + std::to_string(m_pathable) + "\n";
+	str += "SubGrid: " + std::to_string(m_subGrid) + "\n";
+	str += "PfvVars: \n" + m_pfv.ToString();
+	str += "\n";
+	return str;
 }
 
 void Tile::_copy(const Tile & other)

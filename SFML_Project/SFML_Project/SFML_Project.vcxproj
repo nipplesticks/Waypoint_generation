@@ -140,6 +140,8 @@
     <ClCompile Include="Source\Entity\Character.cpp" />
     <ClCompile Include="Source\Entity\Entity.cpp" />
     <ClCompile Include="Source\Pathfinding\Grid.cpp" />
+    <ClCompile Include="Source\Pathfinding\Quadrant.cpp" />
+    <ClCompile Include="Source\Pathfinding\QuadTreeGrid.cpp" />
     <ClCompile Include="Source\Pathfinding\Tile.cpp" />
     <ClCompile Include="Source\Texture\Texture.cpp" />
   </ItemGroup>
@@ -149,6 +151,8 @@
     <ClInclude Include="Source\Entity\Character.h" />
     <ClInclude Include="Source\Entity\Entity.h" />
     <ClInclude Include="Source\Pathfinding\Grid.h" />
+    <ClInclude Include="Source\Pathfinding\Quadrant.h" />
+    <ClInclude Include="Source\Pathfinding\QuadTreeGrid.h" />
     <ClInclude Include="Source\Pathfinding\Tile.h" />
     <ClInclude Include="Source\Texture\Texture.h" />
     <ClInclude Include="Utility\Timer.h" />

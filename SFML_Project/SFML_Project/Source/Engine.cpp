@@ -29,7 +29,7 @@ Engine::Engine(sf::RenderWindow * window)
 	m_player.SetPosition(0, 0);
 	m_player.SetColor(255, 255, 255);
 	m_player.SetTexture(&m_texture, true);
-	m_player.SetSpeed(64.0f);
+	m_player.SetSpeed(128.0f);
 
 	m_camera.SetPosition(0, 0);
 
@@ -143,12 +143,12 @@ void Engine::Update(double dt)
 
 	m_player.Update(dt);
 
-	if (s_mouseRightLastFrame && timer.GetTime() > 0.1f)
+	/*if (s_mouseRightLastFrame && timer.GetTime() > 0.1f)
 	{
 		timerStart = false;
 		s_mouseRightLastFrame = false;
 	}
-	else
+	else*/
 		s_mouseRightLastFrame = mouseRightThisFrame;
 
 

@@ -77,9 +77,13 @@ void Grid::_checkTile(const Tile & current,
 	}
 }
 
-
+#include <fstream>
+#include <string>
 std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & source, const sf::Vector2f & destination)
 {
+	static int static_counter = 0;
+	//std::ofstream pathFile;
+	//pathFile.open("Path" + std::to_string(static_counter++) + ".txt");
 
 	sf::Vector2f tileSize = Tile::GetTileSize();
 	sf::Vector2f gridStart = m_grid[0].GetWorldCoord();
@@ -99,6 +103,10 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 
 	Tile tileSource = grid[gridSourceIndex.x + gridSourceIndex.y * m_gridSize.x];
 	Tile tileDestination = grid[gridDestIndex.x + gridDestIndex.y * m_gridSize.x];
+
+	//pathFile << "Source: \n" + tileSource.ToString();
+	//pathFile << "Dest: \n" + tileDestination.ToString();
+
 
 	if (tileSource.GetSubGrid() != tileDestination.GetSubGrid() || !tileDestination.IsPathable() || !tileSource.IsPathable())
 		return std::vector<Tile>();
@@ -121,8 +129,13 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 
 	openList.push_back(currentTile);
 
+	int counter = 0;
+
 	while (!openList.empty() || earlyExplorationTileIndex != -1)
 	{
+		//pathFile << "###########################################################################################\n";
+		//pathFile << "Iteration: " << std::to_string(counter++) << "\n";
+
 		if (earlyExplorationTileIndex != -1)
 		{
 			currentTile = grid[earlyExplorationTileIndex];
@@ -134,6 +147,8 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 			currentTile = openList.front();
 			openList.erase(openList.begin());
 		}
+
+		//pathFile << "CurrentTile:\n" << currentTile.ToString();
 
 		if (currentTile == tileDestination)
 		{
@@ -148,6 +163,14 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 			std::reverse(path.begin(), path.end());
 			path.push_back(tileDestination);
 			path.erase(path.begin());
+
+			//pathFile << "Final path:\n";
+			for (auto & t : path)
+			{
+				pathFile << t.ToString();
+			}
+
+			pathFile.close();
 			return path;
 		}
 
@@ -197,14 +220,22 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 
 		if (earlyExploration.size() > 0 && earlyExploration.front().GetPathfindingVars().fCost <= currentTile.GetPathfindingVars().fCost)
 		{
+			//pathFile << "fCost Smaller, continue on this path...\n";
 			sf::Vector2i eIndex = earlyExploration.front().GetGridCoord();
 			earlyExplorationTileIndex = eIndex.x + eIndex.y * m_gridSize.x;
 			grid[earlyExplorationTileIndex].SetPathfindingVars(earlyExploration.front().GetPathfindingVars());
 			earlyExploration.erase(earlyExploration.begin());
 		}
+		else
+		{
+			//pathFile << "can't continue on this path, go back\n";
+		}
+
 		openList.insert(openList.end(), earlyExploration.begin(), earlyExploration.end());
 		earlyExploration.clear();
 	}
+
+	//pathFile.close();
 
 	return std::vector<Tile>();
 }

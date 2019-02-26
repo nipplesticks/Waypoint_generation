@@ -16,5 +16,5 @@ public:
 
 private:
 	std::vector<Tile> m_path;
-	float m_speed = 10.0f;
+	float m_speed = 100.0f;
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
-
+#include <string>
 
 class Tile
 {
@@ -12,6 +12,17 @@ public:
 		float fCost = FLT_MAX,
 			gCost = FLT_MAX,
 			hCost = FLT_MAX;
+
+		std::string ToString() const
+		{
+			std::string str = "";
+
+			str += "ParentIndex: " + std::to_string(parentIndex) + "\n";
+			str += "fCost: " + std::to_string(fCost) + ", gCost: " + std::to_string(gCost) + ", hCost: " + std::to_string(hCost) + "\n";
+
+			return str;
+		}
+
 	};
 
 public:
@@ -39,9 +50,9 @@ public:
 	bool operator==(const Tile& other);
 	bool operator==(const sf::Vector2i& gridCoord);
 	bool operator<(const Tile& other);
-	bool operator>(const Tile& other);
+	//bool operator>(const Tile& other);
 
-
+	std::string ToString() const;
 
 private:
 	sf::Vector2i m_gridCoord;
@@ -51,7 +62,6 @@ private:
 	static sf::Vector2f s_size;
 	bool m_pathable;
 	int m_subGrid;
-	int m_cost;
 
 private:
 	void _copy(const Tile& other);
