@@ -26,6 +26,7 @@ public:
 	
 	bool GetQuadrantFrom(const Quadrant & refQuadrant, Direction dir, __out Quadrant * outQuadrant);
 
+	const std::vector<Quadrant> & GetQuadrantVector() const;
 
 	std::string ToString() const;
 
@@ -34,5 +35,8 @@ private:
 	std::vector<Quadrant> m_quadTree;
 	unsigned int m_worldSize;
 	unsigned int m_maximumLevel;
+
+private:
+	size_t _GetQuadrantIndex(const sf::Vector2f & worldPos, unsigned int level);
 };
 

@@ -1,5 +1,7 @@
 #include "Engine.h"
 #include <iostream>
+#include <fstream>
+
 Engine::Engine(sf::RenderWindow * window)
 {
 	m_pWindow = window;
@@ -24,6 +26,7 @@ Engine::Engine(sf::RenderWindow * window)
 		}
 	}
 
+	m_quadGrid.BuildTree(7, 100, sf::Vector2f(0, 0));
 
 	//m_player.SetPosition(MAP_WIDTH * MAP_TILE_SIZE * 0.5f, MAP_HEIGHT * MAP_TILE_SIZE * 0.5f);
 	m_player.SetPosition(0, 0);
@@ -106,13 +109,13 @@ void Engine::Update(double dt)
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_pWindow);
 		sf::Vector2u windowSize = m_pWindow->getSize();
 
-		sf::Vector2f clickPos;
-		clickPos.x = (((float)mousePos.x - (float)windowSize.x * 0.5f) * zoom) + m_camera.GetPosition().x;
-		clickPos.y = (((float)mousePos.y - (float)windowSize.y * 0.5f) * zoom) + m_camera.GetPosition().y;
+		sf::Vector2f clickWorld;
+		clickWorld.x = (((float)mousePos.x - (float)windowSize.x * 0.5f) * zoom) + m_camera.GetPosition().x;
+		clickWorld.y = (((float)mousePos.y - (float)windowSize.y * 0.5f) * zoom) + m_camera.GetPosition().y;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && !playerPath.empty())
 		{
 			sf::Vector2f source = playerPath.back().GetWorldCoord();
-			newPath = m_grid->FindPath(source, clickPos);
+			newPath = m_grid->FindPath(source, clickWorld);
 			newPath.insert(newPath.begin(), playerPath.begin(), playerPath.end());
 		}
 		else
@@ -123,7 +126,7 @@ void Engine::Update(double dt)
 				m_map[index].SetColor(sf::Color::White);
 			}
 
-			newPath = m_grid->FindPath(m_player.GetPosition() + m_player.GetSize() * 0.5f, clickPos);
+			newPath = m_grid->FindPath(m_player.GetPosition() + m_player.GetSize() * 0.5f, clickWorld);
 
 		}
 		for (auto & t : newPath)
@@ -149,7 +152,8 @@ void Engine::Update(double dt)
 		s_mouseRightLastFrame = false;
 	}
 	else*/
-		s_mouseRightLastFrame = mouseRightThisFrame;
+
+	s_mouseRightLastFrame = mouseRightThisFrame;
 
 
 }

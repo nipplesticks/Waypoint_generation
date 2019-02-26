@@ -58,6 +58,33 @@ void Quadrant::Create(const sf::Vector2f & pos, const sf::Vector2f & size, unsig
 	m_isLeaf = isLeaf;
 }
 
+void Quadrant::AddChild(int index)
+{
+	if (m_nrOfChildren < 4)
+		m_children[m_nrOfChildren++] = index;
+}
+
+void Quadrant::SetParent(int index)
+{
+	if (m_parent == -1)
+		m_parent = index;
+}
+
+const unsigned long int * Quadrant::GetChildren() const
+{
+	return m_children;
+}
+
+long int Quadrant::GetParent() const
+{
+	return m_parent;
+}
+
+unsigned int Quadrant::GetNrOfChildren() const
+{
+	return m_nrOfChildren;
+}
+
 const sf::Vector2f & Quadrant::GetMin() const
 {
 	return m_min;
@@ -98,13 +125,19 @@ std::string Quadrant::ToString() const
 {
 	std::string str = "";
 
-	str += "Min: " + std::to_string(m_min.x) + " " + std::to_string(m_min.y) + "\n";
-	str += "Max: " + std::to_string(m_max.x) + " " + std::to_string(m_max.y) + "\n";
+	str += "Min: " + std::to_string(m_min.x) + ", " + std::to_string(m_min.y) + "\n";
+	str += "Max: " + std::to_string(m_max.x) + ", " + std::to_string(m_max.y) + "\n";
 	str += "Size: " + std::to_string(m_size) + "\n";
 	str += "Level: " + std::to_string(m_level) + "\n";
 	str += "Leaf: ";
 	str += m_isLeaf ? "True" : "False";
 	str += "\n";
+	str += "ParentIndex: " + std::to_string(m_parent) + "\n";
+	str += "ChildrenIndices: ";
+	for (unsigned int i = 0; i < m_nrOfChildren; i++)
+		str += std::to_string(m_children[i]) + ", ";
+	str[str.size() - 1] = '\n';
+
 
 	return str;
 }
@@ -116,4 +149,10 @@ void Quadrant::_copy(const Quadrant & other)
 	m_size = other.m_size;
 	m_level = other.m_level;
 	m_isLeaf = other.m_isLeaf;
+	m_parent = other.m_parent;
+	m_nrOfChildren = other.m_nrOfChildren;
+	for (int i = 0; i < 4; i++)
+	{
+		m_children[i] = other.m_children[i];
+	}
 }

@@ -5,6 +5,7 @@
 #include <vector>
 #include "Texture/Texture.h"
 #include "Pathfinding/Grid.h"
+#include "Pathfinding/QuadTreeGrid.h"
 
 class Engine
 {
@@ -34,6 +35,8 @@ private:
 	std::vector<Entity> m_map;
 
 	Grid * m_grid;
+
+	QuadGrid m_quadGrid;
 
 	Character m_player;
 	Texture m_texture;
