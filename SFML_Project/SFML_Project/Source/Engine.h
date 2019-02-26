@@ -5,7 +5,7 @@
 #include <vector>
 #include "Texture/Texture.h"
 #include "Pathfinding/Grid.h"
-#include "Pathfinding/QuadTreeGrid.h"
+#include "Pathfinding/QuadTree.h"
 
 class Engine
 {
@@ -36,7 +36,7 @@ private:
 
 	Grid * m_grid;
 
-	QuadGrid m_quadGrid;
+	QuadTree m_quadGrid;
 
 	Character m_player;
 	Texture m_texture;

@@ -1,10 +1,10 @@
-#include "QuadTreeGrid.h"
+#include "QuadTree.h"
 
-QuadGrid::QuadGrid()
+QuadTree::QuadTree()
 {
 }
 
-QuadGrid::~QuadGrid()
+QuadTree::~QuadTree()
 {
 }
 
@@ -27,7 +27,7 @@ QuadGrid::~QuadGrid()
 //	q.Build(startPos, sf::Vector2f(worldSize, worldSize), 0, maxLevel, m_quadTree, 0);
 //}
 
-void QuadGrid::BuildTree(unsigned int maxLevel, unsigned int worldSize, const sf::Vector2f & startPos)
+void QuadTree::BuildTree(unsigned int maxLevel, unsigned int worldSize, const sf::Vector2f & startPos)
 {
 	m_quadTree.clear();
 	m_maximumLevel = maxLevel;
@@ -72,69 +72,79 @@ void QuadGrid::BuildTree(unsigned int maxLevel, unsigned int worldSize, const sf
 	}
 }
 
-bool QuadGrid::GetQuadrant(const sf::Vector2f & worldPos, unsigned int level, Quadrant * outQuadrant)
+Quadrant * QuadTree::GetQuadrant(const sf::Vector2f & worldPos, unsigned int level)
 {
 	if (m_quadTree.empty())
-		return false;
+		return nullptr;
 
 	size_t quadrantIndex = _GetQuadrantIndex(worldPos, level);
 
-	outQuadrant = &m_quadTree[quadrantIndex];
-
-	return true;
+	return &m_quadTree[quadrantIndex];;
 }
 
-bool QuadGrid::GetQuadrantFrom(const Quadrant & refQuadrant, Direction dir, Quadrant * outQuadrant)
+Quadrant * QuadTree::GetQuadrantFrom(Quadrant * refQuadrant, Direction dir)
 {
-	bool valid = false;
-	
-	sf::Vector2f searchPos = refQuadrant.GetMin();
+	sf::Vector2f searchPos = refQuadrant->GetMin();
 
-	float size = refQuadrant.GetSize() * 1.5f;
+	float size = refQuadrant->GetSize() * 1.5f;
 
 	switch (dir)
 	{
 	case North:
-		searchPos.y - size;
+		searchPos.y -= size;
 		break;
 	case North_East:
-		searchPos.y - size;
-		searchPos.x + size;
+		searchPos.y -= size;
+		searchPos.x += size;
 		break;
 	case East:
-		searchPos.x + size;
+		searchPos.x += size;
 		break;
 	case South_East:
-		searchPos.y + size;
-		searchPos.x + size;
+		searchPos.y += size;
+		searchPos.x += size;
 		break;
 	case South:
-		searchPos.y + size;
+		searchPos.y += size;
 		break;
 	case South_West:
-		searchPos.y + size;
-		searchPos.x - size;
+		searchPos.y += size;
+		searchPos.x -= size;
 		break;
 	case West:
-		searchPos.x - size;
+		searchPos.x -= size;
 		break;
 	case North_West:
-		searchPos.y - size;
-		searchPos.x - size;
+		searchPos.y -= size;
+		searchPos.x -= size;
 		break;
+
 	}
 
-	valid = GetQuadrant(searchPos, refQuadrant.GetLevel(), outQuadrant);
-
-	return valid;
+	return GetQuadrant(searchPos, refQuadrant->GetLevel());
 }
 
-const std::vector<Quadrant>& QuadGrid::GetQuadrantVector() const
+unsigned int QuadTree::GetWorldSize() const
+{
+	return m_maximumLevel;
+}
+
+unsigned int QuadTree::GetMaxTreeLevel() const
+{
+	return m_maximumLevel;
+}
+
+const std::vector<Quadrant>& QuadTree::GetQuadrantVector() const
 {
 	return m_quadTree;
 }
 
-std::string QuadGrid::ToString() const
+const Quadrant & QuadTree::operator[](unsigned int index)
+{
+	return m_quadTree[index];
+}
+
+std::string QuadTree::ToString() const
 {
 	std::string str = "";
 
@@ -151,7 +161,7 @@ std::string QuadGrid::ToString() const
 	return str;
 }
 
-size_t QuadGrid::_GetQuadrantIndex(const sf::Vector2f & worldPos, unsigned int level)
+size_t QuadTree::_GetQuadrantIndex(const sf::Vector2f & worldPos, unsigned int level)
 {
 	level = level > m_maximumLevel ? m_maximumLevel : level;
 
