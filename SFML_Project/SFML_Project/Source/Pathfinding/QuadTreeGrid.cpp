@@ -8,6 +8,25 @@ QuadGrid::~QuadGrid()
 {
 }
 
+//void QuadGrid::BuildTree(unsigned int maxLevel, unsigned int worldSize, const sf::Vector2f & startPos)
+//{
+//	m_quadTree.clear();
+//	m_maximumLevel = maxLevel;
+//	m_worldSize = worldSize;
+//
+//	size_t numberOfQuadrants = 0;
+//
+//	for (unsigned int level = 0; level <= maxLevel; level++)
+//	{
+//		numberOfQuadrants += (unsigned int)std::pow(4, level);
+//	}
+//
+//	m_quadTree = std::vector<Quadrant>(numberOfQuadrants);
+//
+//	Quadrant q;
+//	q.Build(startPos, sf::Vector2f(worldSize, worldSize), 0, maxLevel, m_quadTree, 0);
+//}
+
 void QuadGrid::BuildTree(unsigned int maxLevel, unsigned int worldSize, const sf::Vector2f & startPos)
 {
 	m_quadTree.clear();
@@ -20,11 +39,34 @@ void QuadGrid::BuildTree(unsigned int maxLevel, unsigned int worldSize, const sf
 	{
 		numberOfQuadrants += (unsigned int)std::pow(4, level);
 	}
-
 	m_quadTree = std::vector<Quadrant>(numberOfQuadrants);
 
+	sf::Vector2f size(worldSize, worldSize);
+
 	Quadrant q;
-	q.Build(startPos, sf::Vector2f(worldSize, worldSize), 0, maxLevel, m_quadTree, 0);
+	q.Create(startPos, size, 0, false);
+	size_t index = 0;
+	m_quadTree[index++] = q;
+
+	for (unsigned int level = 1; level <= maxLevel; level++)
+	{
+		bool isLeaf = level == maxLevel;
+		float rowCol = (unsigned int)std::pow(2, level);
+		size = size * 0.5f;
+
+		for (unsigned int y = 0; y < rowCol; y++)
+		{
+			sf::Vector2f currentPos = startPos;
+			currentPos.y += size.y * y;
+
+			for (unsigned int x = 0; x < rowCol; x++)
+			{
+				currentPos.x = startPos.x + size.x * x;
+				q.Create(currentPos, size, level, isLeaf);
+				m_quadTree[index++] = q;
+			}
+		}
+	}
 }
 
 bool QuadGrid::GetQuadrant(const sf::Vector2f & worldPos, unsigned int level, Quadrant * outQuadrant)
@@ -48,22 +90,20 @@ bool QuadGrid::GetQuadrant(const sf::Vector2f & worldPos, unsigned int level, Qu
 	sf::Vector2f searchPos = worldPos;
 	
 	sf::Vector2f worldStart = m_quadTree[0].GetMin();
-	sf::Vector2f worldEnd = m_quadTree[0].GetMax();
+	sf::Vector2f worldEnd	= m_quadTree[0].GetMax();
 
-	searchPos.x = searchPos.x < worldStart.x ? worldStart.x : searchPos.x;
-	searchPos.y = searchPos.y < worldStart.y ? worldStart.y : searchPos.y;
+	searchPos.x =	searchPos.x < worldStart.x	? worldStart.x	: searchPos.x;
+	searchPos.y =	searchPos.y < worldStart.y	? worldStart.y	: searchPos.y;
+	searchPos.x =	searchPos.x > worldEnd.x	? worldEnd.x	: searchPos.x;
+	searchPos.y =	searchPos.y > worldEnd.y	? worldEnd.y	: searchPos.y;
 
-	searchPos.x = searchPos.x > worldEnd.x ? worldEnd.x : searchPos.x;
-	searchPos.y = searchPos.y > worldEnd.y ? worldEnd.y : searchPos.y;
-
-	
 	searchPos -= worldStart;
 	
-	sf::Vector2f step = searchPos * (1.0f / size);
+	sf::Vector2f step = searchPos / size;
 
-	size_t quadrantIndex = levelStartIndex + (int)step.x * (int)step.x + (int)step.y * (int)std::pow(2, level);
+	size_t quadrantIndex = levelStartIndex + (int)step.x + (int)step.y * (int)std::pow(2, level);
 
-	//outQuadrant = &m_quadTree[quadrantIndex];
+	outQuadrant = &m_quadTree[quadrantIndex];
 
 	return true;
 }

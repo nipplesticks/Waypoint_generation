@@ -18,34 +18,44 @@ Quadrant::~Quadrant()
 	
 }
 
-void Quadrant::Build(const sf::Vector2f & pos, const sf::Vector2f & size, unsigned int currentLevel, unsigned int maxLevel, std::vector<Quadrant> & quadTree, size_t index)
+//void Quadrant::Build(const sf::Vector2f & pos, const sf::Vector2f & size, unsigned int currentLevel, unsigned int maxLevel, std::vector<Quadrant> & quadTree, size_t index)
+//{
+//	m_min = pos;
+//	m_max = pos + size;
+//	m_size = m_max.x - m_min.x;
+//	m_level = currentLevel;
+//	quadTree[index] = *this;
+//	if (maxLevel == currentLevel)
+//		m_isLeaf = true;
+//	else
+//	{
+//		m_isLeaf = false;
+//		sf::Vector2f subSize = size * 0.5f;
+//		currentLevel++;
+//
+//		index = index * 4 + 1;
+//
+//		for (int y = 0; y < 2; y++)
+//		{
+//			for (int x = 0; x < 2; x++)
+//			{
+//				Quadrant q;
+//				sf::Vector2f subPos;
+//				subPos.x = pos.x + subSize.x * x;
+//				subPos.y = pos.y + subSize.y * y;
+//				q.Build(subPos, subSize, currentLevel, maxLevel, quadTree, index++);
+//			}
+//		}
+//	}
+//}
+
+void Quadrant::Create(const sf::Vector2f & pos, const sf::Vector2f & size, unsigned int currentLevel, bool isLeaf)
 {
 	m_min = pos;
 	m_max = pos + size;
 	m_size = m_max.x - m_min.x;
 	m_level = currentLevel;
-	quadTree[index] = *this;
-	if (maxLevel == currentLevel)
-		m_isLeaf = true;
-	else
-	{
-		sf::Vector2f subSize = size * 0.5f;
-		currentLevel++;
-
-		index = index * 4 + 1;
-
-		for (int y = 0; y < 2; y++)
-		{
-			for (int x = 0; x < 2; x++)
-			{
-				Quadrant q;
-				sf::Vector2f subPos;
-				subPos.x = pos.x + subSize.x * x;
-				subPos.y = pos.y + subSize.y * y;
-				q.Build(subPos, subSize, currentLevel, maxLevel, quadTree, index++);
-			}
-		}
-	}
+	m_isLeaf = isLeaf;
 }
 
 const sf::Vector2f & Quadrant::GetMin() const
