@@ -21,14 +21,18 @@ int main()
 	Timer timer;
 	timer.Start();
 	std::cout << "Building tree..." << std::endl;
-	qG.BuildTree(10, 100, sf::Vector2f(-50.f, -50.f));
+	qG.BuildTree(4, 100, sf::Vector2f(-50.f, -50.f));
+
 	std::cout << timer.Stop() << std::endl;
+
+	Quadrant q;
+	bool yeah = qG.GetQuadrant(sf::Vector2f(12.5f, 25.0f), 3u, &q);
 	
 	
-	/*std::ofstream outlol;
+	std::ofstream outlol;
 	outlol.open("QuadTreeEXDE.txt");
 	outlol << qG.ToString();
-	outlol.close();*/
+	outlol.close();
 
 	startToSource.x /= tileSize.x;
 	startToSource.y /= tileSize.y;

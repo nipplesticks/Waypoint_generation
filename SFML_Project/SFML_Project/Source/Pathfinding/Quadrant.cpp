@@ -18,19 +18,21 @@ Quadrant::~Quadrant()
 	
 }
 
-void Quadrant::Build(const sf::Vector2f & pos, const sf::Vector2f & size, unsigned int currentLevel, unsigned int maxLevel, std::vector<Quadrant> & quadTree)
+void Quadrant::Build(const sf::Vector2f & pos, const sf::Vector2f & size, unsigned int currentLevel, unsigned int maxLevel, std::vector<Quadrant> & quadTree, size_t index)
 {
 	m_min = pos;
 	m_max = pos + size;
 	m_size = m_max.x - m_min.x;
 	m_level = currentLevel;
-	quadTree.push_back(*this);
+	quadTree[index] = *this;
 	if (maxLevel == currentLevel)
 		m_isLeaf = true;
 	else
 	{
 		sf::Vector2f subSize = size * 0.5f;
 		currentLevel++;
+
+		index = index * 4 + 1;
 
 		for (int y = 0; y < 2; y++)
 		{
@@ -40,7 +42,7 @@ void Quadrant::Build(const sf::Vector2f & pos, const sf::Vector2f & size, unsign
 				sf::Vector2f subPos;
 				subPos.x = pos.x + subSize.x * x;
 				subPos.y = pos.y + subSize.y * y;
-				q.Build(subPos, subSize, currentLevel, maxLevel, quadTree);
+				q.Build(subPos, subSize, currentLevel, maxLevel, quadTree, index++);
 			}
 		}
 	}

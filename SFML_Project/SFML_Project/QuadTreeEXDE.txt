@@ -1,0 +1,2392 @@
+World size: 100
+Maximum level: 4
+
+############### QUAD TREE BEGIN ###############
+
+Index: 0
+Min: -50.000000 -50.000000
+Max: 50.000000 50.000000
+Size: 100.000000
+Level: 0
+Leaf: True
+
+Index: 1
+Min: -50.000000 -50.000000
+Max: 0.000000 0.000000
+Size: 50.000000
+Level: 1
+Leaf: True
+
+Index: 2
+Min: 0.000000 -50.000000
+Max: 50.000000 0.000000
+Size: 50.000000
+Level: 1
+Leaf: True
+
+Index: 3
+Min: -50.000000 0.000000
+Max: 0.000000 50.000000
+Size: 50.000000
+Level: 1
+Leaf: True
+
+Index: 4
+Min: 0.000000 0.000000
+Max: 50.000000 50.000000
+Size: 50.000000
+Level: 1
+Leaf: True
+
+Index: 5
+Min: -50.000000 -50.000000
+Max: -25.000000 -25.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 6
+Min: -25.000000 -50.000000
+Max: 0.000000 -25.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 7
+Min: -50.000000 -25.000000
+Max: -25.000000 0.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 8
+Min: -25.000000 -25.000000
+Max: 0.000000 0.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 9
+Min: 0.000000 -50.000000
+Max: 25.000000 -25.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 10
+Min: 25.000000 -50.000000
+Max: 50.000000 -25.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 11
+Min: 0.000000 -25.000000
+Max: 25.000000 0.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 12
+Min: 25.000000 -25.000000
+Max: 50.000000 0.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 13
+Min: -50.000000 0.000000
+Max: -25.000000 25.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 14
+Min: -25.000000 0.000000
+Max: 0.000000 25.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 15
+Min: -50.000000 25.000000
+Max: -25.000000 50.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 16
+Min: -25.000000 25.000000
+Max: 0.000000 50.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 17
+Min: 0.000000 0.000000
+Max: 25.000000 25.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 18
+Min: 25.000000 0.000000
+Max: 50.000000 25.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 19
+Min: 0.000000 25.000000
+Max: 25.000000 50.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 20
+Min: 25.000000 25.000000
+Max: 50.000000 50.000000
+Size: 25.000000
+Level: 2
+Leaf: True
+
+Index: 21
+Min: -50.000000 -50.000000
+Max: -37.500000 -37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 22
+Min: -37.500000 -50.000000
+Max: -25.000000 -37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 23
+Min: -50.000000 -37.500000
+Max: -37.500000 -25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 24
+Min: -37.500000 -37.500000
+Max: -25.000000 -25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 25
+Min: -25.000000 -50.000000
+Max: -12.500000 -37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 26
+Min: -12.500000 -50.000000
+Max: 0.000000 -37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 27
+Min: -25.000000 -37.500000
+Max: -12.500000 -25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 28
+Min: -12.500000 -37.500000
+Max: 0.000000 -25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 29
+Min: -50.000000 -25.000000
+Max: -37.500000 -12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 30
+Min: -37.500000 -25.000000
+Max: -25.000000 -12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 31
+Min: -50.000000 -12.500000
+Max: -37.500000 0.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 32
+Min: -37.500000 -12.500000
+Max: -25.000000 0.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 33
+Min: -25.000000 -25.000000
+Max: -12.500000 -12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 34
+Min: -12.500000 -25.000000
+Max: 0.000000 -12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 35
+Min: -25.000000 -12.500000
+Max: -12.500000 0.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 36
+Min: -12.500000 -12.500000
+Max: 0.000000 0.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 37
+Min: 0.000000 -50.000000
+Max: 12.500000 -37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 38
+Min: 12.500000 -50.000000
+Max: 25.000000 -37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 39
+Min: 0.000000 -37.500000
+Max: 12.500000 -25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 40
+Min: 12.500000 -37.500000
+Max: 25.000000 -25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 41
+Min: 25.000000 -50.000000
+Max: 37.500000 -37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 42
+Min: 37.500000 -50.000000
+Max: 50.000000 -37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 43
+Min: 25.000000 -37.500000
+Max: 37.500000 -25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 44
+Min: 37.500000 -37.500000
+Max: 50.000000 -25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 45
+Min: 0.000000 -25.000000
+Max: 12.500000 -12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 46
+Min: 12.500000 -25.000000
+Max: 25.000000 -12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 47
+Min: 0.000000 -12.500000
+Max: 12.500000 0.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 48
+Min: 12.500000 -12.500000
+Max: 25.000000 0.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 49
+Min: 25.000000 -25.000000
+Max: 37.500000 -12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 50
+Min: 37.500000 -25.000000
+Max: 50.000000 -12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 51
+Min: 25.000000 -12.500000
+Max: 37.500000 0.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 52
+Min: 37.500000 -12.500000
+Max: 50.000000 0.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 53
+Min: -50.000000 0.000000
+Max: -37.500000 12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 54
+Min: -37.500000 0.000000
+Max: -25.000000 12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 55
+Min: -50.000000 12.500000
+Max: -37.500000 25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 56
+Min: -37.500000 12.500000
+Max: -25.000000 25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 57
+Min: -25.000000 0.000000
+Max: -12.500000 12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 58
+Min: -12.500000 0.000000
+Max: 0.000000 12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 59
+Min: -25.000000 12.500000
+Max: -12.500000 25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 60
+Min: -12.500000 12.500000
+Max: 0.000000 25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 61
+Min: -50.000000 25.000000
+Max: -37.500000 37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 62
+Min: -37.500000 25.000000
+Max: -25.000000 37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 63
+Min: -50.000000 37.500000
+Max: -37.500000 50.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 64
+Min: -37.500000 37.500000
+Max: -25.000000 50.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 65
+Min: -25.000000 25.000000
+Max: -12.500000 37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 66
+Min: -12.500000 25.000000
+Max: 0.000000 37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 67
+Min: -25.000000 37.500000
+Max: -12.500000 50.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 68
+Min: -12.500000 37.500000
+Max: 0.000000 50.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 69
+Min: 0.000000 0.000000
+Max: 12.500000 12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 70
+Min: 12.500000 0.000000
+Max: 25.000000 12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 71
+Min: 0.000000 12.500000
+Max: 12.500000 25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 72
+Min: 12.500000 12.500000
+Max: 25.000000 25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 73
+Min: 25.000000 0.000000
+Max: 37.500000 12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 74
+Min: 37.500000 0.000000
+Max: 50.000000 12.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 75
+Min: 25.000000 12.500000
+Max: 37.500000 25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 76
+Min: 37.500000 12.500000
+Max: 50.000000 25.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 77
+Min: 0.000000 25.000000
+Max: 12.500000 37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 78
+Min: 12.500000 25.000000
+Max: 25.000000 37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 79
+Min: 0.000000 37.500000
+Max: 12.500000 50.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 80
+Min: 12.500000 37.500000
+Max: 25.000000 50.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 81
+Min: 25.000000 25.000000
+Max: 37.500000 37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 82
+Min: 37.500000 25.000000
+Max: 50.000000 37.500000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 83
+Min: 25.000000 37.500000
+Max: 37.500000 50.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 84
+Min: 37.500000 37.500000
+Max: 50.000000 50.000000
+Size: 12.500000
+Level: 3
+Leaf: True
+
+Index: 85
+Min: -50.000000 -50.000000
+Max: -43.750000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 86
+Min: -43.750000 -50.000000
+Max: -37.500000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 87
+Min: -50.000000 -43.750000
+Max: -43.750000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 88
+Min: -43.750000 -43.750000
+Max: -37.500000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 89
+Min: -37.500000 -50.000000
+Max: -31.250000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 90
+Min: -31.250000 -50.000000
+Max: -25.000000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 91
+Min: -37.500000 -43.750000
+Max: -31.250000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 92
+Min: -31.250000 -43.750000
+Max: -25.000000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 93
+Min: -50.000000 -37.500000
+Max: -43.750000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 94
+Min: -43.750000 -37.500000
+Max: -37.500000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 95
+Min: -50.000000 -31.250000
+Max: -43.750000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 96
+Min: -43.750000 -31.250000
+Max: -37.500000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 97
+Min: -37.500000 -37.500000
+Max: -31.250000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 98
+Min: -31.250000 -37.500000
+Max: -25.000000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 99
+Min: -37.500000 -31.250000
+Max: -31.250000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 100
+Min: -31.250000 -31.250000
+Max: -25.000000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 101
+Min: -25.000000 -50.000000
+Max: -18.750000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 102
+Min: -18.750000 -50.000000
+Max: -12.500000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 103
+Min: -25.000000 -43.750000
+Max: -18.750000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 104
+Min: -18.750000 -43.750000
+Max: -12.500000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 105
+Min: -12.500000 -50.000000
+Max: -6.250000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 106
+Min: -6.250000 -50.000000
+Max: 0.000000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 107
+Min: -12.500000 -43.750000
+Max: -6.250000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 108
+Min: -6.250000 -43.750000
+Max: 0.000000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 109
+Min: -25.000000 -37.500000
+Max: -18.750000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 110
+Min: -18.750000 -37.500000
+Max: -12.500000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 111
+Min: -25.000000 -31.250000
+Max: -18.750000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 112
+Min: -18.750000 -31.250000
+Max: -12.500000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 113
+Min: -12.500000 -37.500000
+Max: -6.250000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 114
+Min: -6.250000 -37.500000
+Max: 0.000000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 115
+Min: -12.500000 -31.250000
+Max: -6.250000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 116
+Min: -6.250000 -31.250000
+Max: 0.000000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 117
+Min: -50.000000 -25.000000
+Max: -43.750000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 118
+Min: -43.750000 -25.000000
+Max: -37.500000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 119
+Min: -50.000000 -18.750000
+Max: -43.750000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 120
+Min: -43.750000 -18.750000
+Max: -37.500000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 121
+Min: -37.500000 -25.000000
+Max: -31.250000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 122
+Min: -31.250000 -25.000000
+Max: -25.000000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 123
+Min: -37.500000 -18.750000
+Max: -31.250000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 124
+Min: -31.250000 -18.750000
+Max: -25.000000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 125
+Min: -50.000000 -12.500000
+Max: -43.750000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 126
+Min: -43.750000 -12.500000
+Max: -37.500000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 127
+Min: -50.000000 -6.250000
+Max: -43.750000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 128
+Min: -43.750000 -6.250000
+Max: -37.500000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 129
+Min: -37.500000 -12.500000
+Max: -31.250000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 130
+Min: -31.250000 -12.500000
+Max: -25.000000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 131
+Min: -37.500000 -6.250000
+Max: -31.250000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 132
+Min: -31.250000 -6.250000
+Max: -25.000000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 133
+Min: -25.000000 -25.000000
+Max: -18.750000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 134
+Min: -18.750000 -25.000000
+Max: -12.500000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 135
+Min: -25.000000 -18.750000
+Max: -18.750000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 136
+Min: -18.750000 -18.750000
+Max: -12.500000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 137
+Min: -12.500000 -25.000000
+Max: -6.250000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 138
+Min: -6.250000 -25.000000
+Max: 0.000000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 139
+Min: -12.500000 -18.750000
+Max: -6.250000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 140
+Min: -6.250000 -18.750000
+Max: 0.000000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 141
+Min: -25.000000 -12.500000
+Max: -18.750000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 142
+Min: -18.750000 -12.500000
+Max: -12.500000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 143
+Min: -25.000000 -6.250000
+Max: -18.750000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 144
+Min: -18.750000 -6.250000
+Max: -12.500000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 145
+Min: -12.500000 -12.500000
+Max: -6.250000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 146
+Min: -6.250000 -12.500000
+Max: 0.000000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 147
+Min: -12.500000 -6.250000
+Max: -6.250000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 148
+Min: -6.250000 -6.250000
+Max: 0.000000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 149
+Min: 0.000000 -50.000000
+Max: 6.250000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 150
+Min: 6.250000 -50.000000
+Max: 12.500000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 151
+Min: 0.000000 -43.750000
+Max: 6.250000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 152
+Min: 6.250000 -43.750000
+Max: 12.500000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 153
+Min: 12.500000 -50.000000
+Max: 18.750000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 154
+Min: 18.750000 -50.000000
+Max: 25.000000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 155
+Min: 12.500000 -43.750000
+Max: 18.750000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 156
+Min: 18.750000 -43.750000
+Max: 25.000000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 157
+Min: 0.000000 -37.500000
+Max: 6.250000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 158
+Min: 6.250000 -37.500000
+Max: 12.500000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 159
+Min: 0.000000 -31.250000
+Max: 6.250000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 160
+Min: 6.250000 -31.250000
+Max: 12.500000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 161
+Min: 12.500000 -37.500000
+Max: 18.750000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 162
+Min: 18.750000 -37.500000
+Max: 25.000000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 163
+Min: 12.500000 -31.250000
+Max: 18.750000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 164
+Min: 18.750000 -31.250000
+Max: 25.000000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 165
+Min: 25.000000 -50.000000
+Max: 31.250000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 166
+Min: 31.250000 -50.000000
+Max: 37.500000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 167
+Min: 25.000000 -43.750000
+Max: 31.250000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 168
+Min: 31.250000 -43.750000
+Max: 37.500000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 169
+Min: 37.500000 -50.000000
+Max: 43.750000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 170
+Min: 43.750000 -50.000000
+Max: 50.000000 -43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 171
+Min: 37.500000 -43.750000
+Max: 43.750000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 172
+Min: 43.750000 -43.750000
+Max: 50.000000 -37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 173
+Min: 25.000000 -37.500000
+Max: 31.250000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 174
+Min: 31.250000 -37.500000
+Max: 37.500000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 175
+Min: 25.000000 -31.250000
+Max: 31.250000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 176
+Min: 31.250000 -31.250000
+Max: 37.500000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 177
+Min: 37.500000 -37.500000
+Max: 43.750000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 178
+Min: 43.750000 -37.500000
+Max: 50.000000 -31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 179
+Min: 37.500000 -31.250000
+Max: 43.750000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 180
+Min: 43.750000 -31.250000
+Max: 50.000000 -25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 181
+Min: 0.000000 -25.000000
+Max: 6.250000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 182
+Min: 6.250000 -25.000000
+Max: 12.500000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 183
+Min: 0.000000 -18.750000
+Max: 6.250000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 184
+Min: 6.250000 -18.750000
+Max: 12.500000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 185
+Min: 12.500000 -25.000000
+Max: 18.750000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 186
+Min: 18.750000 -25.000000
+Max: 25.000000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 187
+Min: 12.500000 -18.750000
+Max: 18.750000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 188
+Min: 18.750000 -18.750000
+Max: 25.000000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 189
+Min: 0.000000 -12.500000
+Max: 6.250000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 190
+Min: 6.250000 -12.500000
+Max: 12.500000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 191
+Min: 0.000000 -6.250000
+Max: 6.250000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 192
+Min: 6.250000 -6.250000
+Max: 12.500000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 193
+Min: 12.500000 -12.500000
+Max: 18.750000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 194
+Min: 18.750000 -12.500000
+Max: 25.000000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 195
+Min: 12.500000 -6.250000
+Max: 18.750000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 196
+Min: 18.750000 -6.250000
+Max: 25.000000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 197
+Min: 25.000000 -25.000000
+Max: 31.250000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 198
+Min: 31.250000 -25.000000
+Max: 37.500000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 199
+Min: 25.000000 -18.750000
+Max: 31.250000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 200
+Min: 31.250000 -18.750000
+Max: 37.500000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 201
+Min: 37.500000 -25.000000
+Max: 43.750000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 202
+Min: 43.750000 -25.000000
+Max: 50.000000 -18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 203
+Min: 37.500000 -18.750000
+Max: 43.750000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 204
+Min: 43.750000 -18.750000
+Max: 50.000000 -12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 205
+Min: 25.000000 -12.500000
+Max: 31.250000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 206
+Min: 31.250000 -12.500000
+Max: 37.500000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 207
+Min: 25.000000 -6.250000
+Max: 31.250000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 208
+Min: 31.250000 -6.250000
+Max: 37.500000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 209
+Min: 37.500000 -12.500000
+Max: 43.750000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 210
+Min: 43.750000 -12.500000
+Max: 50.000000 -6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 211
+Min: 37.500000 -6.250000
+Max: 43.750000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 212
+Min: 43.750000 -6.250000
+Max: 50.000000 0.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 213
+Min: -50.000000 0.000000
+Max: -43.750000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 214
+Min: -43.750000 0.000000
+Max: -37.500000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 215
+Min: -50.000000 6.250000
+Max: -43.750000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 216
+Min: -43.750000 6.250000
+Max: -37.500000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 217
+Min: -37.500000 0.000000
+Max: -31.250000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 218
+Min: -31.250000 0.000000
+Max: -25.000000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 219
+Min: -37.500000 6.250000
+Max: -31.250000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 220
+Min: -31.250000 6.250000
+Max: -25.000000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 221
+Min: -50.000000 12.500000
+Max: -43.750000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 222
+Min: -43.750000 12.500000
+Max: -37.500000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 223
+Min: -50.000000 18.750000
+Max: -43.750000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 224
+Min: -43.750000 18.750000
+Max: -37.500000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 225
+Min: -37.500000 12.500000
+Max: -31.250000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 226
+Min: -31.250000 12.500000
+Max: -25.000000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 227
+Min: -37.500000 18.750000
+Max: -31.250000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 228
+Min: -31.250000 18.750000
+Max: -25.000000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 229
+Min: -25.000000 0.000000
+Max: -18.750000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 230
+Min: -18.750000 0.000000
+Max: -12.500000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 231
+Min: -25.000000 6.250000
+Max: -18.750000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 232
+Min: -18.750000 6.250000
+Max: -12.500000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 233
+Min: -12.500000 0.000000
+Max: -6.250000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 234
+Min: -6.250000 0.000000
+Max: 0.000000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 235
+Min: -12.500000 6.250000
+Max: -6.250000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 236
+Min: -6.250000 6.250000
+Max: 0.000000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 237
+Min: -25.000000 12.500000
+Max: -18.750000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 238
+Min: -18.750000 12.500000
+Max: -12.500000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 239
+Min: -25.000000 18.750000
+Max: -18.750000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 240
+Min: -18.750000 18.750000
+Max: -12.500000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 241
+Min: -12.500000 12.500000
+Max: -6.250000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 242
+Min: -6.250000 12.500000
+Max: 0.000000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 243
+Min: -12.500000 18.750000
+Max: -6.250000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 244
+Min: -6.250000 18.750000
+Max: 0.000000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 245
+Min: -50.000000 25.000000
+Max: -43.750000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 246
+Min: -43.750000 25.000000
+Max: -37.500000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 247
+Min: -50.000000 31.250000
+Max: -43.750000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 248
+Min: -43.750000 31.250000
+Max: -37.500000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 249
+Min: -37.500000 25.000000
+Max: -31.250000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 250
+Min: -31.250000 25.000000
+Max: -25.000000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 251
+Min: -37.500000 31.250000
+Max: -31.250000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 252
+Min: -31.250000 31.250000
+Max: -25.000000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 253
+Min: -50.000000 37.500000
+Max: -43.750000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 254
+Min: -43.750000 37.500000
+Max: -37.500000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 255
+Min: -50.000000 43.750000
+Max: -43.750000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 256
+Min: -43.750000 43.750000
+Max: -37.500000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 257
+Min: -37.500000 37.500000
+Max: -31.250000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 258
+Min: -31.250000 37.500000
+Max: -25.000000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 259
+Min: -37.500000 43.750000
+Max: -31.250000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 260
+Min: -31.250000 43.750000
+Max: -25.000000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 261
+Min: -25.000000 25.000000
+Max: -18.750000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 262
+Min: -18.750000 25.000000
+Max: -12.500000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 263
+Min: -25.000000 31.250000
+Max: -18.750000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 264
+Min: -18.750000 31.250000
+Max: -12.500000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 265
+Min: -12.500000 25.000000
+Max: -6.250000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 266
+Min: -6.250000 25.000000
+Max: 0.000000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 267
+Min: -12.500000 31.250000
+Max: -6.250000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 268
+Min: -6.250000 31.250000
+Max: 0.000000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 269
+Min: -25.000000 37.500000
+Max: -18.750000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 270
+Min: -18.750000 37.500000
+Max: -12.500000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 271
+Min: -25.000000 43.750000
+Max: -18.750000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 272
+Min: -18.750000 43.750000
+Max: -12.500000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 273
+Min: -12.500000 37.500000
+Max: -6.250000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 274
+Min: -6.250000 37.500000
+Max: 0.000000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 275
+Min: -12.500000 43.750000
+Max: -6.250000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 276
+Min: -6.250000 43.750000
+Max: 0.000000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 277
+Min: 0.000000 0.000000
+Max: 6.250000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 278
+Min: 6.250000 0.000000
+Max: 12.500000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 279
+Min: 0.000000 6.250000
+Max: 6.250000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 280
+Min: 6.250000 6.250000
+Max: 12.500000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 281
+Min: 12.500000 0.000000
+Max: 18.750000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 282
+Min: 18.750000 0.000000
+Max: 25.000000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 283
+Min: 12.500000 6.250000
+Max: 18.750000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 284
+Min: 18.750000 6.250000
+Max: 25.000000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 285
+Min: 0.000000 12.500000
+Max: 6.250000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 286
+Min: 6.250000 12.500000
+Max: 12.500000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 287
+Min: 0.000000 18.750000
+Max: 6.250000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 288
+Min: 6.250000 18.750000
+Max: 12.500000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 289
+Min: 12.500000 12.500000
+Max: 18.750000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 290
+Min: 18.750000 12.500000
+Max: 25.000000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 291
+Min: 12.500000 18.750000
+Max: 18.750000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 292
+Min: 18.750000 18.750000
+Max: 25.000000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 293
+Min: 25.000000 0.000000
+Max: 31.250000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 294
+Min: 31.250000 0.000000
+Max: 37.500000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 295
+Min: 25.000000 6.250000
+Max: 31.250000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 296
+Min: 31.250000 6.250000
+Max: 37.500000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 297
+Min: 37.500000 0.000000
+Max: 43.750000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 298
+Min: 43.750000 0.000000
+Max: 50.000000 6.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 299
+Min: 37.500000 6.250000
+Max: 43.750000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 300
+Min: 43.750000 6.250000
+Max: 50.000000 12.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 301
+Min: 25.000000 12.500000
+Max: 31.250000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 302
+Min: 31.250000 12.500000
+Max: 37.500000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 303
+Min: 25.000000 18.750000
+Max: 31.250000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 304
+Min: 31.250000 18.750000
+Max: 37.500000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 305
+Min: 37.500000 12.500000
+Max: 43.750000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 306
+Min: 43.750000 12.500000
+Max: 50.000000 18.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 307
+Min: 37.500000 18.750000
+Max: 43.750000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 308
+Min: 43.750000 18.750000
+Max: 50.000000 25.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 309
+Min: 0.000000 25.000000
+Max: 6.250000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 310
+Min: 6.250000 25.000000
+Max: 12.500000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 311
+Min: 0.000000 31.250000
+Max: 6.250000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 312
+Min: 6.250000 31.250000
+Max: 12.500000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 313
+Min: 12.500000 25.000000
+Max: 18.750000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 314
+Min: 18.750000 25.000000
+Max: 25.000000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 315
+Min: 12.500000 31.250000
+Max: 18.750000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 316
+Min: 18.750000 31.250000
+Max: 25.000000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 317
+Min: 0.000000 37.500000
+Max: 6.250000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 318
+Min: 6.250000 37.500000
+Max: 12.500000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 319
+Min: 0.000000 43.750000
+Max: 6.250000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 320
+Min: 6.250000 43.750000
+Max: 12.500000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 321
+Min: 12.500000 37.500000
+Max: 18.750000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 322
+Min: 18.750000 37.500000
+Max: 25.000000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 323
+Min: 12.500000 43.750000
+Max: 18.750000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 324
+Min: 18.750000 43.750000
+Max: 25.000000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 325
+Min: 25.000000 25.000000
+Max: 31.250000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 326
+Min: 31.250000 25.000000
+Max: 37.500000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 327
+Min: 25.000000 31.250000
+Max: 31.250000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 328
+Min: 31.250000 31.250000
+Max: 37.500000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 329
+Min: 37.500000 25.000000
+Max: 43.750000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 330
+Min: 43.750000 25.000000
+Max: 50.000000 31.250000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 331
+Min: 37.500000 31.250000
+Max: 43.750000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 332
+Min: 43.750000 31.250000
+Max: 50.000000 37.500000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 333
+Min: 25.000000 37.500000
+Max: 31.250000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 334
+Min: 31.250000 37.500000
+Max: 37.500000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 335
+Min: 25.000000 43.750000
+Max: 31.250000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 336
+Min: 31.250000 43.750000
+Max: 37.500000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 337
+Min: 37.500000 37.500000
+Max: 43.750000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 338
+Min: 43.750000 37.500000
+Max: 50.000000 43.750000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 339
+Min: 37.500000 43.750000
+Max: 43.750000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+
+Index: 340
+Min: 43.750000 43.750000
+Max: 50.000000 50.000000
+Size: 6.250000
+Level: 4
+Leaf: True
+

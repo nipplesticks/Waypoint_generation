@@ -10,7 +10,7 @@ public:
 	Quadrant(const Quadrant & other);
 	~Quadrant();
 
-	void Build(const sf::Vector2f & pos, const sf::Vector2f & size, unsigned int currentLevel, unsigned int maxLevel, std::vector<Quadrant> & quadTree);
+	void Build(const sf::Vector2f & pos, const sf::Vector2f & size, unsigned int currentLevel, unsigned int maxLevel, std::vector<Quadrant> & quadTree, size_t index);
 
 	const sf::Vector2f & GetMin() const;
 	const sf::Vector2f & GetMax() const;

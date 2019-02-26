@@ -167,10 +167,10 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 			//pathFile << "Final path:\n";
 			for (auto & t : path)
 			{
-				pathFile << t.ToString();
+				//pathFile << t.ToString();
 			}
 
-			pathFile.close();
+			//pathFile.close();
 			return path;
 		}
 
