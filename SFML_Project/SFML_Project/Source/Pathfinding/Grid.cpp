@@ -35,6 +35,11 @@ void Grid::Block(const sf::Vector2i & coord)
 	m_grid[coord.x + coord.y * m_gridSize.x].SetPathable(false);
 }
 
+void Grid::SetWaypoints(const std::vector<Waypoint>& waypoints)
+{
+	m_waypoints = waypoints;
+}
+
 Tile Grid::TileFromWorldCoords(const sf::Vector2f & worldCoord) const
 {
 	sf::Vector2f tileSize = Tile::GetTileSize();

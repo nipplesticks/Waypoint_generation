@@ -220,6 +220,7 @@ void Engine::_loadMap(const std::string & mapName)
 
 	bool placedPlayer = false;
 
+	m_background.SetSize(xLevel * MAP_TILE_SIZE, yLevel * MAP_TILE_SIZE);
 	for (int y = 0; y < yLevel; y++)
 	{
 		for (int x = 0; x < xLevel; x++)
@@ -245,6 +246,171 @@ void Engine::_loadMap(const std::string & mapName)
 		}
 	}
 
-	m_background.SetSize(xLevel * MAP_TILE_SIZE, yLevel * MAP_TILE_SIZE);
+
+	/*std::vector<Waypoint> waypoints;
+	_createWaypoints(waypoints);
+	m_grid->SetWaypoints(waypoints);*/
+
+
+}
+#include <DirectXMath.h>
+void Engine::_createWaypoints(std::vector<Waypoint>& waypoints)
+{
+	using namespace DirectX;
+
+	for (auto & e : m_blocked)
+	{
+		sf::Vector2f ePos = e.GetPosition();
+		sf::Vector2f eSize = e.GetSize();
+		sf::Vector2f points[4] = {
+			{ ePos },
+			{ ePos + sf::Vector2f(eSize.x, 0.0f) },
+			{ ePos + eSize },
+			{ ePos + sf::Vector2f(0.0f, eSize.y) },
+		};
+		sf::Vector2f eCenter = ePos + eSize * 0.5f;
+		
+		float length = XMVectorGetX(XMVector2Length(XMVectorSet(eSize.x, eSize.y, 0.0f, 0.0f)));
+
+		
+
+		XMFLOAT2 xmCenter = { eCenter.x, eCenter.y };
+
+		XMVECTOR xmVecCenter = XMLoadFloat2(&xmCenter);
+
+		for (int i = 0; i < 4; i++)
+		{
+			XMFLOAT2 p = { points[i].x, points[i].y };
+			XMVECTOR dir = XMVector2Normalize(XMVectorSubtract(XMLoadFloat2(&p), xmVecCenter));
+			XMStoreFloat2(&p, dir);
+			sf::Vector2f direction = { p.x, p.y };
+
+			Waypoint wp(points[i] + direction * length * 0.5f);
+
+			if (_isInsideMap(wp) && !_intersectsWithBlock(wp))
+				waypoints.push_back(wp);
+		}
+	}
+
+	_connectWaypoints(waypoints);
+
+}
+
+bool Engine::_intersectsWithBlock(const Waypoint & waypoint)
+{
+	for (auto & e : m_blocked)
+	{
+		sf::Vector2f pos = e.GetPosition();
+		sf::Vector2f size = e.GetSize();
+		sf::Vector2f wPos = waypoint.GetWorldCoord();
+		
+		if (wPos.x > pos.x && wPos.x < pos.x + size.x &&
+			wPos.y > pos.y && wPos.y < pos.y + size.y)
+			return true;
+	}
+
+	return false;
+}
+
+bool Engine::_isInsideMap(const Waypoint & waypoint)
+{
+	sf::Vector2f pos = m_background.GetPosition();
+	sf::Vector2f size = m_background.GetSize();
+	sf::Vector2f wPos = waypoint.GetWorldCoord();
+
+	if (wPos.x > pos.x && wPos.x < pos.x + size.x &&
+		wPos.y > pos.y && wPos.y < pos.y + size.y)
+		return true;
+
+
+	return false;
+}
+
+bool Engine::_lineIntersectionBB(const sf::Vector2f & lo, const sf::Vector2f & le, const sf::Vector2f points[4])
+{
+	for (int i = 0; i < 4; i++)
+	{
+		sf::Vector2f edgeStart = points[i];
+		sf::Vector2f edgeEnd = points[(i + 1) % 4];
+
+		sf::Vector2f intersection;
+
+		if (_lineIntersectionLine(lo, le, edgeStart, edgeEnd, intersection))
+			return true;
+	}
+
+
+	return false;
+}
+
+bool Engine::_lineIntersectionLine(const sf::Vector2f & l1o, const sf::Vector2f & l1e, const sf::Vector2f & l2o, const sf::Vector2f & l2e, sf::Vector2f & intersectionPoint)
+{
+	static const float EPSILON = 0.0001f;
+
+	sf::Vector2f b = l1e - l1o;
+	sf::Vector2f d = l2e - l2o;
+
+	float bDotDPerp = b.x * d.y - b.y * d.x;
+
+	if (fabs(bDotDPerp) < EPSILON)
+		return false;
+
+	sf::Vector2f c = l2o - l1o;
+	
+	float t = (c.x * d.y - c.y * d.x) / bDotDPerp;
+
+	if (t < 0.0f || t > 1.0f)
+		return false;
+
+	float u = (c.x * b.y - c.y * b.x) / bDotDPerp;
+
+	if (u < 0.0f || u > 1.0f)
+		return false;
+
+	intersectionPoint = l1o + t * b;
+
+	return true;
+}
+
+void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
+{
+	using namespace DirectX;
+	// TODO:: Create lines from each waypoint to each waypoint, if they dont intersect with anything, this is a gogo!!!
+
+	int size = waypoints.size();
+
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			if (i != j)
+			{
+				sf::Vector2f lineStart = waypoints[i].GetWorldCoord();
+				sf::Vector2f lineEnd = waypoints[j].GetWorldCoord();
+				bool intersection = false;
+				for (auto & e : m_blocked)
+				{
+					sf::Vector2f ePos = e.GetPosition();
+					sf::Vector2f eSize = e.GetSize();
+					sf::Vector2f points[4] = {
+						{ ePos },
+						{ ePos + sf::Vector2f(eSize.x, 0.0f) },
+						{ ePos + eSize },
+						{ ePos + sf::Vector2f(0.0f, eSize.y) },
+					};
+
+					if (intersection = _lineIntersectionBB(lineStart, lineEnd, points))
+						break;
+				}
+
+				if (!intersection)
+				{
+					float length = XMVectorGetX(XMVector2Length(XMVectorSubtract(XMVectorSet(lineEnd.x, lineEnd.y, 0.0f, 0.0f), XMVectorSet(lineStart.x, lineStart.y, 0.0f, 0.0f))));
+					Waypoint::Connection c(&waypoints[j], length);
+					waypoints[i].AddConnection(c);
+				}
+			}
+		}
+	}
 }
 

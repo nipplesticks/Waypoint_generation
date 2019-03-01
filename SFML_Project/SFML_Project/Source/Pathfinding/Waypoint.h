@@ -45,10 +45,21 @@ public:
 public:
 	Waypoint(float x = 0, float y = 0);
 	Waypoint(const sf::Vector2f & worldCoord);
+	Waypoint(const Waypoint & other);
+
+	void SetWorldCoord(const sf::Vector2f & worldCoord);
+	void SetWorldCoord(float x, float y);
+
+	const sf::Vector2f & GetWorldCoord() const;
 
 	void AddConnection(const Connection & c);
 
 	const std::vector<Connection> & GetConnections() const;
+
+	Waypoint& operator=(const Waypoint & other);
+
+private:
+	void _copy(const Waypoint & other);
 
 private:
 	sf::Vector2f m_worldCoord;
