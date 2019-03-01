@@ -30,7 +30,7 @@ public:
 
 	void SetTexture(Texture * texture, bool useRect = false);
 
-	void Draw(sf::RenderWindow * wnd);
+	virtual void Draw(sf::RenderWindow * wnd);
 
 private:
 	sf::Vector2f m_position;

@@ -28,13 +28,20 @@ void Character::Update(double dt)
 		if (m_path.size() > 1)
 		{
 			if (fabs(direction.x) < TILE_SIZE.x * 0.1f && fabs(direction.y) < TILE_SIZE.y * 0.1f)
+			{
 				m_path.erase(m_path.begin());
+				m_pathDraw.erase(m_pathDraw.begin());
+			}
 			
 		}
 		else
 		{
 			if (fabs(direction.x) < 1.0f && fabs(direction.y) < 1.0f)
+			{
 				m_path.erase(m_path.begin());
+				m_pathDraw.erase(m_pathDraw.begin());
+
+			}
 			
 		}
 
@@ -93,6 +100,18 @@ void Character::Update(double dt)
 void Character::SetPath(const std::vector<Tile>& path)
 {
 	m_path = path;
+
+	m_pathDraw.clear();
+
+	for (auto & p : m_path)
+	{
+		Entity e;
+		e.SetPosition(p.GetWorldCoord());
+		e.SetSize(p.GetTileSize());
+		e.SetColor(sf::Color::Red);
+		m_pathDraw.push_back(e);
+	}
+
 }
 
 const std::vector<Tile>& Character::GetPath() const
@@ -103,4 +122,13 @@ const std::vector<Tile>& Character::GetPath() const
 void Character::SetSpeed(float speed)
 {
 	m_speed = speed;
+}
+
+void Character::Draw(sf::RenderWindow * wnd)
+{
+	for (auto & d : m_pathDraw)
+	{
+		d.Draw(wnd);
+	}
+	Entity::Draw(wnd);
 }

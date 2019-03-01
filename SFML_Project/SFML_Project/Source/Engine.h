@@ -5,7 +5,6 @@
 #include <vector>
 #include "Texture/Texture.h"
 #include "Pathfinding/Grid.h"
-#include "Pathfinding/QuadTree.h"
 
 class Engine
 {
@@ -32,11 +31,9 @@ private:
 	const unsigned int MAP_WIDTH = 100;
 	const unsigned int MAP_HEIGHT = 100;
 	
-	std::vector<Entity> m_map;
-
 	Grid * m_grid;
 
-	QuadTree m_quadGrid;
+	Entity m_background;
 
 	Character m_player;
 	Texture m_texture;
@@ -48,8 +45,4 @@ private:
 	bool				m_running = false;
 	std::thread			m_logicThread;
 	std::thread			m_drawThread;
-
-private:
-	static void _logic(Engine * e);
-	static void _draw(sf::RenderWindow * wnd, Engine * e);
 };

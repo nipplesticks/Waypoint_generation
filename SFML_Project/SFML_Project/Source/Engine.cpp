@@ -13,22 +13,11 @@ Engine::Engine(sf::RenderWindow * window)
 	m_grassTexture.Load("../Assets/Grass.bmp", iRect, {1, 1});
 	m_brickTexture.Load("../Assets/Brick.bmp", iRect, {1, 1});
 
-	for (unsigned int y = 0; y < MAP_HEIGHT; y++)
-	{
-		for (unsigned int x = 0; x < MAP_WIDTH; x++)
-		{
-			Entity e;
-			e.SetPosition(x * MAP_TILE_SIZE, y * MAP_TILE_SIZE);
-			e.SetSize(MAP_TILE_SIZE, MAP_TILE_SIZE);
-			e.SetColor(sf::Color::White);
-			e.SetTexture(&m_grassTexture);
-			m_map.push_back(e);
-		}
-	}
+	m_background.SetTexture(&m_grassTexture);
 
-	m_quadGrid.BuildTree(7, 100, sf::Vector2f(0, 0));
+	m_background.SetSize(MAP_WIDTH * MAP_TILE_SIZE, MAP_HEIGHT* MAP_TILE_SIZE);
+	m_background.SetPosition(0, 0);
 
-	//m_player.SetPosition(MAP_WIDTH * MAP_TILE_SIZE * 0.5f, MAP_HEIGHT * MAP_TILE_SIZE * 0.5f);
 	m_player.SetPosition(0, 0);
 	m_player.SetColor(255, 255, 255);
 	m_player.SetTexture(&m_texture, true);
@@ -37,15 +26,6 @@ Engine::Engine(sf::RenderWindow * window)
 	m_camera.SetPosition(0, 0);
 
 	m_grid = new Grid(sf::Vector2i(MAP_WIDTH, MAP_HEIGHT), { 0.0f, 0.0f }, {32.0f, 32.0f});
-
-	for (unsigned int y = MAP_HEIGHT / 2 - 5; y < MAP_HEIGHT / 2 + 5; y++)
-	{
-		for (unsigned int x = MAP_WIDTH / 2 - 5; x < MAP_WIDTH / 2 + 5; x++)
-		{
-			m_map[x + y * MAP_WIDTH].SetTexture(&m_brickTexture);
-			m_grid->Block(sf::Vector2i(x, y));
-		}
-	}
 
 }
 
@@ -65,11 +45,32 @@ Engine::~Engine()
 
 void Engine::Run()
 {
+	double total = 0.0;
+	int counter = 0;
 	m_pWindow->setActive(false);
 	m_running = true;
+	Timer deltaTime;
+	Timer deltaTime2;
+	deltaTime.Start();
+	deltaTime2.Start();
+	while (m_running)
+	{
+		counter++;
+		Update(deltaTime.Stop());
+		
+		Draw();
+		
+		
+		total += deltaTime2.Stop(Timer::MILLISECONDS);
 
-	m_drawThread = std::thread(_draw, m_pWindow, this);
-	m_logicThread = std::thread(_logic, this);
+		if (total > 1000)
+		{
+			std::cout << "\r" << total / counter << " ms";
+			counter = 0;
+			total = 0.0;
+		}	
+	}
+	m_pWindow->close();
 }
 
 void Engine::Update(double dt)
@@ -100,6 +101,9 @@ void Engine::Update(double dt)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		m_camera.Translate(0.0f, 0.0f, CAMERA_ZOOM_SPEED * dt);
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+		Terminate();
+
 	bool mouseRightThisFrame = sf::Mouse::isButtonPressed(sf::Mouse::Right);
 
 	if (mouseRightThisFrame && !s_mouseRightLastFrame)
@@ -120,38 +124,17 @@ void Engine::Update(double dt)
 		}
 		else
 		{
-			for (auto & t : playerPath)
-			{
-				int index = t.GetGridCoord().x + t.GetGridCoord().y * MAP_WIDTH;
-				m_map[index].SetColor(sf::Color::White);
-			}
-
+			
 			newPath = m_grid->FindPath(m_player.GetPosition() + m_player.GetSize() * 0.5f, clickWorld);
 
 		}
-		for (auto & t : newPath)
-		{
-			int index = t.GetGridCoord().x + t.GetGridCoord().y * MAP_WIDTH;
-			m_map[index].SetColor(sf::Color::Red);
-		}
-
+		
 		m_player.SetPath(newPath);
 	}
 
 	Tile t = m_grid->TileFromWorldCoords(m_player.GetPosition() + m_player.GetSize() * 0.5f);
 
-	int index = t.GetGridCoord().x + t.GetGridCoord().y * MAP_WIDTH;
-
-	m_map[index].SetColor(sf::Color::White);
-
 	m_player.Update(dt);
-
-	/*if (s_mouseRightLastFrame && timer.GetTime() > 0.1f)
-	{
-		timerStart = false;
-		s_mouseRightLastFrame = false;
-	}
-	else*/
 
 	s_mouseRightLastFrame = mouseRightThisFrame;
 
@@ -160,32 +143,18 @@ void Engine::Update(double dt)
 
 void Engine::Draw()
 {
+	m_pWindow->setActive();
+	m_pWindow->clear();
 	int startX, endX, startY, endY;
 	Camera * cam = Camera::GetActiveCamera();
 	sf::Vector3f camPos = cam->GetPosition();
 	sf::Vector2u wndSize = m_pWindow->getSize();
 
-	startX = ((camPos.x - wndSize.x * 0.5f  * (camPos.z)) / (MAP_TILE_SIZE));
-	startX = startX > 0 ? startX : 0;
-	
-	startY = ((camPos.y - wndSize.y * 0.5f * (camPos.z)) / (MAP_TILE_SIZE));
-	startY = startY > 0 ? startY : 0;
-
-	endX = startX + (wndSize.x * (camPos.z) / (MAP_TILE_SIZE) + 0.5f) + 2;
-	endX = endX < MAP_WIDTH ? endX : MAP_WIDTH;
-
-	endY = startY + (wndSize.y * (camPos.z) / (MAP_TILE_SIZE) + 0.5f) + 2;
-	endY = endY < MAP_HEIGHT ? endY : MAP_HEIGHT;
-
-	for (int y = startY; y < endY; y++)
-	{
-		for (int x = startX; x < endX; x++)
-		{
-			m_map[x + y * MAP_WIDTH].Draw(m_pWindow);
-		}
-	}
+	m_background.Draw(m_pWindow);
 
 	m_player.Draw(m_pWindow);
+
+	m_pWindow->display();
 }
 
 bool Engine::IsRunning() const
@@ -198,43 +167,3 @@ void Engine::Terminate()
 	m_running = false;
 }
 
-void Engine::_logic(Engine * e)
-{
-	Timer deltaTime;
-	deltaTime.Start();
-	while (e->IsRunning())
-	{
-		e->Update(deltaTime.Stop());
-	}
-}
-
-
-
-void Engine::_draw(sf::RenderWindow * wnd, Engine * e)
-{
-	double total = 0.0;
-	int counter = 0;
-
-	wnd->setActive();
-	Timer t;
-	t.Start();
-	while (e->IsRunning())
-	{
-		counter++;
-		total += t.Stop(Timer::MILLISECONDS);
-		
-		if (total > 1000)
-		{
-			std::cout << "\r" << total / counter << " ms";
-			counter = 0;
-			total = 0.0;
-		}
-		
-		
-		wnd->clear();
-
-		e->Draw();
-
-		wnd->display();
-	}
-}

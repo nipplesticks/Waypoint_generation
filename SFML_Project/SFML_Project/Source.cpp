@@ -18,9 +18,13 @@ int main()
 
 	Engine e(&window);
 
+	std::thread lol(WindowProc, &window);
+
 	e.Run();
 
-	WindowProc(&window);
+	while (!lol.joinable());
+
+	lol.join();
 
 	e.Terminate();
 
