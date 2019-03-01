@@ -6,26 +6,6 @@
 class Tile
 {
 public:
-	/*struct PathFindingVars
-	{
-		int parentIndex = -1;
-		float fCost = FLT_MAX,
-			gCost = FLT_MAX,
-			hCost = FLT_MAX;
-
-		std::string ToString() const
-		{
-			std::string str = "";
-
-			str += "ParentIndex: " + std::to_string(parentIndex) + "\n";
-			str += "fCost: " + std::to_string(fCost) + ", gCost: " + std::to_string(gCost) + ", hCost: " + std::to_string(hCost) + "\n";
-
-			return str;
-		}
-
-	};*/
-
-public:
 	Tile(sf::Vector2i gridCoord = sf::Vector2i(-1, -1), sf::Vector2f worldCoord = sf::Vector2f(0, 0), bool pathable = true);
 	Tile(const Tile& other);
 	~Tile();
