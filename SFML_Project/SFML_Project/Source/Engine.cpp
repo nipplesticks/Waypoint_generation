@@ -245,11 +245,11 @@ void Engine::_loadMap(const std::string & mapName)
 			}
 		}
 	}
+	sf::RectangleShape s;
 
-
-	/*std::vector<Waypoint> waypoints;
+	std::vector<Waypoint> waypoints;
 	_createWaypoints(waypoints);
-	m_grid->SetWaypoints(waypoints);*/
+	m_grid->SetWaypoints(waypoints);
 
 
 }
@@ -271,8 +271,6 @@ void Engine::_createWaypoints(std::vector<Waypoint>& waypoints)
 		sf::Vector2f eCenter = ePos + eSize * 0.5f;
 		
 		float length = XMVectorGetX(XMVector2Length(XMVectorSet(eSize.x, eSize.y, 0.0f, 0.0f)));
-
-		
 
 		XMFLOAT2 xmCenter = { eCenter.x, eCenter.y };
 
@@ -339,7 +337,6 @@ bool Engine::_lineIntersectionBB(const sf::Vector2f & lo, const sf::Vector2f & l
 			return true;
 	}
 
-
 	return false;
 }
 
@@ -383,11 +380,13 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 	{
 		for (int j = 0; j < size; j++)
 		{
-			if (i != j)
+			if (i != j && !waypoints[j].HasConnectionWith(waypoints[i]))
 			{
 				sf::Vector2f lineStart = waypoints[i].GetWorldCoord();
 				sf::Vector2f lineEnd = waypoints[j].GetWorldCoord();
+
 				bool intersection = false;
+
 				for (auto & e : m_blocked)
 				{
 					sf::Vector2f ePos = e.GetPosition();
@@ -407,7 +406,10 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 				{
 					float length = XMVectorGetX(XMVector2Length(XMVectorSubtract(XMVectorSet(lineEnd.x, lineEnd.y, 0.0f, 0.0f), XMVectorSet(lineStart.x, lineStart.y, 0.0f, 0.0f))));
 					Waypoint::Connection c(&waypoints[j], length);
+					Waypoint::Connection c1(&waypoints[i], length);
+
 					waypoints[i].AddConnection(c);
+					waypoints[j].AddConnection(c1);
 				}
 			}
 		}

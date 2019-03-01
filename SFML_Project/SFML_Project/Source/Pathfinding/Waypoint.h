@@ -17,6 +17,14 @@ public:
 		{
 			_copy(other);
 		}
+		bool operator==(const Connection & other) const
+		{
+			return Waypoint == other.Waypoint;
+		}
+		bool operator==(const Waypoint * other) const
+		{
+			return Waypoint == other;
+		}
 		bool operator<(const Connection & other) const
 		{
 			return Cost < other.Cost;
@@ -49,6 +57,8 @@ public:
 
 	void SetWorldCoord(const sf::Vector2f & worldCoord);
 	void SetWorldCoord(float x, float y);
+
+	bool HasConnectionWith(const Waypoint & wp) const;
 
 	const sf::Vector2f & GetWorldCoord() const;
 

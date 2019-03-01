@@ -115,16 +115,6 @@ bool Tile::operator==(const sf::Vector2i & gridCoord)
 	return m_gridCoord == gridCoord;
 }
 
-//bool Tile::operator<(const Tile & other)
-//{
-//	return m_pfv.fCost < other.m_pfv.fCost;
-//}
-
-//bool Tile::operator>(const Tile & other)
-//{
-//	return !(*this < other);
-//}
-
 std::string Tile::ToString() const
 {
 	std::string str = "";

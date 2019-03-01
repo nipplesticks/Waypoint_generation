@@ -11,7 +11,6 @@ public:
 	~Tile();
 
 	const sf::Vector2i& GetGridCoord() const;
-	//const PathFindingVars & GetPathfindingVars() const;
 	const sf::Vector2f& GetWorldCoord() const;
 	static const sf::Vector2f& GetTileSize();
 	const bool IsPathable() const;
@@ -20,7 +19,6 @@ public:
 	int Get1DGridCoord(int gridWidth);
 
 	void SetGridCoord(const sf::Vector2i& gridCoord);
-	//void SetPathfindingVars(const PathFindingVars & pfv);
 	void SetGridCoord(const int x, const int y);
 	void SetWorldCoord(const sf::Vector2f& worldCoord);
 	void SetWorldCoord(const float x, const float y);
@@ -31,14 +29,11 @@ public:
 	Tile& operator=(const Tile& other);
 	bool operator==(const Tile& other);
 	bool operator==(const sf::Vector2i& gridCoord);
-	bool operator<(const Tile& other);
-	//bool operator>(const Tile& other);
 
 	std::string ToString() const;
 
 private:
 	sf::Vector2i m_gridCoord;
-	//PathFindingVars m_pfv;
 	sf::Vector2f m_worldCoord;
 	// Tile size in world
 	static sf::Vector2f s_size;

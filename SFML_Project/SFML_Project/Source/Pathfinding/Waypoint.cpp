@@ -25,6 +25,11 @@ void Waypoint::SetWorldCoord(float x, float y)
 	SetWorldCoord({ x, y });
 }
 
+bool Waypoint::HasConnectionWith(const Waypoint & wp) const
+{
+	return std::find(m_connections.begin(), m_connections.end(), &wp) != m_connections.end();
+}
+
 const sf::Vector2f & Waypoint::GetWorldCoord() const
 {
 	return m_worldCoord;
@@ -32,7 +37,8 @@ const sf::Vector2f & Waypoint::GetWorldCoord() const
 
 void Waypoint::AddConnection(const Connection & c)
 {
-	m_connections.push_back(c);
+	if (std::find(m_connections.begin(), m_connections.end(), c) == m_connections.end())
+		m_connections.push_back(c);
 }
 
 const std::vector<Waypoint::Connection>& Waypoint::GetConnections() const
