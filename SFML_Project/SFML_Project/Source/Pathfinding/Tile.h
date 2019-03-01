@@ -6,7 +6,7 @@
 class Tile
 {
 public:
-	struct PathFindingVars
+	/*struct PathFindingVars
 	{
 		int parentIndex = -1;
 		float fCost = FLT_MAX,
@@ -23,7 +23,7 @@ public:
 			return str;
 		}
 
-	};
+	};*/
 
 public:
 	Tile(sf::Vector2i gridCoord = sf::Vector2i(-1, -1), sf::Vector2f worldCoord = sf::Vector2f(0, 0), bool pathable = true);
@@ -31,14 +31,16 @@ public:
 	~Tile();
 
 	const sf::Vector2i& GetGridCoord() const;
-	const PathFindingVars & GetPathfindingVars() const;
+	//const PathFindingVars & GetPathfindingVars() const;
 	const sf::Vector2f& GetWorldCoord() const;
 	static const sf::Vector2f& GetTileSize();
 	const bool IsPathable() const;
 	const int GetSubGrid() const;
 
+	int Get1DGridCoord(int gridWidth);
+
 	void SetGridCoord(const sf::Vector2i& gridCoord);
-	void SetPathfindingVars(const PathFindingVars & pfv);
+	//void SetPathfindingVars(const PathFindingVars & pfv);
 	void SetGridCoord(const int x, const int y);
 	void SetWorldCoord(const sf::Vector2f& worldCoord);
 	void SetWorldCoord(const float x, const float y);
@@ -56,7 +58,7 @@ public:
 
 private:
 	sf::Vector2i m_gridCoord;
-	PathFindingVars m_pfv;
+	//PathFindingVars m_pfv;
 	sf::Vector2f m_worldCoord;
 	// Tile size in world
 	static sf::Vector2f s_size;

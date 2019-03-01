@@ -26,7 +26,7 @@ Engine::Engine(sf::RenderWindow * window)
 
 	//m_grid = new Grid(sf::Vector2i(MAP_WIDTH, MAP_HEIGHT), { 0.0f, 0.0f }, { 32.0f, 32.0f });
 	//m_background.SetSize(MAP_WIDTH * MAP_TILE_SIZE, MAP_HEIGHT * MAP_TILE_SIZE);
-	_loadMap("smallMap.txt");
+	_loadMap("bigGameProjectGrid.txt");
 }
 
 Engine::~Engine()
@@ -49,15 +49,19 @@ void Engine::Run()
 
 	while (IsRunning())
 	{
+
+		Timer eventTimer;
+		eventTimer.Start();
 		sf::Event event;
 		while (m_pWindow->pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				m_pWindow->close();
 		}
+		
 		counter++;
 
-		Update(deltaTime.Stop());
+		Update(deltaTime.Stop() - eventTimer.Stop());
 
 		Draw();
 
@@ -107,6 +111,8 @@ void Engine::Update(double dt)
 
 	bool mouseRightThisFrame = sf::Mouse::isButtonPressed(sf::Mouse::Right);
 
+	double time = 0;
+
 	if (mouseRightThisFrame && !s_mouseRightLastFrame)
 	{
 		Timer t;
@@ -119,8 +125,12 @@ void Engine::Update(double dt)
 		sf::Vector2f clickWorld;
 		clickWorld.x = (((float)mousePos.x - (float)windowSize.x * 0.5f) * zoom) + m_camera.GetPosition().x;
 		clickWorld.y = (((float)mousePos.y - (float)windowSize.y * 0.5f) * zoom) + m_camera.GetPosition().y;
+
+		Timer pathTime;
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && !playerPath.empty())
 		{
+			
 			sf::Vector2f source = playerPath.back().GetWorldCoord();
 			newPath = m_grid->FindPath(source, clickWorld);
 			newPath.insert(newPath.begin(), playerPath.begin(), playerPath.end());
@@ -128,20 +138,20 @@ void Engine::Update(double dt)
 		else
 		{
 			
-			newPath = m_grid->FindPath(m_player.GetPosition() + m_player.GetSize() * 0.5f, clickWorld);
+			newPath = m_grid->FindPath(m_player.GetPosition() + m_player.GetSize() * 0.5f, clickWorld, m_pWindow, this);
 
 		}
 		
-		double time = t.Stop(Timer::MILLISECONDS);
-
-		std::cout << "Path: [" << sfVecToString(m_player.GetPosition())  << "] --> [" <<sfVecToString(newPath.back().GetWorldCoord()) << "]\n";
-		std::cout << "Time: " << std::to_string(time) << " ms\n\n";
+		time = t.Stop(Timer::MILLISECONDS);
+		if (!newPath.empty())
+		{
+			std::cout << "Path: [" << sfVecToString(m_player.GetPosition())  << "] --> [" <<sfVecToString(newPath.back().GetWorldCoord()) << "]\n";
+			std::cout << "Time: " << std::to_string(time) << " ms\n\n";
+		}
 
 		m_player.SetPath(newPath);
 	}
-
-	Tile t = m_grid->TileFromWorldCoords(m_player.GetPosition() + m_player.GetSize() * 0.5f);
-
+	
 	m_player.Update(dt);
 
 	s_mouseRightLastFrame = mouseRightThisFrame;
@@ -149,9 +159,10 @@ void Engine::Update(double dt)
 
 }
 
-void Engine::Draw()
+void Engine::Draw(bool clearAndDisplay)
 {
-	m_pWindow->clear();
+	if (clearAndDisplay)
+		m_pWindow->clear();
 	int startX, endX, startY, endY;
 	Camera * cam = Camera::GetActiveCamera();
 	sf::Vector3f camPos = cam->GetPosition();
@@ -164,7 +175,8 @@ void Engine::Draw()
 
 	m_player.Draw(m_pWindow);
 
-	m_pWindow->display();
+	if (clearAndDisplay)
+		m_pWindow->display();
 }
 
 bool Engine::IsRunning() const

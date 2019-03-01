@@ -28,10 +28,10 @@ const sf::Vector2i & Tile::GetGridCoord() const
 	return m_gridCoord;
 }
 
-const Tile::PathFindingVars & Tile::GetPathfindingVars() const
-{
-	return m_pfv;
-}
+//const Tile::PathFindingVars & Tile::GetPathfindingVars() const
+//{
+//	return m_pfv;
+//}
 
 const sf::Vector2f & Tile::GetWorldCoord() const
 {
@@ -53,14 +53,14 @@ const int Tile::GetSubGrid() const
 	return m_subGrid;
 }
 
+int Tile::Get1DGridCoord(int gridWidth)
+{
+	return m_gridCoord.x + m_gridCoord.y * gridWidth;
+}
+
 void Tile::SetGridCoord(const sf::Vector2i & gridCoord)
 {
 	m_gridCoord = gridCoord;
-}
-
-void Tile::SetPathfindingVars(const PathFindingVars & pfv)
-{
-	m_pfv = pfv;
 }
 
 void Tile::SetGridCoord(const int x, const int y)
@@ -115,10 +115,10 @@ bool Tile::operator==(const sf::Vector2i & gridCoord)
 	return m_gridCoord == gridCoord;
 }
 
-bool Tile::operator<(const Tile & other)
-{
-	return m_pfv.fCost < other.m_pfv.fCost;
-}
+//bool Tile::operator<(const Tile & other)
+//{
+//	return m_pfv.fCost < other.m_pfv.fCost;
+//}
 
 //bool Tile::operator>(const Tile & other)
 //{
@@ -133,15 +133,15 @@ std::string Tile::ToString() const
 	str += "Size: " + std::to_string(s_size.x) + ", " + std::to_string(s_size.y) + "\n";
 	str += "Pathable: " + std::to_string(m_pathable) + "\n";
 	str += "SubGrid: " + std::to_string(m_subGrid) + "\n";
-	str += "PfvVars: \n" + m_pfv.ToString();
-	str += "\n";
+	/*str += "PfvVars: \n" + m_pfv.ToString();
+	str += "\n";*/
 	return str;
 }
 
 void Tile::_copy(const Tile & other)
 {
 	m_gridCoord = other.m_gridCoord;
-	m_pfv = other.m_pfv;
+	//m_pfv = other.m_pfv;
 	m_worldCoord = other.m_worldCoord;
 	m_pathable = other.m_pathable;
 	m_subGrid = other.m_subGrid;

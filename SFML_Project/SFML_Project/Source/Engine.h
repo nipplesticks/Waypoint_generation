@@ -16,7 +16,7 @@ public:
 
 	void Update(double dt);
 
-	void Draw();
+	void Draw(bool clearAndDisplay = true);
 
 	bool IsRunning() const;
 
