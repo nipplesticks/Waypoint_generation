@@ -11,6 +11,8 @@ public:
 	void Block(const sf::Vector2i & coord);
 	Tile TileFromWorldCoords(const sf::Vector2f & worldCoord) const;
 
+	const Tile & At(int x, int y);
+
 private:
 	std::vector<Tile> m_grid;
 	sf::Vector2i m_gridSize;

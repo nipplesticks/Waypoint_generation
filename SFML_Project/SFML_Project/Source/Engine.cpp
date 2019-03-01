@@ -15,7 +15,6 @@ Engine::Engine(sf::RenderWindow * window)
 
 	m_background.SetTexture(&m_grassTexture);
 
-	m_background.SetSize(MAP_WIDTH * MAP_TILE_SIZE, MAP_HEIGHT* MAP_TILE_SIZE);
 	m_background.SetPosition(0, 0);
 
 	m_player.SetPosition(0, 0);
@@ -25,52 +24,57 @@ Engine::Engine(sf::RenderWindow * window)
 
 	m_camera.SetPosition(0, 0);
 
-	m_grid = new Grid(sf::Vector2i(MAP_WIDTH, MAP_HEIGHT), { 0.0f, 0.0f }, {32.0f, 32.0f});
-
+	//m_grid = new Grid(sf::Vector2i(MAP_WIDTH, MAP_HEIGHT), { 0.0f, 0.0f }, { 32.0f, 32.0f });
+	//m_background.SetSize(MAP_WIDTH * MAP_TILE_SIZE, MAP_HEIGHT * MAP_TILE_SIZE);
+	_loadMap("smallMap.txt");
 }
 
 Engine::~Engine()
 {
 	m_pWindow = nullptr;
 
-	while (!m_logicThread.joinable());
-	m_logicThread.join();
-
-	while (!m_drawThread.joinable());
-	m_drawThread.join();
-
 	delete[] m_grid;
-
 }
 
 void Engine::Run()
 {
+	m_pWindow->setActive();
 	double total = 0.0;
 	int counter = 0;
-	m_pWindow->setActive(false);
 	m_running = true;
 	Timer deltaTime;
 	Timer deltaTime2;
 	deltaTime.Start();
 	deltaTime2.Start();
-	while (m_running)
+
+	while (IsRunning())
 	{
+		sf::Event event;
+		while (m_pWindow->pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				m_pWindow->close();
+		}
 		counter++;
+
 		Update(deltaTime.Stop());
-		
+
 		Draw();
-		
-		
+
 		total += deltaTime2.Stop(Timer::MILLISECONDS);
 
 		if (total > 1000)
 		{
-			std::cout << "\r" << total / counter << " ms";
+			m_pWindow->setTitle(std::to_string(total / counter) + " ms");
 			counter = 0;
 			total = 0.0;
-		}	
+		}
 	}
-	m_pWindow->close();
+}
+
+std::string sfVecToString(const sf::Vector2f & vec)
+{
+	return "X: " + std::to_string(vec.x) + ", Y: " + std::to_string(vec.y);
 }
 
 void Engine::Update(double dt)
@@ -101,13 +105,12 @@ void Engine::Update(double dt)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		m_camera.Translate(0.0f, 0.0f, CAMERA_ZOOM_SPEED * dt);
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-		Terminate();
-
 	bool mouseRightThisFrame = sf::Mouse::isButtonPressed(sf::Mouse::Right);
 
 	if (mouseRightThisFrame && !s_mouseRightLastFrame)
 	{
+		Timer t;
+		t.Start();
 		std::vector<Tile> playerPath = m_player.GetPath();
 		std::vector<Tile> newPath;
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_pWindow);
@@ -129,6 +132,11 @@ void Engine::Update(double dt)
 
 		}
 		
+		double time = t.Stop(Timer::MILLISECONDS);
+
+		std::cout << "Path: [" << sfVecToString(m_player.GetPosition())  << "] --> [" <<sfVecToString(newPath.back().GetWorldCoord()) << "]\n";
+		std::cout << "Time: " << std::to_string(time) << " ms\n\n";
+
 		m_player.SetPath(newPath);
 	}
 
@@ -143,7 +151,6 @@ void Engine::Update(double dt)
 
 void Engine::Draw()
 {
-	m_pWindow->setActive();
 	m_pWindow->clear();
 	int startX, endX, startY, endY;
 	Camera * cam = Camera::GetActiveCamera();
@@ -151,6 +158,9 @@ void Engine::Draw()
 	sf::Vector2u wndSize = m_pWindow->getSize();
 
 	m_background.Draw(m_pWindow);
+
+	for (auto & b : m_blocked)
+		b.Draw(m_pWindow);
 
 	m_player.Draw(m_pWindow);
 
@@ -165,5 +175,64 @@ bool Engine::IsRunning() const
 void Engine::Terminate()
 {
 	m_running = false;
+}
+
+#include <fstream>
+void Engine::_loadMap(const std::string & mapName)
+{
+	std::ifstream mapText;
+	mapText.open("../Assets/" + mapName);
+
+	int yLevel = 0;
+	int xLevel = 0;
+	
+	std::vector<bool> map;
+	std::string row;
+
+
+	while (std::getline(mapText, row))
+	{
+		xLevel = row.size();
+
+		for (int i = 0; i < xLevel; i++)
+		{
+			map.push_back(row[i] == '#');
+		}
+
+		yLevel++;
+	}
+
+	mapText.close();
+	
+	m_grid = new Grid(sf::Vector2i(xLevel, yLevel), { 0.0f, 0.0f }, { 32.0f, 32.0f });
+
+	bool placedPlayer = false;
+
+	for (int y = 0; y < yLevel; y++)
+	{
+		for (int x = 0; x < xLevel; x++)
+		{
+			int index = x + y * xLevel;
+
+			if (map[index])
+			{
+				m_grid->Block({ x, y });
+
+				Entity e;
+				e.SetPosition(m_grid->At(x, y).GetWorldCoord());
+				e.SetSize(MAP_TILE_SIZE, MAP_TILE_SIZE);
+				e.SetTexture(&m_brickTexture);
+				m_blocked.push_back(e);
+			}
+			else if (!placedPlayer)
+			{
+				m_player.SetPosition(m_grid->At(x, y).GetWorldCoord());
+				m_camera.SetPosition(m_player.GetPosition().x, m_player.GetPosition().y);
+				placedPlayer = true;
+			}
+		}
+	}
+
+	m_background.SetSize(xLevel * MAP_TILE_SIZE, yLevel * MAP_TILE_SIZE);
 }
 

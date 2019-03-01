@@ -1,8 +1,6 @@
 #include "Source/Engine.h"
 #include <vector>
 
-int WindowProc(sf::RenderWindow::Window * wnd);
-
 int main()
 {
 	sf::Vector2f gridStart(-15, -15);
@@ -18,30 +16,8 @@ int main()
 
 	Engine e(&window);
 
-	std::thread lol(WindowProc, &window);
-
 	e.Run();
 
-	while (!lol.joinable());
-
-	lol.join();
-
-	e.Terminate();
-
 	return 0;
 }
 
-int WindowProc(sf::RenderWindow::Window * wnd)
-{
-	while (wnd->isOpen())
-	{
-		sf::Event event;
-		while (wnd->pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				wnd->close();
-		}
-	}
-
-	return 0;
-}

@@ -50,6 +50,11 @@ Tile Grid::TileFromWorldCoords(const sf::Vector2f & worldCoord) const
 	return m_grid[gridSourceIndex.x + gridSourceIndex.y * m_gridSize.x];
 }
 
+const Tile & Grid::At(int x, int y)
+{
+	return m_grid[x + y * m_gridSize.x];
+}
+
 void Grid::_checkTile(const Tile & current,
 	float addedGCost, int offsetX, int offsetY,
 	const Tile & destination,
@@ -96,7 +101,7 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 
 
 	if (gridSourceIndex.x	< 0 || gridSourceIndex.x	>= m_gridSize.x ||
-		gridSourceIndex.y	< 0 || gridSourceIndex.x	>= m_gridSize.y ||
+		gridSourceIndex.y	< 0 || gridSourceIndex.y	>= m_gridSize.y ||
 		gridDestIndex.x		< 0 || gridDestIndex.x		>= m_gridSize.x || 
 		gridDestIndex.y		< 0 || gridDestIndex.y		>= m_gridSize.y)
 		return std::vector<Tile>();
@@ -218,7 +223,7 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 
 		std::sort(earlyExploration.begin(), earlyExploration.end());
 
-		if (earlyExploration.size() > 0 && earlyExploration.front().GetPathfindingVars().fCost <= currentTile.GetPathfindingVars().fCost)
+		if (!earlyExploration.empty() && earlyExploration.front().GetPathfindingVars().fCost <= currentTile.GetPathfindingVars().fCost)
 		{
 			//pathFile << "fCost Smaller, continue on this path...\n";
 			sf::Vector2i eIndex = earlyExploration.front().GetGridCoord();
@@ -226,11 +231,11 @@ std::vector<Tile> Grid::_findPath(std::vector<Tile> grid, const sf::Vector2f & s
 			grid[earlyExplorationTileIndex].SetPathfindingVars(earlyExploration.front().GetPathfindingVars());
 			earlyExploration.erase(earlyExploration.begin());
 		}
-		else
-		{
-			//pathFile << "can't continue on this path, go back\n";
-		}
+		//else
+		//{
 
+			//pathFile << "can't continue on this path, go back\n";
+		//}
 		openList.insert(openList.end(), earlyExploration.begin(), earlyExploration.end());
 		earlyExploration.clear();
 	}

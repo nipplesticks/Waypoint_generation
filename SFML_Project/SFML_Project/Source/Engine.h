@@ -40,9 +40,14 @@ private:
 	Texture m_grassTexture;
 	Texture m_brickTexture;
 
+	std::vector<Entity> m_blocked;
+
 private:
 	sf::RenderWindow *	m_pWindow = nullptr;
 	bool				m_running = false;
-	std::thread			m_logicThread;
-	std::thread			m_drawThread;
+
+private:
+
+	void _loadMap(const std::string & mapName);
+
 };
