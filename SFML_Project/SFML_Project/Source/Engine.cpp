@@ -26,7 +26,7 @@ Engine::Engine(sf::RenderWindow * window)
 
 	//m_grid = new Grid(sf::Vector2i(MAP_WIDTH, MAP_HEIGHT), { 0.0f, 0.0f }, { 32.0f, 32.0f });
 	//m_background.SetSize(MAP_WIDTH * MAP_TILE_SIZE, MAP_HEIGHT * MAP_TILE_SIZE);
-	_loadMap("UMAP.txt");
+	_loadMap("bigGameProjectGrid.txt");
 }
 
 Engine::~Engine()
@@ -245,14 +245,15 @@ void Engine::_loadMap(const std::string & mapName)
 			}
 		}
 	}
-	sf::RectangleShape s;
+	
 
-	std::vector<Waypoint> waypoints;
+	/*std::vector<Waypoint> waypoints;
 	_createWaypoints(waypoints);
-	m_grid->SetWaypoints(waypoints);
-
+	m_grid->SetWaypoints(waypoints);*/
 
 }
+
+
 #include <DirectXMath.h>
 void Engine::_createWaypoints(std::vector<Waypoint>& waypoints)
 {

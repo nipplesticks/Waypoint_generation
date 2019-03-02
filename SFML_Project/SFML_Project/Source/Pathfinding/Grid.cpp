@@ -164,31 +164,30 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 				
 				e.SetPosition(t.GetWorldCoord());
 				e.SetSize(t.GetTileSize());
-				//e.SetColor(sf::Color::Red);
+				e.SetColor(sf::Color::Red);
+				e.SetOutlineColor(sf::Color::Black);
+				e.SetOutlineThickness(-1.0f);
 
-				counter++;
-				e.SetColor((colorCounter % 255), (colorCounter / 255) % 255, ((colorCounter / 255) / 255) % 255);
-				colorCounter += 1;
+				//counter++;
+				//e.SetColor((colorCounter % 255), (colorCounter / 255) % 255, ((colorCounter / 255) / 255) % 255);
+				//colorCounter += 1;
 
 				e.Draw(wnd);
 			}
 
+			while (printMe.parentIndex != -1)
+			{
+				Tile t = m_grid[printMe.gridTileIndex];
+				printMe = nodes[printMe.parentIndex];
 
-			//while (printMe.parentIndex != -1)
-			//{
-			//	Tile t = m_grid[printMe.gridTileIndex];
-			//	printMe = nodes[printMe.parentIndex];
+				e.SetPosition(t.GetWorldCoord());
+				e.SetSize(t.GetTileSize());
+				e.SetColor(sf::Color::White);
+				e.SetOutlineColor(sf::Color::Black);
+				e.SetOutlineThickness(-1.0f);
 
-			//	e.SetPosition(t.GetWorldCoord());
-			//	e.SetSize(t.GetTileSize());
-			//	//e.SetColor(sf::Color::Red);
-
-			//	counter++;
-			//	e.SetColor(std::min(colorCounter, 255), std::min((colorCounter / 255), 255), std::min((colorCounter / 255) / 255, 255));
-			//	colorCounter += 1;
-
-			//	e.Draw(wnd);
-			//}
+				e.Draw(wnd);
+			}
 
 			wnd->setTitle(std::to_string(nodes.size()));
 

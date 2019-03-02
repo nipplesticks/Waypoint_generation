@@ -12,7 +12,7 @@ int main()
 	startToSource.x /= tileSize.x;
 	startToSource.y /= tileSize.y;
 
-	sf::RenderWindow window(sf::VideoMode(800, 600), "Test");
+	sf::RenderWindow window(sf::VideoMode(1280, 720), "Test");
 
 	Engine e(&window);
 
