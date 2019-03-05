@@ -602,19 +602,19 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 
 					if (length < CLUSTER_DIST)
 					{
-						if (waypoints[i].GetCluter() == -1 && waypoints[j].GetCluter() == -1)
+						if (waypoints[i].GetCluster() == -1 && waypoints[j].GetCluster() == -1)
 						{
 							waypoints[i].SetCluster(cluster);
 							waypoints[j].SetCluster(cluster);
 							cluster++;
 						}						
-						else if (waypoints[i].GetCluter() != -1)
+						else if (waypoints[i].GetCluster() != -1)
 						{
-							waypoints[j].SetCluster(waypoints[i].GetCluter());
+							waypoints[j].SetCluster(waypoints[i].GetCluster());
 						}
-						else if (waypoints[j].GetCluter() != -1)
+						else if (waypoints[j].GetCluster() != -1)
 						{
-							waypoints[i].SetCluster(waypoints[j].GetCluter());
+							waypoints[i].SetCluster(waypoints[j].GetCluster());
 						}
 					}
 					else

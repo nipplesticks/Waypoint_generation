@@ -63,6 +63,32 @@ private:
 		float fCost = FLT_MAX, gCost = FLT_MAX, hCost = FLT_MAX;
 	};
 
+	struct WpNode
+	{
+		WpNode()
+		{
+			parentIndex = -1;
+			current = nullptr;
+			fCost = FLT_MAX;
+			gCost = FLT_MAX;
+			hCost = FLT_MAX;
+		}
+		WpNode(int _parentIndex, Waypoint * _current, float _gCost, float _hCost)
+		{
+			parentIndex = _parentIndex;
+			current = _current;
+			gCost = _gCost;
+			hCost = _hCost;
+			fCost = gCost + hCost;
+			visitedConnections = std::vector<bool>(current->GetConnections().size());
+		}
+
+		int parentIndex;
+		Waypoint * current;
+		std::vector<bool> visitedConnections;
+		float fCost = FLT_MAX, gCost = FLT_MAX, hCost = FLT_MAX;
+	};
+
 	void _checkNode(const Node & current,
 		float addedGCost, int offsetX, int offsetY,
 		const Tile & destination,
@@ -77,6 +103,6 @@ private:
 
 	float _calcHValue(const Tile & s, const Tile & d);
 
-	bool _addToField(Tile t, Waypoint * wp, int iterationNumber, QuadTree * q);
-
+	// Waypoint tracing
+	void _createTileChain(std::vector<Tile> & tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng);
 };

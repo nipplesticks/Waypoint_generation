@@ -25,7 +25,7 @@ void Waypoint::SetWorldCoord(float x, float y)
 	SetWorldCoord({ x, y });
 }
 
-int Waypoint::GetCluter() const
+int Waypoint::GetCluster() const
 {
 	return m_cluster;
 }

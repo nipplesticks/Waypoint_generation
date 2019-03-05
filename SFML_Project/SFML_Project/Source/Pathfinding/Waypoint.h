@@ -58,7 +58,7 @@ public:
 	void SetWorldCoord(const sf::Vector2f & worldCoord);
 	void SetWorldCoord(float x, float y);
 
-	int GetCluter() const;
+	int GetCluster() const;
 	void SetCluster(int cluster);
 
 	bool HasConnectionWith(const Waypoint & wp) const;

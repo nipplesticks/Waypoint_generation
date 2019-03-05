@@ -28,6 +28,12 @@ Grid::~Grid()
 
 std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
 {
+	std::vector<Tile> tileChain;
+	
+	_createTileChain(tileChain, source, destination, wnd, eng);
+
+
+
 	return _findPath(source, destination, wnd, eng);
 }
 
@@ -400,4 +406,15 @@ float Grid::_calcHValue(const Tile & s, const Tile & d)
 	// 1.0f * (x + y) + (1.414f - 2 * 1.0f) * min(x, y)
 	//return Tile::GetTileSize().x * (deltaX + deltaY);// +(std::sqrt(Tile::GetTileSize().x) - Tile::GetTileSize().x) * std::min(deltaX, deltaY);
 	return (deltaX + deltaY) + (-0.414) * std::min(deltaX, deltaY);
+}
+
+void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
+{
+	Tile sourceTile = TileFromWorldCoords(source);
+	Tile destinationTile = TileFromWorldCoords(destination);
+
+	Waypoint * sourceWaypoint = sourceTile.GetFieldOwner();
+	Waypoint * destinationWaypoint = destinationTile.GetFieldOwner();
+
+	
 }
