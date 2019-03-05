@@ -83,6 +83,12 @@ std::string sfVecToString(const sf::Vector2f & vec)
 
 void Engine::Update(double dt)
 {
+	if (dt > m_pathFindingTime)
+	{
+		dt -= m_pathFindingTime;
+		m_pathFindingTime = 0.0;
+	}
+
 	static bool s_mouseRightLastFrame = false;
 	static bool timerStart = false;
 	static Timer timer;
@@ -113,10 +119,10 @@ void Engine::Update(double dt)
 
 	double time = 0;
 
+	Timer t;
+	t.Start();
 	if (mouseRightThisFrame && !s_mouseRightLastFrame)
 	{
-		Timer t;
-		t.Start();
 		std::vector<Tile> playerPath = m_player.GetPath();
 		std::vector<Tile> newPath;
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_pWindow);
@@ -142,16 +148,19 @@ void Engine::Update(double dt)
 
 		}
 		
-		time = t.Stop(Timer::MILLISECONDS);
 		if (!newPath.empty())
 		{
 			std::cout << "Path: [" << sfVecToString(m_player.GetPosition())  << "] --> [" <<sfVecToString(newPath.back().GetWorldCoord()) << "]\n";
-			std::cout << "Time: " << std::to_string(time) << " ms\n\n";
+
 		}
 
 		m_player.SetPath(newPath);
 	}
 	
+	time = t.Stop();
+	std::cout << "Time: " << std::to_string(time) << " ms\n\n";
+	m_pathFindingTime = time;
+
 	m_player.Update(dt);
 
 	s_mouseRightLastFrame = mouseRightThisFrame;

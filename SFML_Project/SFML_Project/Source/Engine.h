@@ -43,7 +43,7 @@ private:
 
 	QuadTree m_quadTree;
 
-	
+	double m_pathFindingTime = 0.0;
 
 	std::vector<Entity> m_blocked;
 	std::vector<Entity> m_field;
