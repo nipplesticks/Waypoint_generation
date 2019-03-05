@@ -5,6 +5,7 @@
 #include <vector>
 #include "Texture/Texture.h"
 #include "Pathfinding/Grid.h"
+#include "Pathfinding/QuadTree/QuadTree.h"
 
 class Engine
 {
@@ -39,6 +40,8 @@ private:
 	Texture m_texture;
 	Texture m_grassTexture;
 	Texture m_brickTexture;
+
+	QuadTree m_quadTree;
 
 	std::vector<Entity> m_blocked;
 

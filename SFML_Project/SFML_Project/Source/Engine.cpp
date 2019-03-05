@@ -218,6 +218,7 @@ void Engine::_loadMap(const std::string & mapName)
 	
 	m_grid = new Grid(sf::Vector2i(xLevel, yLevel), { 0.0f, 0.0f }, { 32.0f, 32.0f });
 
+
 	bool placedPlayer = false;
 
 	m_background.SetSize(xLevel * MAP_TILE_SIZE, yLevel * MAP_TILE_SIZE);
@@ -245,12 +246,25 @@ void Engine::_loadMap(const std::string & mapName)
 			}
 		}
 	}
-	
 
-	/*std::vector<Waypoint> waypoints;
+	Timer t;
+
+	t.Start();
+	m_quadTree.BuildTree(7, std::max(yLevel, xLevel) * MAP_TILE_SIZE, m_background.GetPosition());
+	double timeBuild = t.Stop(Timer::MILLISECONDS);
+	m_quadTree.PlaceObjects(m_blocked);
+	double timePlace = t.Stop(Timer::MILLISECONDS);
+
+	/*std::ofstream tree;
+	tree.open("Tree.txt");
+	tree << "Time to build: " << timeBuild << " ms, Time to Place: " << timePlace << " ms\n\n";
+	tree << m_quadTree.ToString();
+	tree.close();
+	*/
+
+	std::vector<Waypoint> waypoints;
 	_createWaypoints(waypoints);
-	m_grid->SetWaypoints(waypoints);*/
-
+	m_grid->SetWaypoints(waypoints);
 }
 
 
