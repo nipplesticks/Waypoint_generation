@@ -151,6 +151,15 @@ Entity * QuadTree::DispatchRay(const sf::Vector2f & rayStart, const sf::Vector2f
 	return e;
 }
 
+Entity * QuadTree::PointInsideObject(const sf::Vector2f & point) const
+{
+	Entity * e = nullptr;
+
+	_pointTraverse(point, 0, e);
+
+	return e;
+}
+
 const Quadrant & QuadTree::operator[](unsigned int index)
 {
 	return m_quadTree[index];
@@ -220,6 +229,46 @@ void QuadTree::_traverseAndPlace(Entity * e, int quadIndex)
 		else
 		{
 			m_quadTree[quadIndex].SetObject(e);
+		}
+	}
+}
+
+void QuadTree::_pointTraverse(const sf::Vector2f & point, int quadIndex, Entity *& ePtr) const
+{
+	if (ePtr == nullptr)
+	{
+		if (_insideAABB(point, m_quadTree[quadIndex]))
+		{
+			int nrOfChildren = m_quadTree[quadIndex].GetNrOfChildren();
+
+			if (nrOfChildren > 0)
+			{
+				const unsigned int * children = m_quadTree[quadIndex].GetChildren();
+				for (int i = 0; i < nrOfChildren; i++)
+					_pointTraverse(point, children[i], ePtr);
+			}
+			else
+			{
+				// Trace Objects
+				const std::vector<Entity*> & objects = m_quadTree[quadIndex].GetObjects();
+
+				size_t size = objects.size();
+				float tTemp = FLT_MAX;
+
+				for (int i = 0; i < size; i++)
+				{
+					sf::FloatRect fr;
+					fr.left = objects[i]->GetPosition().x;
+					fr.top = objects[i]->GetPosition().y;
+					fr.width = objects[i]->GetSize().x;
+					fr.height = objects[i]->GetSize().y;
+
+					if (fr.contains(point))
+					{
+						ePtr = objects[i];
+					}
+				}
+			}
 		}
 	}
 }
@@ -348,19 +397,20 @@ bool QuadTree::_insideAABB(const sf::Vector2f & min, const sf::Vector2f & size, 
 	a2.width	= qSize;
 	a2.height	= qSize;
 
-	/*if (
-		(min.x > qMin.x && min.y > qMin.y && min.x < qMax.x && min.y < qMax.y)
-		||
-		(max.x > qMin.x && max.y > qMin.y && max.x < qMax.x && max.y < qMax.y)
-		||
-		(min.x > qMin.x && max.y > qMin.y && min.x < qMax.x && max.y < qMax.y)
-		||
-		(max.x > qMin.x && min.y > qMin.y && max.x < qMax.x && min.y < qMax.y)
-		)
-	{
-		return true;
-	}*/
-
 	return a2.intersects(a1) || a2.contains(min);
+}
+
+bool QuadTree::_insideAABB(const sf::Vector2f & min, const Quadrant & quadrant) const
+{
+	sf::FloatRect a1;
+	const sf::Vector2f & qMin = quadrant.GetMin();
+	float qSize = quadrant.GetSize();
+	
+	a1.left = qMin.x;
+	a1.top = qMin.y;
+	a1.width = qSize;
+	a1.height = qSize;
+
+	return a1.contains(min);
 }
 

@@ -53,7 +53,6 @@ private:
 
 	void _loadMap(const std::string & mapName);
 	void _createWaypoints(std::vector<Waypoint> & waypoints);
-	bool _intersectsWithBlock(const Waypoint & waypoint);
 	bool _isInsideMap(const Waypoint & waypoint);
 	bool _lineIntersectionBB(const sf::Vector2f & lo, const sf::Vector2f & le, const sf::Vector2f points[4]);
 	bool _lineIntersectionLine(const sf::Vector2f & l1o, const sf::Vector2f & l1e, const sf::Vector2f & l2o, const sf::Vector2f & l2e, __out sf::Vector2f & intersectionPoint);

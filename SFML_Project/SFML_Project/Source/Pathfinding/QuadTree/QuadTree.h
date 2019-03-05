@@ -34,6 +34,8 @@ public:
 	const std::vector<Quadrant> & GetQuadrantVector() const;
 
 	Entity * DispatchRay(const sf::Vector2f & rayStart, const sf::Vector2f & rayEnd) const;
+	Entity * PointInsideObject(const sf::Vector2f & point) const;
+
 
 	const Quadrant & operator[](unsigned int index);
 
@@ -48,10 +50,12 @@ private:
 private:
 	size_t _GetQuadrantIndex(const sf::Vector2f & worldPos, unsigned int level);
 	void _traverseAndPlace(Entity * e, int quadIndex);
+	void _pointTraverse(const sf::Vector2f & point, int quadIndex, Entity *& ePtr) const;
 	void _traverseWithRay(const sf::Vector2f & rayStart, const sf::Vector2f & rayEnd, int quadIndex, float & t, Entity *& ePtr) const;
 	bool _lineWithLineIntersection(const sf::Vector2f & lineOrigin1, const sf::Vector2f & lineEnd1, const sf::Vector2f & lineOrigin2, const sf::Vector2f & lineEnd2, float & t) const;
 	bool _insideRay(const sf::Vector2f & rayStart, const sf::Vector2f & rayEnd, const Quadrant & quadrant) const;
 	bool _insideRay(const sf::Vector2f & rayStart, const sf::Vector2f & rayEnd, const Entity * e, float & t) const;
 	bool _insideAABB(const sf::Vector2f & min, const sf::Vector2f & size, const Quadrant & quadrant) const;
+	bool _insideAABB(const sf::Vector2f & min, const Quadrant & quadrant) const;
 };
 

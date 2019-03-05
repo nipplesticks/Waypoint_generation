@@ -253,19 +253,9 @@ void Engine::_loadMap(const std::string & mapName)
 
 	int size = std::max(yLevel, xLevel) * MAP_TILE_SIZE;
 
-	m_quadTree.BuildTree(1, size, m_background.GetPosition());
-	
-	//double timeBuild = t.Stop(Timer::MILLISECONDS);
+	m_quadTree.BuildTree(5, size, m_background.GetPosition());
 	m_quadTree.PlaceObjects(m_blocked);
-	//double timePlace = t.Stop(Timer::MILLISECONDS);
-
-	/*std::ofstream tree;
-	tree.open("Tree.txt");
-	tree << "Time to build: " << timeBuild << " ms, Time to Place: " << timePlace << " ms\n\n";
-	tree << m_quadTree.ToString();
-	tree.close();
-	*/
-
+	
 	std::vector<Waypoint> waypoints;
 	_createWaypoints(waypoints);
 	m_grid->SetWaypoints(waypoints);
@@ -304,29 +294,18 @@ void Engine::_createWaypoints(std::vector<Waypoint>& waypoints)
 
 			Waypoint wp(points[i] + direction * length * 0.5f);
 
-			if (_isInsideMap(wp) && !_intersectsWithBlock(wp))
-				waypoints.push_back(wp);
+			if (_isInsideMap(wp))
+			{
+				Entity * e = m_quadTree.PointInsideObject(wp.GetWorldCoord());
+
+				if (e == nullptr)
+					waypoints.push_back(wp);
+			}
 		}
 	}
 
 	_connectWaypoints(waypoints);
 
-}
-
-bool Engine::_intersectsWithBlock(const Waypoint & waypoint)
-{
-	for (auto & e : m_blocked)
-	{
-		sf::Vector2f pos = e.GetPosition();
-		sf::Vector2f size = e.GetSize();
-		sf::Vector2f wPos = waypoint.GetWorldCoord();
-		
-		if (wPos.x > pos.x && wPos.x < pos.x + size.x &&
-			wPos.y > pos.y && wPos.y < pos.y + size.y)
-			return true;
-	}
-
-	return false;
 }
 
 bool Engine::_isInsideMap(const Waypoint & waypoint)
