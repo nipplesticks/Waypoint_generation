@@ -46,6 +46,7 @@ private:
 	
 
 	std::vector<Entity> m_blocked;
+	std::vector<Entity> m_field;
 	std::vector<Entity> m_waypoints;
 	std::vector<Line>	m_lines;
 

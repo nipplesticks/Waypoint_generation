@@ -138,17 +138,16 @@ std::string Tile::ToString() const
 	str += "Size: " + std::to_string(s_size.x) + ", " + std::to_string(s_size.y) + "\n";
 	str += "Pathable: " + std::to_string(m_pathable) + "\n";
 	str += "SubGrid: " + std::to_string(m_subGrid) + "\n";
-	/*str += "PfvVars: \n" + m_pfv.ToString();
-	str += "\n";*/
+
 	return str;
 }
 
 void Tile::_copy(const Tile & other)
 {
 	m_gridCoord = other.m_gridCoord;
-	//m_pfv = other.m_pfv;
 	m_worldCoord = other.m_worldCoord;
 	m_pathable = other.m_pathable;
 	m_subGrid = other.m_subGrid;
+	m_fieldOwner = other.m_fieldOwner;
 }
 #pragma endregion

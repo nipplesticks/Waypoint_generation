@@ -25,8 +25,8 @@ Engine::Engine(sf::RenderWindow * window)
 
 	m_camera.SetPosition(0, 0);
 
-	_loadMap("bigGameProjectGrid.txt");
-	//_loadMap("SmallMap.txt");
+	//_loadMap("bigGameProjectGrid.txt");
+	_loadMap("bigGameProjectGridEdgy.txt");
 }
 
 Engine::~Engine()
@@ -173,6 +173,9 @@ void Engine::Draw(bool clearAndDisplay)
 	for (auto & b : m_blocked)
 		b.Draw(m_pWindow);
 
+	for (auto & f : m_field)
+		f.Draw(m_pWindow);
+
 	for (auto & w : m_waypoints)
 		w.Draw(m_pWindow);
 	for (auto & l : m_lines)
@@ -274,17 +277,55 @@ void Engine::_loadMap(const std::string & mapName)
 		e.SetColor(sf::Color::Black);
 		m_waypoints.push_back(e);
 
-		/*for (auto & c : w.GetConnections())
+		for (auto & c : w.GetConnections())
 		{
 			Line l;
 			l.SetLine(w.GetWorldCoord(), c.Waypoint->GetWorldCoord());
 			l.SetColor(sf::Color::Blue);
 			m_lines.push_back(l);
-		}*/
+		}
 	}
 
 
 	m_grid->SetWaypoints(waypoints, &m_quadTree);
+
+	std::map<Waypoint *, sf::Color> wpToColor;
+
+	for (int y = 0; y < m_mapHeight; y++)
+	{
+		for (int x = 0; x < m_mapWidth; x++)
+		{
+			Tile t = m_grid->At(x, y);
+			Waypoint * wp;
+
+			if ((wp = t.GetFieldOwner()) != nullptr)
+			{
+				Entity e;
+				e.SetPosition(t.GetWorldCoord());
+				e.SetSize(t.GetTileSize());
+
+				sf::Color c;
+
+				auto it = wpToColor.find(wp);
+				if (it == wpToColor.end())
+				{
+					c = sf::Color(rand() % 256, rand() % 256, rand() % 256);
+					wpToColor.insert(wpToColor.end(), std::pair(wp, c));
+				}
+				else
+				{
+					c = wpToColor[wp];
+				}
+				e.SetColor(c);
+
+				m_field.push_back(e);
+
+			}
+		}
+	}
+
+	
+
 }
 
 void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vector<bool> & map)

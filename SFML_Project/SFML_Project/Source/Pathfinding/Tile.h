@@ -39,13 +39,13 @@ public:
 	std::string ToString() const;
 
 private:
-	sf::Vector2i m_gridCoord;
-	sf::Vector2f m_worldCoord;
 	// Tile size in world
 	static sf::Vector2f s_size;
+
+	sf::Vector2i m_gridCoord;
+	sf::Vector2f m_worldCoord;
 	bool m_pathable;
 	int m_subGrid;
-
 	Waypoint * m_fieldOwner = nullptr;
 
 private:
