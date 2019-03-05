@@ -27,10 +27,9 @@ private:
 	Camera m_camera;
 	const float CAMERA_MOVE_SPEED = 100.0f;
 	const float CAMERA_ZOOM_SPEED = 1.0f;
-
 	const float MAP_TILE_SIZE = 32.0f;
-	const unsigned int MAP_WIDTH = 100;
-	const unsigned int MAP_HEIGHT = 100;
+	unsigned int m_mapWidth = 0;
+	unsigned int m_mapHeight = 0;
 	
 	Grid * m_grid;
 
@@ -52,7 +51,7 @@ private:
 private:
 
 	void _loadMap(const std::string & mapName);
-	void _createWaypoints(std::vector<Waypoint> & waypoints);
+	void _createWaypoints(std::vector<Waypoint> & waypoints, const std::vector<bool> & map);
 	bool _isInsideMap(const Waypoint & waypoint);
 	bool _lineIntersectionBB(const sf::Vector2f & lo, const sf::Vector2f & le, const sf::Vector2f points[4]);
 	bool _lineIntersectionLine(const sf::Vector2f & l1o, const sf::Vector2f & l1e, const sf::Vector2f & l2o, const sf::Vector2f & l2e, __out sf::Vector2f & intersectionPoint);

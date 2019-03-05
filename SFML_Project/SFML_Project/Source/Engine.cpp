@@ -24,9 +24,7 @@ Engine::Engine(sf::RenderWindow * window)
 
 	m_camera.SetPosition(0, 0);
 
-	//m_grid = new Grid(sf::Vector2i(MAP_WIDTH, MAP_HEIGHT), { 0.0f, 0.0f }, { 32.0f, 32.0f });
-	//m_background.SetSize(MAP_WIDTH * MAP_TILE_SIZE, MAP_HEIGHT * MAP_TILE_SIZE);
-	_loadMap("SmallMap.txt");
+	_loadMap("bigGameProjectGrid.txt");
 }
 
 Engine::~Engine()
@@ -214,6 +212,9 @@ void Engine::_loadMap(const std::string & mapName)
 		yLevel++;
 	}
 
+	m_mapWidth = xLevel;
+	m_mapHeight = yLevel;
+
 	mapText.close();
 	
 	m_grid = new Grid(sf::Vector2i(xLevel, yLevel), { 0.0f, 0.0f }, { 32.0f, 32.0f });
@@ -247,39 +248,136 @@ void Engine::_loadMap(const std::string & mapName)
 		}
 	}
 
-	//Timer t;
-
-	//t.Start();
 
 	int size = std::max(yLevel, xLevel) * MAP_TILE_SIZE;
 
 	m_quadTree.BuildTree(5, size, m_background.GetPosition());
 	m_quadTree.PlaceObjects(m_blocked);
 	
+	Timer t;
+	t.Start();
 	std::vector<Waypoint> waypoints;
-	_createWaypoints(waypoints);
+	_createWaypoints(waypoints, map);
+	std::cout << "Time to createWaypoints: " << t.Stop(Timer::MILLISECONDS) << std::endl;
+
+
 	m_grid->SetWaypoints(waypoints);
 }
 
 
 #include <DirectXMath.h>
-void Engine::_createWaypoints(std::vector<Waypoint>& waypoints)
+void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vector<bool> & map)
 {
+	struct BLOCK
+	{
+		sf::Vector2f topLeft, topRight, bottomRight, bottomLeft;
+	};
+
+	std::vector<BLOCK> blocks;
+	std::vector<bool> used(m_mapHeight * m_mapWidth);
+
+	Timer t;
+	t.Start();
+	for (int y = 0; y < m_mapHeight; y++)
+	{
+		for (int x = 0; x < m_mapWidth; x++)
+		{
+			int index = x + y * m_mapWidth;
+			if (map[index] /* This tile is blocked */ && !used[index])
+			{
+				
+				bool canContinue = true;
+				int stopIndex = m_mapWidth;
+				int x2;
+				int y2;
+				for (y2 = y; y2 < m_mapHeight; y2++)
+				{
+					int lol = x + y2 * m_mapWidth;
+					if (!map[lol] || used[lol])
+					{
+						break;
+					}
+
+					for (x2 = x; x2 < stopIndex; x2++)
+					{
+						int subIndex = x2 + y2 * m_mapWidth;
+						if (!map[subIndex] || used[subIndex])
+						{
+							stopIndex = x2;
+							break;
+						}
+					}
+				}
+
+				for (int y3 = y; y3 < y2; y3++)
+				{
+					for (int x3 = x; x3 < x2; x3++)
+					{
+						int subIndex = x3 + y3 * m_mapWidth;
+						used[subIndex] = true;
+					}
+				}
+
+				BLOCK b;
+				b.topLeft = sf::Vector2f(x * MAP_TILE_SIZE, y * MAP_TILE_SIZE);
+				b.topRight = sf::Vector2f(x2 * MAP_TILE_SIZE, y * MAP_TILE_SIZE);
+				b.bottomRight = sf::Vector2f(x2 * MAP_TILE_SIZE, y2 * MAP_TILE_SIZE);
+				b.bottomLeft = sf::Vector2f(x * MAP_TILE_SIZE, y2 * MAP_TILE_SIZE);
+
+				blocks.push_back(b);
+			}
+		}
+	}
+
+	double time = t.Stop(Timer::MILLISECONDS);
+
+	std::cout << "Build blocks time: " << time << " ms\n";
+
+	for (int y = 0; y < m_mapHeight; y++)
+	{
+		for (int x = 0; x < m_mapWidth; x++)
+		{
+			sf::Vector2f lol = sf::Vector2f(x * MAP_TILE_SIZE, y* MAP_TILE_SIZE);
+
+			int inside = -1;
+
+			int counter = int('A');
+			for (auto & b : blocks)
+			{
+				if (lol.x >= b.topLeft.x && lol.x < b.bottomRight.x
+					&&
+					lol.y >= b.topLeft.y && lol.y < b.bottomRight.y)
+				{
+					inside = counter;
+					break;
+				}
+				counter++;
+			}
+
+			if (inside > -1)
+				std::cout << char(inside);
+			else
+				std::cout << " ";
+
+		}
+		std::cout << std::endl;
+	}
+
+
 	using namespace DirectX;
 
-	for (auto & e : m_blocked)
+	for (auto & e : blocks)
 	{
-		sf::Vector2f ePos = e.GetPosition();
-		sf::Vector2f eSize = e.GetSize();
 		sf::Vector2f points[4] = {
-			{ ePos },
-			{ ePos + sf::Vector2f(eSize.x, 0.0f) },
-			{ ePos + eSize },
-			{ ePos + sf::Vector2f(0.0f, eSize.y) },
+			{ e.topLeft },
+			{ e.topRight },
+			{ e.bottomRight },
+			{ e.bottomLeft }
 		};
-		sf::Vector2f eCenter = ePos + eSize * 0.5f;
+
+		sf::Vector2f eCenter = (e.topLeft + e.bottomRight) * 0.5f;
 		
-		float length = XMVectorGetX(XMVector2Length(XMVectorSet(eSize.x, eSize.y, 0.0f, 0.0f)));
+		float length = XMVectorGetX(XMVector2Length(XMVectorSet(MAP_TILE_SIZE, MAP_TILE_SIZE, 0.0f, 0.0f)));
 
 		XMFLOAT2 xmCenter = { eCenter.x, eCenter.y };
 
@@ -299,10 +397,38 @@ void Engine::_createWaypoints(std::vector<Waypoint>& waypoints)
 				Entity * e = m_quadTree.PointInsideObject(wp.GetWorldCoord());
 
 				if (e == nullptr)
-					waypoints.push_back(wp);
+				{
+					size_t size = waypoints.size();
+
+					bool canAdd = true;
+
+					sf::Vector2f newPos = wp.GetWorldCoord();
+
+					for (size_t w = 0; w < size; w++)
+					{
+						static const float MIN_LENGTH = 1.0f;
+
+						sf::Vector2f comparePos = waypoints[w].GetWorldCoord();
+
+						float l = XMVectorGetX(XMVector2Length(XMVectorSet(comparePos.x - newPos.x, comparePos.y - newPos.y, 0.0f, 0.0f)));
+
+
+						if (l < MIN_LENGTH)
+						{
+							canAdd = false;
+							break;
+						}
+
+					}
+
+					if (canAdd)
+						waypoints.push_back(wp);
+				}
 			}
 		}
 	}
+
+
 
 	_connectWaypoints(waypoints);
 
@@ -373,6 +499,10 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 
 	int size = waypoints.size();
 
+	static const float CLUSTER_DIST = MAP_TILE_SIZE;
+
+	int cluster = 0;
+
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < size; j++)
@@ -389,11 +519,30 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 				if (e == nullptr)
 				{
 					float length = XMVectorGetX(XMVector2Length(XMVectorSubtract(XMVectorSet(lineEnd.x, lineEnd.y, 0.0f, 0.0f), XMVectorSet(lineStart.x, lineStart.y, 0.0f, 0.0f))));
+
 					Waypoint::Connection c(&waypoints[j], length);
 					Waypoint::Connection c1(&waypoints[i], length);
 
 					waypoints[i].AddConnection(c);
 					waypoints[j].AddConnection(c1);
+
+					if (length < CLUSTER_DIST)
+					{
+						if (waypoints[i].GetCluter() == -1 && waypoints[j].GetCluter() == -1)
+						{
+							waypoints[i].SetCluster(cluster);
+							waypoints[j].SetCluster(cluster);
+							cluster++;
+						}						
+						else if (waypoints[i].GetCluter() != -1)
+						{
+							waypoints[j].SetCluster(waypoints[i].GetCluter());
+						}
+						else if (waypoints[j].GetCluter() != -1)
+						{
+							waypoints[i].SetCluster(waypoints[j].GetCluter());
+						}
+					}
 				}
 			}
 		}
