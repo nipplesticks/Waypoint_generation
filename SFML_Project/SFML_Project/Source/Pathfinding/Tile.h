@@ -2,13 +2,19 @@
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 #include <string>
-
+#include "Waypoint.h"
 class Tile
 {
 public:
 	Tile(sf::Vector2i gridCoord = sf::Vector2i(-1, -1), sf::Vector2f worldCoord = sf::Vector2f(0, 0), bool pathable = true);
 	Tile(const Tile& other);
 	~Tile();
+
+	void SetFieldOwner(Waypoint * fieldOwner);
+
+	bool BlockedOrHaveFieldOwner() const;
+
+	Waypoint * GetFieldOwner();
 
 	const sf::Vector2i& GetGridCoord() const;
 	const sf::Vector2f& GetWorldCoord() const;
@@ -39,6 +45,8 @@ private:
 	static sf::Vector2f s_size;
 	bool m_pathable;
 	int m_subGrid;
+
+	Waypoint * m_fieldOwner = nullptr;
 
 private:
 	void _copy(const Tile& other);

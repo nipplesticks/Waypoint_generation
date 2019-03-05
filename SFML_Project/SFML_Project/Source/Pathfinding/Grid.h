@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "../Entity/Entity.h"
 #include "Waypoint.h"
+#include "QuadTree/QuadTree.h"
 
 class Engine;
 
@@ -17,7 +18,7 @@ public:
 
 	void Block(const sf::Vector2i & coord);
 
-	void SetWaypoints(const std::vector<Waypoint> & waypoints);
+	void SetWaypoints(const std::vector<Waypoint> & waypoints, QuadTree * q);
 
 	Tile TileFromWorldCoords(const sf::Vector2f & worldCoord) const;
 
@@ -72,6 +73,10 @@ private:
 
 	std::vector<Tile> _findPath(const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng);
 	bool _isValid(const Tile & tile);
+	bool _isValidCoord(const sf::Vector2i & coord);
+
 	float _calcHValue(const Tile & s, const Tile & d);
+
+	bool _addToField(Tile t, Waypoint * wp, int iterationNumber, QuadTree * q);
 
 };

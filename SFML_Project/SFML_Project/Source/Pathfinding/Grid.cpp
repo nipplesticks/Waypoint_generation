@@ -1,5 +1,6 @@
 #include "Grid.h"
 #include "../Engine.h"
+#include <DirectXMath.h>
 Grid::Grid(const sf::Vector2i & size, const sf::Vector2f & gridStartPosition, const sf::Vector2f & tileSize)
 {
 	Tile::SetTileSize(tileSize);
@@ -34,10 +35,101 @@ void Grid::Block(const sf::Vector2i & coord)
 {
 	m_grid[coord.x + coord.y * m_gridSize.x].SetPathable(false);
 }
-
-void Grid::SetWaypoints(const std::vector<Waypoint>& waypoints)
+#include <iostream>
+void Grid::SetWaypoints(const std::vector<Waypoint>& waypoints, QuadTree * q)
 {
 	m_waypoints = waypoints;
+
+	/*bool done = false;
+
+	int mod = m_waypoints.size();
+
+	int counter = 0;
+	int loops = 1;
+
+	bool hasAddedYeahBoi = false;
+	
+
+	while (!done)
+	{
+		if (counter == mod)
+		{
+			counter %= mod;
+			loops++;
+
+			if (!hasAddedYeahBoi)
+				break;
+			hasAddedYeahBoi = false;
+		}
+
+		sf::Vector2f wpPos = m_waypoints[counter].GetWorldCoord();
+		Tile t = TileFromWorldCoords(wpPos);
+		bool newThing = _addToField(t, &m_waypoints[counter], loops, q);
+
+		hasAddedYeahBoi = newThing || hasAddedYeahBoi;
+
+
+		counter++;
+	}
+
+	int counter2 = 0;
+	int counter3 = 0;
+*/
+	Timer t;
+	t.Start();
+	int size = m_waypoints.size();
+
+	using namespace DirectX;
+
+	for (auto & t : m_grid)
+	{
+		sf::Vector2f tWorld = t.GetWorldCoord() + t.GetTileSize() * 0.5f;
+
+
+		if (t.IsPathable())
+		{
+			if (t.GetFieldOwner() == nullptr)
+			{
+				float distance = FLT_MAX;
+				Waypoint * wp = nullptr;
+
+				for (int i = 0; i < size; i++)
+				{
+					sf::Vector2f wpWorld = m_waypoints[i].GetWorldCoord();
+					Entity * e = q->DispatchRay(tWorld, wpWorld);
+					if (e == nullptr)
+					{
+						float tTemp = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(wpWorld.x, wpWorld.y, 0.0f, 0.0f), XMVectorSet(tWorld.x, tWorld.y, 0.0f, 0.0f))));
+
+						if (tTemp < distance)
+						{
+							distance = tTemp;
+							wp = &m_waypoints[i];
+						}
+
+					}
+				}
+
+				if (wp == nullptr)
+				{
+					std::cout << t.GetGridCoord().x << ", " << t.GetGridCoord().y << " has no owner\n";
+				}
+
+				t.SetFieldOwner(wp);
+			}
+		}
+	}
+
+	int counter = 0;
+	for (auto & t : m_grid)
+	{
+		if (t.IsPathable() && t.GetFieldOwner() == nullptr)
+		{
+			counter++;
+		}
+	}
+	std::cout << "time " << t.Stop(Timer::MILLISECONDS) << std::endl;
+	std::cout << "Tiles without fileldOwner: " << counter << std::endl;
 }
 
 Tile Grid::TileFromWorldCoords(const sf::Vector2f & worldCoord) const
@@ -323,6 +415,13 @@ bool Grid::_isValid(const Tile & tile)
 	return true;
 }
 
+bool Grid::_isValidCoord(const sf::Vector2i & coord)
+{
+	if (coord.x < 0 || coord.x >= m_gridSize.x || coord.y < 0 || coord.y >= m_gridSize.y)
+		return false;
+	return true;
+}
+
 float Grid::_calcHValue(const Tile & s, const Tile & d)
 {
 	//float deltaX = abs(s.GetWorldCoord().x - d.GetWorldCoord().x);
@@ -336,4 +435,95 @@ float Grid::_calcHValue(const Tile & s, const Tile & d)
 	// 1.0f * (x + y) + (1.414f - 2 * 1.0f) * min(x, y)
 	//return Tile::GetTileSize().x * (deltaX + deltaY);// +(std::sqrt(Tile::GetTileSize().x) - Tile::GetTileSize().x) * std::min(deltaX, deltaY);
 	return (deltaX + deltaY) + (-0.414) * std::min(deltaX, deltaY);
+}
+
+bool Grid::_addToField(Tile t, Waypoint * wp, int iterationNumber, QuadTree * q)
+{
+	sf::Vector2i startCoord = t.GetGridCoord();
+
+	bool hasAddedSomething = false;
+
+	if (!m_grid[startCoord.x + startCoord.y * m_gridSize.x].BlockedOrHaveFieldOwner())
+	{
+		m_grid[startCoord.x + startCoord.y * m_gridSize.x].SetFieldOwner(wp);
+		hasAddedSomething = true;
+	}
+
+	sf::Vector2i coord = startCoord;
+	coord.x -= iterationNumber;
+	coord.y += iterationNumber;
+
+	int step = iterationNumber * 2;
+
+
+	// EAST
+	for (int i = 0; i < step; i++)
+	{
+		coord.x += i;
+		int index = coord.x + coord.y * m_gridSize.x;
+		if (_isValidCoord(coord) && !m_grid[index].BlockedOrHaveFieldOwner())
+		{
+			Entity * e = q->DispatchRay(wp->GetWorldCoord(), m_grid[index].GetWorldCoord());
+			if (e == nullptr)
+			{
+				hasAddedSomething = true;
+				m_grid[index].SetFieldOwner(wp);
+			}
+		}
+
+	}
+	
+	// North
+	for (int i = 0; i < step; i++)
+	{
+		coord.y -= i;
+		int index = coord.x + coord.y * m_gridSize.x;
+		if (_isValidCoord(coord) && !m_grid[index].BlockedOrHaveFieldOwner())
+		{
+			Entity * e = q->DispatchRay(wp->GetWorldCoord(), m_grid[index].GetWorldCoord());
+			if (e == nullptr)
+			{
+				hasAddedSomething = true;
+				m_grid[index].SetFieldOwner(wp);
+			}
+		}
+
+	}
+
+	// West
+	for (int i = 0; i < step; i++)
+	{
+		coord.x -= i;
+		int index = coord.x + coord.y * m_gridSize.x;
+		if (_isValidCoord(coord) && !m_grid[index].BlockedOrHaveFieldOwner())
+		{
+			Entity * e = q->DispatchRay(wp->GetWorldCoord(), m_grid[index].GetWorldCoord());
+			if (e == nullptr)
+			{
+				hasAddedSomething = true;
+				m_grid[index].SetFieldOwner(wp);
+			}
+		}
+
+	}
+
+	// South
+	for (int i = 0; i < step; i++)
+	{
+		coord.y += i;
+		int index = coord.x + coord.y * m_gridSize.x;
+		if (_isValidCoord(coord) && !m_grid[index].BlockedOrHaveFieldOwner())
+		{
+			Entity * e = q->DispatchRay(wp->GetWorldCoord(), m_grid[index].GetWorldCoord());
+			if (e == nullptr)
+			{
+				hasAddedSomething = true;
+				m_grid[index].SetFieldOwner(wp);
+			}
+		}
+
+	}
+
+
+	return hasAddedSomething;
 }

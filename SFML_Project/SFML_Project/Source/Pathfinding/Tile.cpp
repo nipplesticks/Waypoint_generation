@@ -22,6 +22,21 @@ Tile::~Tile()
 	
 }
 
+void Tile::SetFieldOwner(Waypoint * fieldOwner)
+{
+	m_fieldOwner = fieldOwner;
+}
+
+bool Tile::BlockedOrHaveFieldOwner() const
+{
+	return m_fieldOwner != nullptr || !m_pathable;
+}
+
+Waypoint * Tile::GetFieldOwner()
+{
+	return m_fieldOwner;
+}
+
 #pragma region GET & SET
 const sf::Vector2i & Tile::GetGridCoord() const
 {

@@ -284,7 +284,7 @@ void Engine::_loadMap(const std::string & mapName)
 	}
 
 
-	m_grid->SetWaypoints(waypoints);
+	m_grid->SetWaypoints(waypoints, &m_quadTree);
 }
 
 void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vector<bool> & map)
