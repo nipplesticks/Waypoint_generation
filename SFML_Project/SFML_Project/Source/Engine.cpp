@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include <iostream>
 #include <fstream>
+#include <DirectXMath.h>
 
 Engine::Engine(sf::RenderWindow * window)
 {
@@ -174,6 +175,8 @@ void Engine::Draw(bool clearAndDisplay)
 
 	for (auto & w : m_waypoints)
 		w.Draw(m_pWindow);
+	for (auto & l : m_lines)
+		l.Draw(m_pWindow);
 
 	m_player.Draw(m_pWindow);
 
@@ -191,7 +194,6 @@ void Engine::Terminate()
 	m_running = false;
 }
 
-#include <fstream>
 void Engine::_loadMap(const std::string & mapName)
 {
 	std::ifstream mapText;
@@ -271,14 +273,20 @@ void Engine::_loadMap(const std::string & mapName)
 		e.SetSize(8, 8);
 		e.SetColor(sf::Color::Black);
 		m_waypoints.push_back(e);
+
+		/*for (auto & c : w.GetConnections())
+		{
+			Line l;
+			l.SetLine(w.GetWorldCoord(), c.Waypoint->GetWorldCoord());
+			l.SetColor(sf::Color::Blue);
+			m_lines.push_back(l);
+		}*/
 	}
 
 
 	m_grid->SetWaypoints(waypoints);
 }
 
-
-#include <DirectXMath.h>
 void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vector<bool> & map)
 {
 	struct BLOCK
@@ -571,8 +579,5 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 			}
 		}
 	}
-
-
-	int lol = 0;
 }
 

@@ -392,6 +392,11 @@ bool QuadTree::_insideAABB(const sf::Vector2f & min, const sf::Vector2f & size, 
 	a1.width	= size.x;
 	a1.height	= size.y;
 
+	if (a1.width == 0.0f)
+		a1.width = 0.001f;
+	if (a1.height == 0.0f)
+		a1.height = 0.001f;
+
 	a2.left		= qMin.x;
 	a2.top		= qMin.y;
 	a2.width	= qSize;

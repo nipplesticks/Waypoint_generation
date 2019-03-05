@@ -6,6 +6,7 @@
 #include "Texture/Texture.h"
 #include "Pathfinding/Grid.h"
 #include "Pathfinding/QuadTree/QuadTree.h"
+#include "Entity/Line.h"
 
 class Engine
 {
@@ -25,7 +26,7 @@ public:
 
 private:
 	Camera m_camera;
-	const float CAMERA_MOVE_SPEED = 100.0f;
+	const float CAMERA_MOVE_SPEED = 1000.0f;
 	const float CAMERA_ZOOM_SPEED = 1.0f;
 	const float MAP_TILE_SIZE = 32.0f;
 	unsigned int m_mapWidth = 0;
@@ -42,8 +43,11 @@ private:
 
 	QuadTree m_quadTree;
 
+	
+
 	std::vector<Entity> m_blocked;
 	std::vector<Entity> m_waypoints;
+	std::vector<Line>	m_lines;
 
 private:
 	sf::RenderWindow *	m_pWindow = nullptr;
