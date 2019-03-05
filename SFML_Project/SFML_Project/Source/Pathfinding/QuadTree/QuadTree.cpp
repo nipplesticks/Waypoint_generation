@@ -62,7 +62,7 @@ void QuadTree::BuildTree(unsigned int maxLevel, unsigned int worldSize, float wo
 	BuildTree(maxLevel, worldSize, sf::Vector2f(worldStartX, worldStartY));
 }
 
-void QuadTree::PlaceObjects(const std::vector<Entity> & objectVector)
+void QuadTree::PlaceObjects(std::vector<Entity> & objectVector)
 {
 	for (auto & q : m_leafs)
 		q->ClearObjects();
@@ -143,6 +143,14 @@ const std::vector<Quadrant>& QuadTree::GetQuadrantVector() const
 	return m_quadTree;
 }
 
+Entity * QuadTree::DispatchRay(const sf::Vector2f & rayStart, const sf::Vector2f & rayEnd) const
+{
+	Entity * e = nullptr;
+	float t = FLT_MAX;
+	_traverseWithRay(rayStart, rayEnd, 0, t, e);
+	return e;
+}
+
 const Quadrant & QuadTree::operator[](unsigned int index)
 {
 	return m_quadTree[index];
@@ -197,9 +205,9 @@ size_t QuadTree::_GetQuadrantIndex(const sf::Vector2f & worldPos, unsigned int l
 	return levelStartIndex + (int)step.x + (int)step.y * (int)std::pow(2, level);
 }
 
-void QuadTree::_traverseAndPlace(const Entity * e, int quadIndex)
+void QuadTree::_traverseAndPlace(Entity * e, int quadIndex)
 {
-	if (_inside(e->GetPosition(), e->GetSize(), m_quadTree[quadIndex]))
+	if (_insideAABB(e->GetPosition(), e->GetSize(), m_quadTree[quadIndex]))
 	{
 		int nrOfChildren = m_quadTree[quadIndex].GetNrOfChildren();
 
@@ -216,11 +224,117 @@ void QuadTree::_traverseAndPlace(const Entity * e, int quadIndex)
 	}
 }
 
-bool QuadTree::_inside(const sf::Vector2f & min, const sf::Vector2f & size, const Quadrant & quadrant)
+void QuadTree::_traverseWithRay(const sf::Vector2f & rayStart, const sf::Vector2f & rayEnd, int quadIndex, float & t, Entity *& ePtr) const
+{
+	if (t > 0.0f)
+	{
+		if (_insideRay(rayStart, rayEnd, m_quadTree[quadIndex]))
+		{
+			int nrOfChildren = m_quadTree[quadIndex].GetNrOfChildren();
+
+			if (nrOfChildren > 0)
+			{
+				const unsigned int * children = m_quadTree[quadIndex].GetChildren();
+				for (int i = 0; i < nrOfChildren; i++)
+					_traverseWithRay(rayStart, rayEnd, children[i], t, ePtr);
+			}
+			else
+			{
+				// Trace Objects
+				const std::vector<Entity*> & objects = m_quadTree[quadIndex].GetObjects();
+
+				size_t size = objects.size();
+				float tTemp = FLT_MAX;
+
+				for (int i = 0; i < size; i++)
+				{
+					if (_insideRay(rayStart, rayEnd, objects[i], tTemp) && tTemp < t)
+					{
+						ePtr = objects[i];
+						t = tTemp;
+					}
+				}
+			}
+		}
+	}
+}
+
+bool QuadTree::_lineWithLineIntersection(const sf::Vector2f & lineOrigin1, const sf::Vector2f & lineEnd1, const sf::Vector2f & lineOrigin2, const sf::Vector2f & lineEnd2, float & t) const
+{
+	static const float EPSILON = 0.0001f;
+
+	sf::Vector2f b = lineEnd1 - lineOrigin1;
+	sf::Vector2f d = lineEnd2 - lineOrigin2;
+
+	float bDotDPerp = b.x * d.y - b.y * d.x;
+
+	if (fabs(bDotDPerp) < EPSILON)
+		return false;
+
+	sf::Vector2f c = lineOrigin2 - lineOrigin1;
+
+	float tTemp = (c.x * d.y - c.y * d.x) / bDotDPerp;
+
+	if (tTemp < 0.0f || tTemp > 1.0f)
+		return false;
+
+	float u = (c.x * b.y - c.y * b.x) / bDotDPerp;
+
+	if (u < 0.0f || u > 1.0f)
+		return false;
+
+
+	t = tTemp;
+
+	return true;
+}
+
+bool QuadTree::_insideRay(const sf::Vector2f & rayStart, const sf::Vector2f & rayEnd, const Quadrant & quadrant) const
+{
+	if (_insideAABB(rayStart, rayEnd - rayStart, quadrant))
+		return true;
+
+	return false;
+}
+
+bool QuadTree::_insideRay(const sf::Vector2f & rayStart, const sf::Vector2f & rayEnd, const Entity * e, float & t) const
+{
+
+	sf::Vector2f points[4];
+	points[0] = e->GetPosition();
+	points[1] = e->GetPosition() + sf::Vector2f(e->GetSize().x, 0);
+	points[2] = e->GetPosition() + e->GetSize();
+	points[3] = e->GetPosition() + sf::Vector2f(0, e->GetSize().y);
+	
+	if (rayStart.x > points[0].x && rayStart.x < points[2].x
+		&&
+		rayStart.y > points[0].y && rayStart.y < points[2].y)
+	{
+		t = 0.0f;
+		return true;
+	}
+
+	float tTemp = 0.0f;
+	bool returnVal = false;
+	for (int i = 0; i < 4; i++)
+	{
+		sf::Vector2f edgeStart = points[i];
+		sf::Vector2f edgeEnd = points[(i + 1) % 4];
+
+		if (_lineWithLineIntersection(rayStart, rayEnd, edgeStart, edgeEnd, tTemp) && tTemp < t)
+		{
+			t = tTemp;
+			returnVal = true;
+		}
+	}
+
+	return returnVal;
+}
+
+bool QuadTree::_insideAABB(const sf::Vector2f & min, const sf::Vector2f & size, const Quadrant & quadrant) const
 {
 	const sf::Vector2f & qMin = quadrant.GetMin();
 	float qSize = quadrant.GetSize();
-
 
 	sf::FloatRect a1, a2;
 
@@ -247,6 +361,6 @@ bool QuadTree::_inside(const sf::Vector2f & min, const sf::Vector2f & size, cons
 		return true;
 	}*/
 
-	return a1.intersects(a2);
+	return a2.intersects(a1) || a2.contains(min);
 }
 

@@ -129,7 +129,7 @@ std::string Quadrant::ToString() const
 	return str;
 }
 
-void Quadrant::SetObject(const Entity * object)
+void Quadrant::SetObject(Entity * object)
 {
 	m_objects.push_back(object);
 }
@@ -139,7 +139,7 @@ void Quadrant::ClearObjects()
 	m_objects.clear();
 }
 
-const std::vector<const Entity*>& Quadrant::GetObjects() const
+const std::vector<Entity*>& Quadrant::GetObjects() const
 {
 	return m_objects;
 }

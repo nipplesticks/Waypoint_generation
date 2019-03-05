@@ -42,11 +42,11 @@ public:
 
 	std::string ToString() const;
 
-	void SetObject(const Entity * object);
+	void SetObject(Entity * object);
 
 	void ClearObjects();
 
-	const std::vector<const Entity*> & GetObjects() const;
+	const std::vector<Entity*> & GetObjects() const;
 
 private:
 	sf::Vector2f m_min;
@@ -60,7 +60,7 @@ private:
 
 	unsigned int m_level;
 
-	std::vector<const Entity*> m_objects;
+	std::vector<Entity*> m_objects;
 
 	bool m_isLeaf;
 private:

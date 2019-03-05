@@ -26,7 +26,7 @@ Engine::Engine(sf::RenderWindow * window)
 
 	//m_grid = new Grid(sf::Vector2i(MAP_WIDTH, MAP_HEIGHT), { 0.0f, 0.0f }, { 32.0f, 32.0f });
 	//m_background.SetSize(MAP_WIDTH * MAP_TILE_SIZE, MAP_HEIGHT * MAP_TILE_SIZE);
-	_loadMap("bigGameProjectGrid.txt");
+	_loadMap("SmallMap.txt");
 }
 
 Engine::~Engine()
@@ -247,13 +247,17 @@ void Engine::_loadMap(const std::string & mapName)
 		}
 	}
 
-	Timer t;
+	//Timer t;
 
-	t.Start();
-	m_quadTree.BuildTree(7, std::max(yLevel, xLevel) * MAP_TILE_SIZE, m_background.GetPosition());
-	double timeBuild = t.Stop(Timer::MILLISECONDS);
+	//t.Start();
+
+	int size = std::max(yLevel, xLevel) * MAP_TILE_SIZE;
+
+	m_quadTree.BuildTree(1, size, m_background.GetPosition());
+	
+	//double timeBuild = t.Stop(Timer::MILLISECONDS);
 	m_quadTree.PlaceObjects(m_blocked);
-	double timePlace = t.Stop(Timer::MILLISECONDS);
+	//double timePlace = t.Stop(Timer::MILLISECONDS);
 
 	/*std::ofstream tree;
 	tree.open("Tree.txt");
@@ -387,7 +391,6 @@ bool Engine::_lineIntersectionLine(const sf::Vector2f & l1o, const sf::Vector2f 
 void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 {
 	using namespace DirectX;
-	// TODO:: Create lines from each waypoint to each waypoint, if they dont intersect with anything, this is a gogo!!!
 
 	int size = waypoints.size();
 
@@ -402,22 +405,9 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 
 				bool intersection = false;
 
-				for (auto & e : m_blocked)
-				{
-					sf::Vector2f ePos = e.GetPosition();
-					sf::Vector2f eSize = e.GetSize();
-					sf::Vector2f points[4] = {
-						{ ePos },
-						{ ePos + sf::Vector2f(eSize.x, 0.0f) },
-						{ ePos + eSize },
-						{ ePos + sf::Vector2f(0.0f, eSize.y) },
-					};
+				Entity * e = m_quadTree.DispatchRay(lineStart, lineEnd);
 
-					if (intersection = _lineIntersectionBB(lineStart, lineEnd, points))
-						break;
-				}
-
-				if (!intersection)
+				if (e == nullptr)
 				{
 					float length = XMVectorGetX(XMVector2Length(XMVectorSubtract(XMVectorSet(lineEnd.x, lineEnd.y, 0.0f, 0.0f), XMVectorSet(lineStart.x, lineStart.y, 0.0f, 0.0f))));
 					Waypoint::Connection c(&waypoints[j], length);
