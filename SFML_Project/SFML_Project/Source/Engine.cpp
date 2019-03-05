@@ -25,6 +25,7 @@ Engine::Engine(sf::RenderWindow * window)
 	m_camera.SetPosition(0, 0);
 
 	_loadMap("bigGameProjectGrid.txt");
+	//_loadMap("SmallMap.txt");
 }
 
 Engine::~Engine()
@@ -171,6 +172,9 @@ void Engine::Draw(bool clearAndDisplay)
 	for (auto & b : m_blocked)
 		b.Draw(m_pWindow);
 
+	for (auto & w : m_waypoints)
+		w.Draw(m_pWindow);
+
 	m_player.Draw(m_pWindow);
 
 	if (clearAndDisplay)
@@ -259,6 +263,15 @@ void Engine::_loadMap(const std::string & mapName)
 	std::vector<Waypoint> waypoints;
 	_createWaypoints(waypoints, map);
 	std::cout << "Time to createWaypoints: " << t.Stop(Timer::MILLISECONDS) << std::endl;
+
+	for (auto & w: waypoints)
+	{
+		Entity e;
+		e.SetPosition(w.GetWorldCoord() - sf::Vector2f(4, 4));
+		e.SetSize(8, 8);
+		e.SetColor(sf::Color::Black);
+		m_waypoints.push_back(e);
+	}
 
 
 	m_grid->SetWaypoints(waypoints);
@@ -375,6 +388,13 @@ void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vecto
 			{ e.bottomLeft }
 		};
 
+		sf::Vector2f dirs[4] = {
+			{ e.topLeft + sf::Vector2f(-MAP_TILE_SIZE * 0.5f, -MAP_TILE_SIZE * 0.5f) },
+			{ e.topRight + sf::Vector2f(MAP_TILE_SIZE * 0.5f, -MAP_TILE_SIZE * 0.5f)},
+			{ e.bottomRight + sf::Vector2f(MAP_TILE_SIZE * 0.5f, MAP_TILE_SIZE * 0.5f)},
+			{ e.bottomLeft + sf::Vector2f(-MAP_TILE_SIZE * 0.5f, MAP_TILE_SIZE * 0.5f)}
+		};
+
 		sf::Vector2f eCenter = (e.topLeft + e.bottomRight) * 0.5f;
 		
 		float length = XMVectorGetX(XMVector2Length(XMVectorSet(MAP_TILE_SIZE, MAP_TILE_SIZE, 0.0f, 0.0f)));
@@ -386,9 +406,10 @@ void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vecto
 		for (int i = 0; i < 4; i++)
 		{
 			XMFLOAT2 p = { points[i].x, points[i].y };
-			XMVECTOR dir = XMVector2Normalize(XMVectorSubtract(XMLoadFloat2(&p), xmVecCenter));
-			XMStoreFloat2(&p, dir);
-			sf::Vector2f direction = { p.x, p.y };
+			XMFLOAT2 d = { dirs[i].x, dirs[i].y };
+			XMVECTOR dir = XMVector2Normalize(XMVectorSubtract(XMLoadFloat2(&d), XMLoadFloat2(&p)));
+			XMStoreFloat2(&d, dir);
+			sf::Vector2f direction = { d.x, d.y };
 
 			Waypoint wp(points[i] + direction * length * 0.5f);
 
@@ -499,7 +520,7 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 
 	int size = waypoints.size();
 
-	static const float CLUSTER_DIST = MAP_TILE_SIZE;
+	static const float CLUSTER_DIST = MAP_TILE_SIZE * 1.5f;
 
 	int cluster = 0;
 
@@ -520,11 +541,6 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 				{
 					float length = XMVectorGetX(XMVector2Length(XMVectorSubtract(XMVectorSet(lineEnd.x, lineEnd.y, 0.0f, 0.0f), XMVectorSet(lineStart.x, lineStart.y, 0.0f, 0.0f))));
 
-					Waypoint::Connection c(&waypoints[j], length);
-					Waypoint::Connection c1(&waypoints[i], length);
-
-					waypoints[i].AddConnection(c);
-					waypoints[j].AddConnection(c1);
 
 					if (length < CLUSTER_DIST)
 					{
@@ -543,9 +559,20 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 							waypoints[i].SetCluster(waypoints[j].GetCluter());
 						}
 					}
+					else
+					{
+						Waypoint::Connection c(&waypoints[j], length);
+						Waypoint::Connection c1(&waypoints[i], length);
+
+						waypoints[i].AddConnection(c);
+						waypoints[j].AddConnection(c1);
+					}
 				}
 			}
 		}
 	}
+
+
+	int lol = 0;
 }
 

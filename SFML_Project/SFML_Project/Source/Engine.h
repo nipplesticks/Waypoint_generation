@@ -43,6 +43,7 @@ private:
 	QuadTree m_quadTree;
 
 	std::vector<Entity> m_blocked;
+	std::vector<Entity> m_waypoints;
 
 private:
 	sf::RenderWindow *	m_pWindow = nullptr;
