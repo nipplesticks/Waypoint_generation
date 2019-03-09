@@ -1,6 +1,10 @@
 #include "Grid.h"
 #include "../Engine.h"
 #include <DirectXMath.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+
 Grid::Grid(const sf::Vector2i & size, const sf::Vector2f & gridStartPosition, const sf::Vector2f & tileSize)
 {
 	Tile::SetTileSize(tileSize);
@@ -29,19 +33,36 @@ Grid::~Grid()
 std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
 {
 	std::vector<Tile> tileChain;
+	std::vector<Tile> path;
 	
 	_createTileChain(tileChain, source, destination, wnd, eng);
 
+	if (!tileChain.size() > 1)
+	{
+		int pathIterations = tileChain.size() - 1;
 
+		for (int i = 0; i < pathIterations; i++)
+		{
+			std::vector<Tile> partOfPath = _findPath(tileChain[i].GetWorldCoord(), tileChain[i + 1].GetWorldCoord(), wnd, eng);
+			path.insert(path.end(), partOfPath.begin(), partOfPath.end());
+		}
+	}
+	// Not sure if needed
+	// Might be an edge case if source and destination belong to the same waypoint
+	else
+	{
+		path = _findPath(source, destination, wnd, eng);
+	}
 
-	return _findPath(source, destination, wnd, eng);
+	//return _findPath(source, destination, wnd, eng);
+	return path;
 }
 
 void Grid::Block(const sf::Vector2i & coord)
 {
 	m_grid[coord.x + coord.y * m_gridSize.x].SetPathable(false);
 }
-#include <iostream>
+
 void Grid::SetWaypoints(const std::vector<Waypoint>& waypoints, QuadTree * q)
 {
 	m_waypoints = waypoints;
@@ -55,7 +76,6 @@ void Grid::SetWaypoints(const std::vector<Waypoint>& waypoints, QuadTree * q)
 	for (auto & t : m_grid)
 	{
 		sf::Vector2f tWorld = t.GetWorldCoord() + t.GetTileSize() * 0.5f;
-
 
 		if (t.IsPathable())
 		{
@@ -144,9 +164,6 @@ void Grid::_checkNode(const Node & current,
 	}
 }
 
-#include <fstream>
-#include <string>
-#include <iostream>
 std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
 {
 	static int static_counter = 0;
@@ -395,8 +412,6 @@ bool Grid::_isValidCoord(const sf::Vector2i & coord)
 
 float Grid::_calcHValue(const Tile & s, const Tile & d)
 {
-	//float deltaX = abs(s.GetWorldCoord().x - d.GetWorldCoord().x);
-	//float deltaY = abs(s.GetWorldCoord().y - d.GetWorldCoord().y);
 	float deltaX = abs(s.GetGridCoord().x - d.GetGridCoord().x);
 	float deltaY = abs(s.GetGridCoord().y - d.GetGridCoord().y);
 
@@ -416,5 +431,84 @@ void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & s
 	Waypoint * sourceWaypoint = sourceTile.GetFieldOwner();
 	Waypoint * destinationWaypoint = destinationTile.GetFieldOwner();
 
+	std::vector<Waypoint*> waypointPath = _findWaypointPath(sourceWaypoint, destinationWaypoint);
 	
+	if (!waypointPath.empty())
+	{
+		int nrOfWaypoints = waypointPath.size();
+		for (int i = 0; i < nrOfWaypoints; i++)
+		{
+			tileChain.push_back(TileFromWorldCoords(waypointPath[i]->GetWorldCoord()));
+		}
+	}
+}
+
+std::vector<Waypoint*> Grid::_findWaypointPath(Waypoint * source, const Waypoint * destination)
+{
+	std::vector<Waypoint*> waypointPath;
+	std::vector<Waypoint::Connection> waypointConnections;
+	Waypoint * current;
+	
+	waypointPath.push_back(source);
+
+	while (!waypointPath.empty() && waypointPath.back() != destination)
+	{
+		float lowestConnectionCost = FLT_MAX;
+		Waypoint * goToWaypoint = nullptr;
+		int waypointIndex = 0;
+		current = waypointPath.back();
+		waypointConnections = current->GetConnections();
+
+		if (!waypointConnections.empty())
+		{
+			int connectionsSize = waypointConnections.size();
+
+			for (int i = 0; i < connectionsSize; i++)
+			{
+				if (!waypointConnections[i].Waypoint->GetVisited())
+				{
+					float connectionTraversalCost = _calcWaypointHeuristic(current, destination) + waypointConnections[i].Cost;
+
+					if (connectionTraversalCost < lowestConnectionCost)
+					{
+						lowestConnectionCost = connectionTraversalCost;
+						goToWaypoint = waypointConnections[i].Waypoint;
+						waypointIndex = i;
+					}
+				}
+			}
+
+			if (goToWaypoint)
+			{
+				goToWaypoint->SetVisited(true);
+				waypointPath.push_back(goToWaypoint);
+			}
+			else
+			{
+				waypointPath.back()->SetVisited(false);
+				waypointPath.pop_back();
+			}
+		}
+		else
+		{
+			waypointPath.back()->SetVisited(false);
+			waypointPath.pop_back();
+		}
+	}
+
+	// Reset the waypoints
+	int nrOfWaypoints = m_waypoints.size();
+	for (int i = 0; i < nrOfWaypoints; i++)
+		m_waypoints[i].SetVisited(false);
+
+	return waypointPath;
+}
+
+float Grid::_calcWaypointHeuristic(const Waypoint * source, const Waypoint * destination)
+{
+	float deltaX = abs(source->GetWorldCoord().x - destination->GetWorldCoord().x);
+	float deltaY = abs(source->GetWorldCoord().y - destination->GetWorldCoord().y);
+	
+	//return std::min(deltaX, deltaY);
+	return deltaX + deltaY;
 }

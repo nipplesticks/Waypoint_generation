@@ -61,6 +61,9 @@ public:
 	int GetCluster() const;
 	void SetCluster(int cluster);
 
+	bool GetVisited() const;
+	void SetVisited(bool visited);
+
 	bool HasConnectionWith(const Waypoint & wp) const;
 
 	const sf::Vector2f & GetWorldCoord() const;
@@ -78,4 +81,5 @@ private:
 	sf::Vector2f m_worldCoord;
 	int m_cluster = -1;
 	std::vector<Connection> m_connections;
+	bool m_visited = false;
 };

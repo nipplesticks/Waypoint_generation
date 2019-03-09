@@ -35,6 +35,16 @@ void Waypoint::SetCluster(int cluster)
 	m_cluster = cluster;
 }
 
+bool Waypoint::GetVisited() const
+{
+	return m_visited;
+}
+
+void Waypoint::SetVisited(bool visited)
+{
+	m_visited = visited;
+}
+
 bool Waypoint::HasConnectionWith(const Waypoint & wp) const
 {
 	return std::find(m_connections.begin(), m_connections.end(), &wp) != m_connections.end();
@@ -48,7 +58,7 @@ const sf::Vector2f & Waypoint::GetWorldCoord() const
 void Waypoint::AddConnection(const Connection & c)
 {
 	//if (std::find(m_connections.begin(), m_connections.end(), c) == m_connections.end())
-		m_connections.push_back(c);
+	m_connections.push_back(c);
 }
 
 const std::vector<Waypoint::Connection>& Waypoint::GetConnections() const
@@ -68,4 +78,5 @@ void Waypoint::_copy(const Waypoint & other)
 {
 	m_connections = other.m_connections;
 	m_worldCoord = other.m_worldCoord;
+	m_visited = other.m_visited;
 }

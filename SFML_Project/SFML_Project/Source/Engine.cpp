@@ -25,8 +25,9 @@ Engine::Engine(sf::RenderWindow * window)
 
 	m_camera.SetPosition(0, 0);
 
+	_loadMap("SmallMap.txt");
 	//_loadMap("bigGameProjectGrid.txt");
-	_loadMap("bigGameProjectGridEdgy.txt");
+	//_loadMap("bigGameProjectGridEdgy.txt");
 }
 
 Engine::~Engine()
@@ -286,13 +287,13 @@ void Engine::_loadMap(const std::string & mapName)
 		e.SetColor(sf::Color::Black);
 		m_waypoints.push_back(e);
 
-		for (auto & c : w.GetConnections())
+		/*for (auto & c : w.GetConnections())
 		{
 			Line l;
 			l.SetLine(w.GetWorldCoord(), c.Waypoint->GetWorldCoord());
 			l.SetColor(sf::Color::Blue);
 			m_lines.push_back(l);
-		}
+		}*/
 	}
 
 
@@ -300,7 +301,7 @@ void Engine::_loadMap(const std::string & mapName)
 
 	std::map<Waypoint *, sf::Color> wpToColor;
 
-	for (int y = 0; y < m_mapHeight; y++)
+	/*for (int y = 0; y < m_mapHeight; y++)
 	{
 		for (int x = 0; x < m_mapWidth; x++)
 		{
@@ -331,7 +332,7 @@ void Engine::_loadMap(const std::string & mapName)
 
 			}
 		}
-	}
+	}*/
 
 	
 
@@ -510,7 +511,6 @@ void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vecto
 
 
 	_connectWaypoints(waypoints);
-
 }
 
 bool Engine::_isInsideMap(const Waypoint & waypoint)

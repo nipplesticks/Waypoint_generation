@@ -105,4 +105,7 @@ private:
 
 	// Waypoint tracing
 	void _createTileChain(std::vector<Tile> & tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng);
+	std::vector<Waypoint*> _findWaypointPath(Waypoint * source, const Waypoint * destination);
+
+	float _calcWaypointHeuristic(const Waypoint * source, const Waypoint * destination);
 };
