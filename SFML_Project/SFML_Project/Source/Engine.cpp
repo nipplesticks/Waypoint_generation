@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 
 const bool DRAW_LINES = false;
-const bool DRAW_FIELDS = false;
+const bool DRAW_FIELDS = true;
 
 Engine::Engine(sf::RenderWindow * window)
 {

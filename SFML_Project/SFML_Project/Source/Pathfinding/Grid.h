@@ -107,6 +107,10 @@ private:
 	};
 
 private:
+	void _createFields(int start, int end, QuadTree * q);
+
+
+private:
 	std::vector<Tile> m_grid;
 	std::vector<Waypoint> m_waypoints;
 	std::vector<WpNode> m_wpNodes;

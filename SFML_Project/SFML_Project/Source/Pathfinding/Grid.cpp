@@ -4,6 +4,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <thread>
+
+#define NUMBER_OF_THREADS 8
 
 Grid::Grid(const sf::Vector2i & size, const sf::Vector2f & gridStartPosition, const sf::Vector2f & tileSize)
 {
@@ -75,58 +78,29 @@ void Grid::SetWaypoints(const std::vector<Waypoint>& waypoints, QuadTree * q)
 	{
 		m_wpNodes[i] = WpNode(-1, &m_waypoints[i], 0.0f, 0.0f);
 	}
-	
-	Timer t;
-	t.Start();
-	int size = (int)m_waypoints.size();
 
-	using namespace DirectX;
+	int totalGridSize = m_grid.size();
 
-	int counter = 0;
+	int stepSize = totalGridSize / NUMBER_OF_THREADS;
+	std::thread threads[NUMBER_OF_THREADS];
 
-	int size2 = m_grid.size();
-
-	for (auto & t : m_grid)
+	Timer time;
+	time.Start();
+	for (int i = 0; i < NUMBER_OF_THREADS; i++)
 	{
-		std::cout << "\rFinding connections:\t" << (double(counter++) / size2) * 100 << "\t%";
+		int start = stepSize * i;
+		int end = start + stepSize;
+		if (i == NUMBER_OF_THREADS - 1)
+			end = totalGridSize;
 
-		sf::Vector2f tWorld = t.GetWorldCoord() + t.GetTileSize() * 0.5f;
-
-		if (t.IsPathable())
-		{
-			if (t.GetFieldOwner() == nullptr)
-			{
-				float distance = FLT_MAX;
-				Waypoint * wp = nullptr;
-
-				for (int i = 0; i < size; i++)
-				{
-					sf::Vector2f wpWorld = m_waypoints[i].GetWorldCoord();
-					Entity * e = q->DispatchRay(tWorld, wpWorld);
-					if (e == nullptr)
-					{
-						float tTemp = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(wpWorld.x, wpWorld.y, 0.0f, 0.0f), XMVectorSet(tWorld.x, tWorld.y, 0.0f, 0.0f))));
-
-						if (tTemp < distance)
-						{
-							distance = tTemp;
-							wp = &m_waypoints[i];
-						}
-
-					}
-				}
-
-				if (wp == nullptr)
-				{
-					std::cout << t.GetGridCoord().x << ", " << t.GetGridCoord().y << " has no owner\n";
-				}
-
-				t.SetFieldOwner(wp);
-			}
-		}
+		threads[i] = std::thread(&Grid::_createFields, this, start, end, q);
 	}
 
-	std::cout << "\nCreate Field time: " << t.Stop(Timer::MILLISECONDS) <<  " ms" << std::endl;
+	for (int i = 0; i < NUMBER_OF_THREADS; i++)
+		threads[i].join();
+
+	std::cout << "Time to create fields: " << time.Stop() << " sec\n";
+
 }
 
 Tile Grid::TileFromWorldCoords(const sf::Vector2f & worldCoord) const
@@ -147,6 +121,46 @@ Tile Grid::TileFromWorldCoords(const sf::Vector2f & worldCoord) const
 const Tile & Grid::At(int x, int y)
 {
 	return m_grid[x + y * m_gridSize.x];
+}
+
+void Grid::_createFields(int start, int end, QuadTree * q)
+{
+	using namespace DirectX;
+
+	int size = m_waypoints.size();
+
+	for (int i = start; i < end; i++)
+	{
+		sf::Vector2f tWorld = m_grid[i].GetWorldCoord() + m_grid[i].GetTileSize() * 0.5f;
+
+		if (m_grid[i].IsPathable())
+		{
+			if (m_grid[i].GetFieldOwner() == nullptr)
+			{
+				float distance = FLT_MAX;
+				Waypoint * wp = nullptr;
+
+				for (int i = 0; i < size; i++)
+				{
+					sf::Vector2f wpWorld = m_waypoints[i].GetWorldCoord();
+					Entity * e = q->DispatchRay(tWorld, wpWorld);
+					if (e == nullptr)
+					{
+						float tTemp = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(wpWorld.x, wpWorld.y, 0.0f, 0.0f), XMVectorSet(tWorld.x, tWorld.y, 0.0f, 0.0f))));
+
+						if (tTemp < distance)
+						{
+							distance = tTemp;
+							wp = &m_waypoints[i];
+						}
+
+					}
+				}
+				m_grid[i].SetFieldOwner(wp);
+			}
+		}
+	}
+
 }
 
 void Grid::_checkNode(const Node & current,
