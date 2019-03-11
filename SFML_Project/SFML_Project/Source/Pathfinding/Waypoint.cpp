@@ -35,16 +35,6 @@ void Waypoint::SetCluster(int cluster)
 	m_cluster = cluster;
 }
 
-bool Waypoint::GetVisited() const
-{
-	return m_visited;
-}
-
-void Waypoint::SetVisited(bool visited)
-{
-	m_visited = visited;
-}
-
 bool Waypoint::HasConnectionWith(const Waypoint & wp) const
 {
 	return std::find(m_connections.begin(), m_connections.end(), &wp) != m_connections.end();
@@ -77,7 +67,7 @@ Waypoint & Waypoint::operator=(const Waypoint & other)
 void Waypoint::_copy(const Waypoint & other)
 {
 	m_connections = other.m_connections;
+	m_cluster = other.m_cluster;
 	m_worldCoord = other.m_worldCoord;
-	m_visited = other.m_visited;
 	m_arrayIndex = other.m_arrayIndex;
 }

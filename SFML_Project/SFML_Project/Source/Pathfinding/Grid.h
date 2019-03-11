@@ -24,10 +24,6 @@ public:
 
 	const Tile & At(int x, int y);
 
-private:
-	std::vector<Tile> m_grid;
-	std::vector<Waypoint> m_waypoints;
-	sf::Vector2i m_gridSize;
 
 private:
 	struct Node
@@ -68,7 +64,7 @@ private:
 		WpNode()
 		{
 			parentIndex = -1;
-			current = nullptr;
+			ptr = nullptr;
 			fCost = FLT_MAX;
 			gCost = FLT_MAX;
 			hCost = FLT_MAX;
@@ -76,18 +72,46 @@ private:
 		WpNode(int _parentIndex, Waypoint * _current, float _gCost, float _hCost)
 		{
 			parentIndex = _parentIndex;
-			current = _current;
+			ptr = _current;
 			gCost = _gCost;
 			hCost = _hCost;
 			fCost = gCost + hCost;
-			visitedConnections = std::vector<bool>(current->GetConnections().size());
+			visitedConnections = std::vector<bool>(ptr->GetConnections().size());
+		}
+		WpNode(const WpNode & other)
+		{
+			_copy(other);
+		}
+		void operator=(const WpNode & other)
+		{
+			_copy(other);
+		}
+		bool operator<(const WpNode & other) const
+		{
+			return fCost < other.fCost;
+		}
+		void _copy(const WpNode & other)
+		{
+			parentIndex = other.parentIndex;
+			ptr = other.ptr;
+			gCost = other.gCost;
+			hCost = other.hCost;
+			fCost = other.fCost;
+			visitedConnections = other.visitedConnections;
 		}
 
 		int parentIndex;
-		Waypoint * current;
+		Waypoint * ptr;
 		std::vector<bool> visitedConnections;
 		float fCost = FLT_MAX, gCost = FLT_MAX, hCost = FLT_MAX;
 	};
+
+private:
+	std::vector<Tile> m_grid;
+	std::vector<Waypoint> m_waypoints;
+	std::vector<WpNode> m_wpNodes;
+	sf::Vector2i m_gridSize;
+
 
 	void _checkNode(const Node & current,
 		float addedGCost, int offsetX, int offsetY,
@@ -105,7 +129,7 @@ private:
 
 	// Waypoint tracing
 	void _createTileChain(std::vector<Tile> & tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng);
-	std::vector<Waypoint*> _findWaypointPath(Waypoint * source, const Waypoint * destination);
+	std::vector<WpNode> _findWaypointPath(Waypoint * source, Waypoint * destination, std::vector<WpNode> nodes, sf::RenderWindow * wnd, Engine * eng);
 
 	float _calcWaypointHeuristic(const Waypoint * source, const Waypoint * destination);
 };

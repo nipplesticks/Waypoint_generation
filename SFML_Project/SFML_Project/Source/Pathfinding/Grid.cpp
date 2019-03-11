@@ -66,7 +66,13 @@ void Grid::Block(const sf::Vector2i & coord)
 void Grid::SetWaypoints(const std::vector<Waypoint>& waypoints, QuadTree * q)
 {
 	m_waypoints = waypoints;
+	m_wpNodes = std::vector<WpNode>(m_waypoints.size());
 
+	for (size_t i = 0; i < m_waypoints.size(); i++)
+	{
+		m_wpNodes[i] = WpNode(-1, &m_waypoints[i], 0.0f, 0.0f);
+	}
+	
 	Timer t;
 	t.Start();
 	int size = (int)m_waypoints.size();
@@ -160,7 +166,7 @@ void Grid::_checkNode(const Node & current,
 	{
 		Node newNode(parentIndex, nextTile.Get1DGridCoord(m_gridSize.x), current.gCost + addedGCost, _calcHValue(nextTile, destination));
 		openList.push_back(newNode);
-		closedList[nextTileIndex] = true;
+		//closedList[nextTileIndex] = true;
 	}
 }
 
@@ -214,6 +220,7 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 	//std::cout << "********************************************************************************************************************" << std::endl;
 	while (!openList.empty() || earlyExplorationNode.parentIndex != -1)
 	{
+#pragma region DRAW PATH
 		if (wnd)
 		{
 
@@ -277,7 +284,7 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 
 		//pathFile << "###########################################################################################\n";
 		//pathFile << "Iteration: " << std::to_string(counter++) << "\n";
-
+#pragma endregion
 		if (earlyExplorationNode.parentIndex != -1)
 		{
 			currentNode = earlyExplorationNode;
@@ -320,7 +327,6 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 			//std::cout << "********************************************************************************************************************" << std::endl;
 			return path;
 		}
-
 		closedList[currentNode.gridTileIndex] = true;
 		/*
 			Generate all the eight successors of the cell
@@ -374,15 +380,8 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 
 		if (!earlyExploration.empty() && earlyExploration.front().fCost <= currentNode.fCost)
 		{
-			//pathFile << "fCost Smaller, continue on this path...\n";
 			earlyExplorationNode = earlyExploration.front();
 			earlyExploration.erase(earlyExploration.begin());
-		}
-		else
-		{
-
-			//pathFile << "can't continue on this path, go back\n";
-			//std::cout << "*******Cant continue, go to next*********\n";
 		}
 		openList.insert(openList.end(), earlyExploration.begin(), earlyExploration.end());
 		earlyExploration.clear();
@@ -431,33 +430,128 @@ void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & s
 	Waypoint * sourceWaypoint = sourceTile.GetFieldOwner();
 	Waypoint * destinationWaypoint = destinationTile.GetFieldOwner();
 
-	std::vector<Waypoint*> waypointPath = _findWaypointPath(sourceWaypoint, destinationWaypoint);
+	std::vector<WpNode> waypointPath = _findWaypointPath(sourceWaypoint, destinationWaypoint, m_wpNodes, wnd, eng);
 	
+	tileChain.push_back(TileFromWorldCoords(source));
+
 	if (!waypointPath.empty())
 	{
-		int nrOfWaypoints = (int)waypointPath.size();
-		for (int i = 0; i < nrOfWaypoints; i++)
+		int nrOfWaypoints = (int)waypointPath.size() - 1;
+		for (int i = 1; i < nrOfWaypoints; i++)
 		{
-			tileChain.push_back(TileFromWorldCoords(waypointPath[i]->GetWorldCoord()));
+			tileChain.push_back(TileFromWorldCoords(waypointPath[i].ptr->GetWorldCoord()));
 		}
 	}
+
+	tileChain.push_back(TileFromWorldCoords(destination));
+
 }
 
-std::vector<Waypoint*> Grid::_findWaypointPath(Waypoint * source, const Waypoint * destination)
+std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * destination, std::vector<WpNode> nodes, sf::RenderWindow * wnd, Engine * eng)
 {
-	std::vector<Waypoint*> waypointPath;
 	std::vector<Waypoint::Connection> waypointConnections;
-	Waypoint * current;
-	
-	waypointPath.push_back(source);
+	WpNode current = WpNode(-1, source, 0.f, _calcWaypointHeuristic(source, destination));
+	std::vector<WpNode> openList;
+	std::vector<WpNode> waypointNodes;
+	openList.push_back(current);
 
-	while (!waypointPath.empty() && waypointPath.back() != destination)
+	while (!openList.empty())
 	{
+#pragma region Draw Path
+		if (wnd)
+		{
+
+			sf::Event event;
+			while (wnd->pollEvent(event))
+			{
+				if (event.type == sf::Event::Closed)
+					wnd->close();
+			}
+
+			wnd->clear();
+			eng->Draw(false);
+
+			int counter = 0;
+
+			WpNode printMe = current;
+			Line l;
+
+			for (auto & w : waypointNodes)
+			{
+				Waypoint * wp = w.ptr;
+				if (w.parentIndex != -1)
+				{
+					l.SetLine(waypointNodes[w.parentIndex].ptr->GetWorldCoord(), wp->GetWorldCoord());
+					l.Draw(wnd);
+				}
+			}
+
+			if (current.parentIndex != -1)
+			{
+				l.SetLine(waypointNodes[current.parentIndex].ptr->GetWorldCoord(), current.ptr->GetWorldCoord());
+				l.SetColor(sf::Color::Red);
+				l.Draw(wnd);
+			}
+
+			wnd->display();
+			Sleep(10);
+		}
+#pragma endregion
+
+		std::sort(openList.begin(), openList.end());
+		current = openList.front();
+		openList.erase(openList.begin());
+		waypointNodes.push_back(current);
+
+		if (current.ptr == destination)
+		{
+			std::vector<WpNode> waypointPath;
+
+			waypointPath.push_back(current);
+			while (current.parentIndex != -1)
+			{
+				waypointPath.push_back(waypointNodes[current.parentIndex]);
+				current = waypointPath.back();
+			}
+			std::reverse(waypointPath.begin(), waypointPath.end());
+
+
+			if (wnd)
+			{
+
+				sf::Event event;
+				while (wnd->pollEvent(event))
+				{
+					if (event.type == sf::Event::Closed)
+						wnd->close();
+				}
+
+				wnd->clear();
+				eng->Draw(false);
+
+				int counter = 0;
+
+				WpNode printMe = current;
+				Line l;
+				l.SetColor(sf::Color::Red);
+
+				for (int i = 0; i < waypointPath.size() - 1; i++)
+				{
+					l.SetLine(waypointPath[i].ptr->GetWorldCoord(), waypointPath[i + 1].ptr->GetWorldCoord());
+					l.Draw(wnd);
+				}
+				wnd->display();
+				Sleep(5000);
+			}
+
+
+			return waypointPath;
+		}
+
 		float lowestConnectionCost = FLT_MAX;
 		int goToWaypoint = -1;
 		int waypointIndex = 0;
-		current = waypointPath.back();
-		waypointConnections = current->GetConnections();
+		waypointConnections = current.ptr->GetConnections();
 
 		if (!waypointConnections.empty())
 		{
@@ -465,43 +559,49 @@ std::vector<Waypoint*> Grid::_findWaypointPath(Waypoint * source, const Waypoint
 
 			for (int i = 0; i < connectionsSize; i++)
 			{
-				if (!m_waypoints[waypointConnections[i].Waypoint].GetVisited())
+				if (!nodes[current.ptr->GetArrayIndex()].visitedConnections[i])
 				{
-					float connectionTraversalCost = _calcWaypointHeuristic(current, destination) + waypointConnections[i].Cost;
-
-					if (connectionTraversalCost < lowestConnectionCost)
+					
+					if (&m_waypoints[waypointConnections[i].Waypoint] == destination)
 					{
-						lowestConnectionCost = connectionTraversalCost;
+						lowestConnectionCost = 0.f;
 						goToWaypoint = waypointConnections[i].Waypoint;
 						waypointIndex = i;
+					}
+					else
+					{
+						float connectionTraversalCost = _calcWaypointHeuristic(&m_waypoints[waypointConnections[i].Waypoint], destination) + waypointConnections[i].Cost;
+
+						if (connectionTraversalCost < lowestConnectionCost)
+						{
+							lowestConnectionCost = connectionTraversalCost;
+							goToWaypoint = waypointConnections[i].Waypoint;
+							waypointIndex = i;
+						}
 					}
 				}
 			}
 
+
 			if (goToWaypoint != -1)
 			{
-				m_waypoints[goToWaypoint].SetVisited(true);
-				waypointPath.push_back(&m_waypoints[goToWaypoint]);
+				nodes[current.ptr->GetArrayIndex()].visitedConnections[waypointIndex] = true;
+				openList.push_back(WpNode(waypointNodes.size() - 1, &m_waypoints[waypointConnections[waypointIndex].Waypoint],
+					waypointConnections[waypointIndex].Cost + current.gCost,
+					_calcWaypointHeuristic(&m_waypoints[waypointConnections[waypointIndex].Waypoint], destination)));
+
+				Waypoint * currentPtr = openList.back().ptr;
+				auto iterator = std::find(currentPtr->GetConnections().begin(), currentPtr->GetConnections().end(), current.ptr);
+				if (iterator != currentPtr->GetConnections().end())
+				{
+					int index = iterator - currentPtr->GetConnections().begin();
+					nodes[currentPtr->GetArrayIndex()].visitedConnections[index] = true;
+				}
 			}
-			else
-			{
-				waypointPath.back()->SetVisited(false);
-				waypointPath.pop_back();
-			}
-		}
-		else
-		{
-			waypointPath.back()->SetVisited(false);
-			waypointPath.pop_back();
 		}
 	}
 
-	// Reset the waypoints
-	int nrOfWaypoints = (int)m_waypoints.size();
-	for (int i = 0; i < nrOfWaypoints; i++)
-		m_waypoints[i].SetVisited(false);
-
-	return waypointPath;
+	return std::vector<WpNode>();
 }
 
 float Grid::_calcWaypointHeuristic(const Waypoint * source, const Waypoint * destination)
