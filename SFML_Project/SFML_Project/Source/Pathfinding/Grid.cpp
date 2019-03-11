@@ -43,7 +43,10 @@ std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f
 
 		for (int i = 0; i < pathIterations; i++)
 		{
+			Timer t;
+			t.Start();
 			std::vector<Tile> partOfPath = _findPath(tileChain[i].GetWorldCoord(), tileChain[i + 1].GetWorldCoord(), wnd, eng);
+			std::cout << "Part: " << i << ": " << t.Stop(Timer::MILLISECONDS) << " ms\n";
 			path.insert(path.end(), partOfPath.begin(), partOfPath.end());
 		}
 	}
@@ -79,8 +82,14 @@ void Grid::SetWaypoints(const std::vector<Waypoint>& waypoints, QuadTree * q)
 
 	using namespace DirectX;
 
+	int counter = 0;
+
+	int size2 = m_grid.size();
+
 	for (auto & t : m_grid)
 	{
+		std::cout << "\rFinding connections:\t" << (double(counter++) / size2) * 100 << "\t%";
+
 		sf::Vector2f tWorld = t.GetWorldCoord() + t.GetTileSize() * 0.5f;
 
 		if (t.IsPathable())
@@ -117,16 +126,7 @@ void Grid::SetWaypoints(const std::vector<Waypoint>& waypoints, QuadTree * q)
 		}
 	}
 
-	int counter = 0;
-	for (auto & t : m_grid)
-	{
-		if (t.IsPathable() && t.GetFieldOwner() == nullptr)
-		{
-			counter++;
-		}
-	}
-	std::cout << "time " << t.Stop(Timer::MILLISECONDS) << std::endl;
-	std::cout << "Tiles without fileldOwner: " << counter << std::endl;
+	std::cout << "\nCreate Field time: " << t.Stop(Timer::MILLISECONDS) <<  " ms" << std::endl;
 }
 
 Tile Grid::TileFromWorldCoords(const sf::Vector2f & worldCoord) const
@@ -166,7 +166,7 @@ void Grid::_checkNode(const Node & current,
 	{
 		Node newNode(parentIndex, nextTile.Get1DGridCoord(m_gridSize.x), current.gCost + addedGCost, _calcHValue(nextTile, destination));
 		openList.push_back(newNode);
-		//closedList[nextTileIndex] = true;
+		closedList[nextTileIndex] = true;
 	}
 }
 
@@ -221,65 +221,65 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 	while (!openList.empty() || earlyExplorationNode.parentIndex != -1)
 	{
 #pragma region DRAW PATH
-		if (wnd)
-		{
+		//if (wnd)
+		//{
 
-			sf::Event event;
-			while (wnd->pollEvent(event))
-			{
-				if (event.type == sf::Event::Closed)
-					wnd->close();
-			}
+		//	sf::Event event;
+		//	while (wnd->pollEvent(event))
+		//	{
+		//		if (event.type == sf::Event::Closed)
+		//			wnd->close();
+		//	}
 
-			wnd->clear();
-			eng->Draw(false);
+		//	wnd->clear();
+		//	eng->Draw(false);
 
 
-			int counter = 0;
+		//	int counter = 0;
 
-			Node printMe = currentNode;
-			//Tile t = m_grid[printMe.gridTileIndex];
-			Entity e;
-			/*e.SetPosition(t.GetWorldCoord());
-			e.SetSize(32, 32);
-			e.SetColor(sf::Color::Red);
-			e.Draw(wnd);*/
+		//	Node printMe = currentNode;
+		//	//Tile t = m_grid[printMe.gridTileIndex];
+		//	Entity e;
+		//	/*e.SetPosition(t.GetWorldCoord());
+		//	e.SetSize(32, 32);
+		//	e.SetColor(sf::Color::Red);
+		//	e.Draw(wnd);*/
 
-			for (auto & n : nodes)
-			{
-				Tile t = m_grid[n.gridTileIndex];
-				
-				e.SetPosition(t.GetWorldCoord());
-				e.SetSize(t.GetTileSize());
-				e.SetColor(sf::Color::Red);
-				e.SetOutlineColor(sf::Color::Black);
-				e.SetOutlineThickness(-1.0f);
+		//	for (auto & n : nodes)
+		//	{
+		//		Tile t = m_grid[n.gridTileIndex];
+		//		
+		//		e.SetPosition(t.GetWorldCoord());
+		//		e.SetSize(t.GetTileSize());
+		//		e.SetColor(sf::Color::Red);
+		//		e.SetOutlineColor(sf::Color::Black);
+		//		e.SetOutlineThickness(-1.0f);
 
-				//counter++;
-				//e.SetColor((colorCounter % 255), (colorCounter / 255) % 255, ((colorCounter / 255) / 255) % 255);
-				//colorCounter += 1;
+		//		//counter++;
+		//		//e.SetColor((colorCounter % 255), (colorCounter / 255) % 255, ((colorCounter / 255) / 255) % 255);
+		//		//colorCounter += 1;
 
-				e.Draw(wnd);
-			}
+		//		e.Draw(wnd);
+		//	}
 
-			while (printMe.parentIndex != -1)
-			{
-				Tile t = m_grid[printMe.gridTileIndex];
-				printMe = nodes[printMe.parentIndex];
+		//	while (printMe.parentIndex != -1)
+		//	{
+		//		Tile t = m_grid[printMe.gridTileIndex];
+		//		printMe = nodes[printMe.parentIndex];
 
-				e.SetPosition(t.GetWorldCoord());
-				e.SetSize(t.GetTileSize());
-				e.SetColor(sf::Color::White);
-				e.SetOutlineColor(sf::Color::Black);
-				e.SetOutlineThickness(-1.0f);
+		//		e.SetPosition(t.GetWorldCoord());
+		//		e.SetSize(t.GetTileSize());
+		//		e.SetColor(sf::Color::White);
+		//		e.SetOutlineColor(sf::Color::Black);
+		//		e.SetOutlineThickness(-1.0f);
 
-				e.Draw(wnd);
-			}
+		//		e.Draw(wnd);
+		//	}
 
-			wnd->setTitle(std::to_string(nodes.size()));
+		//	wnd->setTitle(std::to_string(nodes.size()));
 
-			wnd->display();
-		}
+		//	wnd->display();
+		//}
 
 
 		//pathFile << "###########################################################################################\n";
@@ -449,10 +449,16 @@ void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & s
 
 std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * destination, std::vector<WpNode> nodes, sf::RenderWindow * wnd, Engine * eng)
 {
+	Timer t;
+	t.Start();
 	std::vector<Waypoint::Connection> waypointConnections;
 	WpNode current = WpNode(-1, source, 0.f, _calcWaypointHeuristic(source, destination));
 	std::vector<WpNode> openList;
 	std::vector<WpNode> waypointNodes;
+	std::vector<WpNode> earlyExploration;
+
+
+
 	openList.push_back(current);
 
 	while (!openList.empty())
@@ -488,13 +494,23 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 
 			if (current.parentIndex != -1)
 			{
-				l.SetLine(waypointNodes[current.parentIndex].ptr->GetWorldCoord(), current.ptr->GetWorldCoord());
 				l.SetColor(sf::Color::Red);
+				l.SetLine(waypointNodes[current.parentIndex].ptr->GetWorldCoord(), current.ptr->GetWorldCoord());
+
 				l.Draw(wnd);
+
+				printMe = waypointNodes[current.parentIndex];
+
+				while (printMe.parentIndex != -1)
+				{
+					l.SetLine(waypointNodes[printMe.parentIndex].ptr->GetWorldCoord(), printMe.ptr->GetWorldCoord());
+					l.Draw(wnd);
+					printMe = waypointNodes[printMe.parentIndex];
+				}
 			}
 
 			wnd->display();
-			Sleep(10);
+			//Sleep(10);
 		}
 #pragma endregion
 
@@ -541,9 +557,9 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 					l.Draw(wnd);
 				}
 				wnd->display();
+				std::cout << "A path!, Time: " << t.Stop(Timer::MILLISECONDS) << std::endl;
 				Sleep(5000);
 			}
-
 
 			return waypointPath;
 		}
@@ -564,14 +580,19 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 					
 					if (&m_waypoints[waypointConnections[i].Waypoint] == destination)
 					{
-						lowestConnectionCost = 0.f;
+						earlyExploration.push_back(WpNode(waypointNodes.size() - 1, &m_waypoints[waypointConnections[i].Waypoint], 0,0));
+						
 						goToWaypoint = waypointConnections[i].Waypoint;
 						waypointIndex = i;
+
 					}
 					else
 					{
-						float connectionTraversalCost = _calcWaypointHeuristic(&m_waypoints[waypointConnections[i].Waypoint], destination) + waypointConnections[i].Cost;
+						earlyExploration.push_back(WpNode(waypointNodes.size() - 1, &m_waypoints[waypointConnections[i].Waypoint],
+							waypointConnections[i].Cost + current.gCost,
+							_calcWaypointHeuristic(&m_waypoints[waypointConnections[i].Waypoint], destination)));
 
+						float connectionTraversalCost = _calcWaypointHeuristic(&m_waypoints[waypointConnections[i].Waypoint], destination) + waypointConnections[i].Cost;
 						if (connectionTraversalCost < lowestConnectionCost)
 						{
 							lowestConnectionCost = connectionTraversalCost;
@@ -582,24 +603,28 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 				}
 			}
 
-
 			if (goToWaypoint != -1)
 			{
-				nodes[current.ptr->GetArrayIndex()].visitedConnections[waypointIndex] = true;
-				openList.push_back(WpNode(waypointNodes.size() - 1, &m_waypoints[waypointConnections[waypointIndex].Waypoint],
-					waypointConnections[waypointIndex].Cost + current.gCost,
-					_calcWaypointHeuristic(&m_waypoints[waypointConnections[waypointIndex].Waypoint], destination)));
+				std::sort(earlyExploration.begin(), earlyExploration.end());
 
-				Waypoint * currentPtr = openList.back().ptr;
+				nodes[current.ptr->GetArrayIndex()].visitedConnections[waypointIndex] = true;
+
+				Waypoint * currentPtr = earlyExploration.front().ptr;
 				auto iterator = std::find(currentPtr->GetConnections().begin(), currentPtr->GetConnections().end(), current.ptr);
 				if (iterator != currentPtr->GetConnections().end())
 				{
 					int index = iterator - currentPtr->GetConnections().begin();
 					nodes[currentPtr->GetArrayIndex()].visitedConnections[index] = true;
 				}
+
+				openList.insert(openList.end(), earlyExploration.begin(), earlyExploration.end());
+				earlyExploration.clear();
 			}
 		}
 	}
+
+
+	std::cout << "No Path, Time: " << t.Stop(Timer::MILLISECONDS) << std::endl;
 
 	return std::vector<WpNode>();
 }

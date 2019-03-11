@@ -591,10 +591,12 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 
 	int cluster = 0;
 
+	std::cout << std::endl;
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < size; j++)
 		{
+			
 			if (i != j && !waypoints[j].HasConnectionWith(waypoints[i]))
 			{
 				sf::Vector2f lineStart = waypoints[i].GetWorldCoord();
