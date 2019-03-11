@@ -32,6 +32,8 @@ private:
 	unsigned int m_mapWidth = 0;
 	unsigned int m_mapHeight = 0;
 	
+	sf::Vector2f m_playerSpawn;
+
 	Grid * m_grid;
 
 	Entity m_background;

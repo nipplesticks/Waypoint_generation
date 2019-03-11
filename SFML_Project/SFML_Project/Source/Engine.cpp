@@ -30,6 +30,7 @@ Engine::Engine(sf::RenderWindow * window)
 
 	//_loadMap("SmallMap.txt");
 	//_loadMap("bigGameProjectGrid.txt");
+	//_loadMap("UMAP.txt");
 	_loadMap("bigGameProjectGridEdgy.txt");
 }
 
@@ -65,7 +66,7 @@ void Engine::Run()
 		
 		counter++;
 
-		Update(deltaTime.Stop() - eventTimer.Stop());
+		Update(deltaTime.Stop());
 
 		Draw();
 
@@ -87,12 +88,6 @@ std::string sfVecToString(const sf::Vector2f & vec)
 
 void Engine::Update(double dt)
 {
-	if (dt > m_pathFindingTime)
-	{
-		dt -= m_pathFindingTime;
-		m_pathFindingTime = 0.0;
-	}
-
 	static bool s_mouseRightLastFrame = false;
 	static bool timerStart = false;
 	static Timer timer;
@@ -118,6 +113,9 @@ void Engine::Update(double dt)
 		m_camera.Translate(0.0f, 0.0f, -CAMERA_ZOOM_SPEED * (float)dt);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		m_camera.Translate(0.0f, 0.0f, CAMERA_ZOOM_SPEED * (float)dt);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		m_player.SetPosition(m_playerSpawn);
+
 
 	bool mouseRightThisFrame = sf::Mouse::isButtonPressed(sf::Mouse::Right);
 
@@ -125,7 +123,7 @@ void Engine::Update(double dt)
 
 	Timer t;
 	t.Start();
-	if (mouseRightThisFrame && !s_mouseRightLastFrame)
+	if (mouseRightThisFrame /* && !s_mouseRightLastFrame*/)
 	{
 		std::vector<Tile> playerPath = m_player.GetPath();
 		std::vector<Tile> newPath;
@@ -152,7 +150,7 @@ void Engine::Update(double dt)
 		
 		if (!newPath.empty())
 		{
-			std::cout << "Path: [" << sfVecToString(m_player.GetPosition())  << "] --> [" <<sfVecToString(newPath.back().GetWorldCoord()) << "]\n";
+			//std::cout << "Path: [" << sfVecToString(m_player.GetPosition())  << "] --> [" <<sfVecToString(newPath.back().GetWorldCoord()) << "]\n";
 
 		}
 
@@ -162,6 +160,15 @@ void Engine::Update(double dt)
 	time = t.Stop();
 	//std::cout << "Time: " << std::to_string(time) << " ms\n\n";
 	m_pathFindingTime = time;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))
+	{
+		dt *= 4.0f;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::G))
+	{
+		dt *= 10.0f;
+	}
 
 	m_player.Update(dt);
 
@@ -261,6 +268,7 @@ void Engine::_loadMap(const std::string & mapName)
 			else if (!placedPlayer)
 			{
 				m_player.SetPosition(m_grid->At(x, y).GetWorldCoord());
+				m_playerSpawn = m_player.GetPosition();
 				m_camera.SetPosition(m_player.GetPosition().x, m_player.GetPosition().y);
 				placedPlayer = true;
 			}
@@ -608,10 +616,10 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 
 				if (e == nullptr)
 				{
-					float length = XMVectorGetX(XMVector2Length(XMVectorSubtract(XMVectorSet(lineEnd.x, lineEnd.y, 0.0f, 0.0f), XMVectorSet(lineStart.x, lineStart.y, 0.0f, 0.0f))));
+					float length = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(lineEnd.x, lineEnd.y, 0.0f, 0.0f), XMVectorSet(lineStart.x, lineStart.y, 0.0f, 0.0f))));
 
 
-					if (length < CLUSTER_DIST)
+					if (sqrt(length) < CLUSTER_DIST)
 					{
 						if (waypoints[i].GetCluster() == -1 && waypoints[j].GetCluster() == -1)
 						{

@@ -46,7 +46,7 @@ std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f
 			Timer t;
 			t.Start();
 			std::vector<Tile> partOfPath = _findPath(tileChain[i].GetWorldCoord(), tileChain[i + 1].GetWorldCoord(), wnd, eng);
-			std::cout << "Part: " << i << ": " << t.Stop(Timer::MILLISECONDS) << " ms\n";
+			//std::cout << "Part: " << i << ": " << t.Stop(Timer::MILLISECONDS) << " ms\n";
 			path.insert(path.end(), partOfPath.begin(), partOfPath.end());
 		}
 	}
@@ -430,6 +430,9 @@ void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & s
 	Waypoint * sourceWaypoint = sourceTile.GetFieldOwner();
 	Waypoint * destinationWaypoint = destinationTile.GetFieldOwner();
 
+	if (sourceWaypoint == nullptr || destinationWaypoint == nullptr)
+		return;
+
 	std::vector<WpNode> waypointPath = _findWaypointPath(sourceWaypoint, destinationWaypoint, m_wpNodes, wnd, eng);
 	
 	tileChain.push_back(TileFromWorldCoords(source));
@@ -464,7 +467,7 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 	while (!openList.empty())
 	{
 #pragma region Draw Path
-		if (wnd)
+		/*if (wnd)
 		{
 
 			sf::Event event;
@@ -509,9 +512,9 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 				}
 			}
 
-			wnd->display();
+			wnd->display();*/
 			//Sleep(10);
-		}
+		//}
 #pragma endregion
 
 		std::sort(openList.begin(), openList.end());
@@ -532,7 +535,9 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 			std::reverse(waypointPath.begin(), waypointPath.end());
 
 
-			if (wnd)
+			//std::cout << "A path!, Time: " << t.Stop(Timer::MILLISECONDS) << std::endl;
+
+			/*if (wnd)
 			{
 
 				sf::Event event;
@@ -557,9 +562,8 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 					l.Draw(wnd);
 				}
 				wnd->display();
-				std::cout << "A path!, Time: " << t.Stop(Timer::MILLISECONDS) << std::endl;
-				Sleep(5000);
-			}
+				Sleep(2500);
+			}*/
 
 			return waypointPath;
 		}
@@ -577,11 +581,10 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 			{
 				if (!nodes[current.ptr->GetArrayIndex()].visitedConnections[i])
 				{
-					
+					nodes[current.ptr->GetArrayIndex()].visitedConnections[i] = true;
 					if (&m_waypoints[waypointConnections[i].Waypoint] == destination)
 					{
 						earlyExploration.push_back(WpNode(waypointNodes.size() - 1, &m_waypoints[waypointConnections[i].Waypoint], 0,0));
-						
 						goToWaypoint = waypointConnections[i].Waypoint;
 						waypointIndex = i;
 
@@ -607,12 +610,10 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 			{
 				std::sort(earlyExploration.begin(), earlyExploration.end());
 
-				nodes[current.ptr->GetArrayIndex()].visitedConnections[waypointIndex] = true;
-
-				Waypoint * currentPtr = earlyExploration.front().ptr;
-				auto iterator = std::find(currentPtr->GetConnections().begin(), currentPtr->GetConnections().end(), current.ptr);
-				if (iterator != currentPtr->GetConnections().end())
+				for (int i = 0; i < earlyExploration.size(); i++)
 				{
+					Waypoint * currentPtr = earlyExploration[i].ptr;
+					auto iterator = std::find(currentPtr->GetConnections().begin(), currentPtr->GetConnections().end(), current.ptr);
 					int index = iterator - currentPtr->GetConnections().begin();
 					nodes[currentPtr->GetArrayIndex()].visitedConnections[index] = true;
 				}
@@ -624,16 +625,24 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 	}
 
 
-	std::cout << "No Path, Time: " << t.Stop(Timer::MILLISECONDS) << std::endl;
+	//std::cout << "No Path, Time: " << t.Stop(Timer::MILLISECONDS) << std::endl;
 
 	return std::vector<WpNode>();
 }
 
 float Grid::_calcWaypointHeuristic(const Waypoint * source, const Waypoint * destination)
 {
-	float deltaX = abs(source->GetWorldCoord().x - destination->GetWorldCoord().x);
+	using namespace DirectX;
+
+	auto p1 = source->GetWorldCoord();
+	auto p2 = destination->GetWorldCoord();
+
+	float l = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(p2.x, p2.y, 0.0f, 0.0f), XMVectorSet(p1.x, p1.y, 0.0f, 0.0f))));
+
+	/*float deltaX = abs(source->GetWorldCoord().x - destination->GetWorldCoord().x);
 	float deltaY = abs(source->GetWorldCoord().y - destination->GetWorldCoord().y);
-	
+	*/
 	//return std::min(deltaX, deltaY);
-	return deltaX + deltaY;
+	//return deltaX + deltaY;
+	return l;
 }
