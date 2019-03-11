@@ -35,6 +35,13 @@ Grid::~Grid()
 
 std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
 {
+	if (source.x < m_grid.front().GetWorldCoord().x || source.y < m_grid.front().GetWorldCoord().y ||
+		destination.x < m_grid.front().GetWorldCoord().x || destination.y < m_grid.front().GetWorldCoord().y ||
+		source.x > m_grid.back().GetWorldCoord().x + Tile::GetTileSize().x || source.y > m_grid.back().GetWorldCoord().y + Tile::GetTileSize().y ||
+		destination.x > m_grid.back().GetWorldCoord().x + Tile::GetTileSize().x || destination.y > m_grid.back().GetWorldCoord().y + Tile::GetTileSize().y)
+		return std::vector<Tile>();
+
+
 	std::vector<Tile> tileChain;
 	std::vector<Tile> path;
 	
@@ -425,15 +432,14 @@ bool Grid::_isValidCoord(const sf::Vector2i & coord)
 
 float Grid::_calcHValue(const Tile & s, const Tile & d)
 {
-	float deltaX = (float)abs(s.GetGridCoord().x - d.GetGridCoord().x);
-	float deltaY = (float)abs(s.GetGridCoord().y - d.GetGridCoord().y);
+	using namespace DirectX;
 
+	auto p1 = s.GetWorldCoord();
+	auto p2 = d.GetWorldCoord();
 
-	// 1.0f = Direct costs
-	// 1.414f = Diagonal costs
-	// 1.0f * (x + y) + (1.414f - 2 * 1.0f) * min(x, y)
-	//return Tile::GetTileSize().x * (deltaX + deltaY);// +(std::sqrt(Tile::GetTileSize().x) - Tile::GetTileSize().x) * std::min(deltaX, deltaY);
-	return (deltaX + deltaY) + (-0.414f) * std::min(deltaX, deltaY);
+	float l = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(p2.x, p2.y, 0.0f, 0.0f), XMVectorSet(p1.x, p1.y, 0.0f, 0.0f))));
+
+	return l;
 }
 
 void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
@@ -653,10 +659,5 @@ float Grid::_calcWaypointHeuristic(const Waypoint * source, const Waypoint * des
 
 	float l = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(p2.x, p2.y, 0.0f, 0.0f), XMVectorSet(p1.x, p1.y, 0.0f, 0.0f))));
 
-	/*float deltaX = abs(source->GetWorldCoord().x - destination->GetWorldCoord().x);
-	float deltaY = abs(source->GetWorldCoord().y - destination->GetWorldCoord().y);
-	*/
-	//return std::min(deltaX, deltaY);
-	//return deltaX + deltaY;
 	return l;
 }

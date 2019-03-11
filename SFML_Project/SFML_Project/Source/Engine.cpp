@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 
 const bool DRAW_LINES = false;
-const bool DRAW_FIELDS = true;
+const bool DRAW_FIELDS = false;
 
 Engine::Engine(sf::RenderWindow * window)
 {
@@ -18,6 +18,8 @@ Engine::Engine(sf::RenderWindow * window)
 	m_brickTexture.Load("../Assets/Brick.bmp", iRect, {1, 1});
 
 	m_background.SetTexture(&m_grassTexture);
+	m_background.SetSize((sf::Vector2f)m_pWindow->getSize());
+
 
 	m_background.SetPosition(0, 0);
 
@@ -31,6 +33,9 @@ Engine::Engine(sf::RenderWindow * window)
 	//_loadMap("SmallMap.txt");
 	//_loadMap("bigGameProjectGrid.txt");
 	//_loadMap("UMAP.txt");
+
+	Draw();
+
 	_loadMap("bigGameProjectGridEdgy.txt");
 }
 
@@ -114,7 +119,10 @@ void Engine::Update(double dt)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		m_camera.Translate(0.0f, 0.0f, CAMERA_ZOOM_SPEED * (float)dt);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+	{
 		m_player.SetPosition(m_playerSpawn);
+		m_player.SetPath(std::vector<Tile>());
+	}
 
 
 	bool mouseRightThisFrame = sf::Mouse::isButtonPressed(sf::Mouse::Right);
@@ -151,10 +159,8 @@ void Engine::Update(double dt)
 		if (!newPath.empty())
 		{
 			//std::cout << "Path: [" << sfVecToString(m_player.GetPosition())  << "] --> [" <<sfVecToString(newPath.back().GetWorldCoord()) << "]\n";
-
+			m_player.SetPath(newPath);
 		}
-
-		m_player.SetPath(newPath);
 	}
 	
 	time = t.Stop();
@@ -354,6 +360,7 @@ void Engine::_loadMap(const std::string & mapName)
 
 void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vector<bool> & map)
 {
+	std::cout << "Create Wp\n";
 	struct BLOCK
 	{
 		sf::Vector2f topLeft, topRight, bottomRight, bottomLeft;
@@ -602,6 +609,8 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 	std::cout << std::endl;
 	for (int i = 0; i < size; i++)
 	{
+		std::cout << "\rConnection time: " << double(i) / size << "\t%";
+
 		for (int j = 0; j < size; j++)
 		{
 			
@@ -648,5 +657,6 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 			}
 		}
 	}
+	std::cout << std::endl;
 }
 

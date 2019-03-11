@@ -44,7 +44,7 @@ private:
 	Texture m_brickTexture;
 
 	QuadTree m_quadTree;
-
+	
 	double m_pathFindingTime = 0.0;
 
 	std::vector<Entity> m_blocked;

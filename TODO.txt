@@ -1,0 +1,9 @@
+TODO:
+	* Avbryta vid fält.
+		- Kolla om current är i samma fält som dest.
+		
+	* Söka path från start och dest mot varandra
+		- Använd std::unorderedMap för att hitta samma fält.
+	
+Om vi känner att vi hinner:
+	* Multi agent (tråda)
