@@ -17,7 +17,7 @@ Grid::Grid(const sf::Vector2i & size, const sf::Vector2f & gridStartPosition, co
 		{
 			int index = x + y * m_gridSize.x;
 			m_grid[index].SetGridCoord(x, y);
-			sf::Vector2f offset = sf::Vector2f(x, y);
+			sf::Vector2f offset = sf::Vector2f((float)x, (float)y);
 			offset.x *= tileSize.x;
 			offset.y *= tileSize.y;
 			m_grid[index].SetWorldCoord(gridStartPosition + offset);
@@ -37,9 +37,9 @@ std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f
 	
 	_createTileChain(tileChain, source, destination, wnd, eng);
 
-	if (!tileChain.size() > 1)
+	if (tileChain.size() > 1)
 	{
-		int pathIterations = tileChain.size() - 1;
+		int pathIterations = (int)tileChain.size() - 1;
 
 		for (int i = 0; i < pathIterations; i++)
 		{
@@ -69,7 +69,7 @@ void Grid::SetWaypoints(const std::vector<Waypoint>& waypoints, QuadTree * q)
 
 	Timer t;
 	t.Start();
-	int size = m_waypoints.size();
+	int size = (int)m_waypoints.size();
 
 	using namespace DirectX;
 
@@ -128,7 +128,7 @@ Tile Grid::TileFromWorldCoords(const sf::Vector2f & worldCoord) const
 	sf::Vector2f tileSize = Tile::GetTileSize();
 	sf::Vector2f gridStart = m_grid[0].GetWorldCoord();
 	sf::Vector2f startToSource = worldCoord - gridStart;
-	sf::Vector2i gridSourceIndex = sf::Vector2i(startToSource.x / tileSize.x, startToSource.y / tileSize.y);
+	sf::Vector2i gridSourceIndex = sf::Vector2i((int)(startToSource.x / tileSize.x), (int)(startToSource.y / tileSize.y));
 
 	if (gridSourceIndex.x < 0 || gridSourceIndex.x >= m_gridSize.x * m_gridSize.y)
 	{
@@ -176,8 +176,8 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 	sf::Vector2f startToSource = source - gridStart;
 	sf::Vector2f startToEnd = destination - gridStart;
 
-	sf::Vector2i gridSourceIndex = sf::Vector2i(startToSource.x / tileSize.x, startToSource.y / tileSize.y);
-	sf::Vector2i gridDestIndex = sf::Vector2i(startToEnd.x / tileSize.x, startToEnd.y / tileSize.y);
+	sf::Vector2i gridSourceIndex = sf::Vector2i((int)(startToSource.x / tileSize.x), (int)(startToSource.y / tileSize.y));
+	sf::Vector2i gridDestIndex = sf::Vector2i((int)(startToEnd.x / tileSize.x), (int)(startToEnd.y / tileSize.y));
 
 
 	if (gridSourceIndex.x	< 0 || gridSourceIndex.x	>= m_gridSize.x ||
@@ -349,10 +349,10 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 
 		//float horVerCost = Tile::GetTileSize().x;
 		//float diagCost = std::sqrt(Tile::GetTileSize().x * 2.0f);
-		float horVerCost = 1;
-		float diagCost = 1.414;
+		float horVerCost = 1.0f;
+		float diagCost = 1.414f;
 
-		int parentIndex = nodes.size() - 1;
+		int parentIndex = (int)nodes.size() - 1;
 
 		_checkNode(currentNode, horVerCost, 0, -1, tileDestination, earlyExploration, parentIndex, closedList);
 		/*---------- South ----------*/
@@ -412,15 +412,15 @@ bool Grid::_isValidCoord(const sf::Vector2i & coord)
 
 float Grid::_calcHValue(const Tile & s, const Tile & d)
 {
-	float deltaX = abs(s.GetGridCoord().x - d.GetGridCoord().x);
-	float deltaY = abs(s.GetGridCoord().y - d.GetGridCoord().y);
+	float deltaX = (float)abs(s.GetGridCoord().x - d.GetGridCoord().x);
+	float deltaY = (float)abs(s.GetGridCoord().y - d.GetGridCoord().y);
 
 
 	// 1.0f = Direct costs
 	// 1.414f = Diagonal costs
 	// 1.0f * (x + y) + (1.414f - 2 * 1.0f) * min(x, y)
 	//return Tile::GetTileSize().x * (deltaX + deltaY);// +(std::sqrt(Tile::GetTileSize().x) - Tile::GetTileSize().x) * std::min(deltaX, deltaY);
-	return (deltaX + deltaY) + (-0.414) * std::min(deltaX, deltaY);
+	return (deltaX + deltaY) + (-0.414f) * std::min(deltaX, deltaY);
 }
 
 void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
@@ -435,7 +435,7 @@ void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & s
 	
 	if (!waypointPath.empty())
 	{
-		int nrOfWaypoints = waypointPath.size();
+		int nrOfWaypoints = (int)waypointPath.size();
 		for (int i = 0; i < nrOfWaypoints; i++)
 		{
 			tileChain.push_back(TileFromWorldCoords(waypointPath[i]->GetWorldCoord()));
@@ -454,18 +454,18 @@ std::vector<Waypoint*> Grid::_findWaypointPath(Waypoint * source, const Waypoint
 	while (!waypointPath.empty() && waypointPath.back() != destination)
 	{
 		float lowestConnectionCost = FLT_MAX;
-		Waypoint * goToWaypoint = nullptr;
+		int goToWaypoint = -1;
 		int waypointIndex = 0;
 		current = waypointPath.back();
 		waypointConnections = current->GetConnections();
 
 		if (!waypointConnections.empty())
 		{
-			int connectionsSize = waypointConnections.size();
+			int connectionsSize = (int)waypointConnections.size();
 
 			for (int i = 0; i < connectionsSize; i++)
 			{
-				if (!waypointConnections[i].Waypoint->GetVisited())
+				if (!m_waypoints[waypointConnections[i].Waypoint].GetVisited())
 				{
 					float connectionTraversalCost = _calcWaypointHeuristic(current, destination) + waypointConnections[i].Cost;
 
@@ -478,10 +478,10 @@ std::vector<Waypoint*> Grid::_findWaypointPath(Waypoint * source, const Waypoint
 				}
 			}
 
-			if (goToWaypoint)
+			if (goToWaypoint != -1)
 			{
-				goToWaypoint->SetVisited(true);
-				waypointPath.push_back(goToWaypoint);
+				m_waypoints[goToWaypoint].SetVisited(true);
+				waypointPath.push_back(&m_waypoints[goToWaypoint]);
 			}
 			else
 			{
@@ -497,7 +497,7 @@ std::vector<Waypoint*> Grid::_findWaypointPath(Waypoint * source, const Waypoint
 	}
 
 	// Reset the waypoints
-	int nrOfWaypoints = m_waypoints.size();
+	int nrOfWaypoints = (int)m_waypoints.size();
 	for (int i = 0; i < nrOfWaypoints; i++)
 		m_waypoints[i].SetVisited(false);
 

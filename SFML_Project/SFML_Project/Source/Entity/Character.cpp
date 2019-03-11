@@ -22,8 +22,8 @@ void Character::Update(double dt)
 		DirectX::XMVECTOR xmVDir = DirectX::XMVectorSet(direction.x, direction.y, 0.0f, 0.0f);
 		DirectX::XMStoreFloat2(&xmDir, DirectX::XMVector2Normalize(xmVDir));
 		sf::Vector2f moveDir;
-		moveDir.x = xmDir.x * dt * m_speed;
-		moveDir.y = xmDir.y * dt * m_speed;
+		moveDir.x = xmDir.x * (float)dt * m_speed;
+		moveDir.y = xmDir.y * (float)dt * m_speed;
 
 		if (m_path.size() > 1)
 		{

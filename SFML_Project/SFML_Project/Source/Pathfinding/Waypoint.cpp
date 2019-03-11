@@ -79,4 +79,5 @@ void Waypoint::_copy(const Waypoint & other)
 	m_connections = other.m_connections;
 	m_worldCoord = other.m_worldCoord;
 	m_visited = other.m_visited;
+	m_arrayIndex = other.m_arrayIndex;
 }

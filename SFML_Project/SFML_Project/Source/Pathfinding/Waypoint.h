@@ -8,9 +8,9 @@ class Waypoint
 public:
 	struct Connection
 	{
-		Connection(Waypoint * _wp = nullptr, float _cost = FLT_MAX)
+		Connection(int wpIndex = -1, float _cost = FLT_MAX)
 		{
-			Waypoint = _wp;
+			Waypoint = wpIndex;
 			Cost = _cost;
 		}
 		Connection(const Connection & other)
@@ -21,9 +21,13 @@ public:
 		{
 			return Waypoint == other.Waypoint;
 		}
-		bool operator==(const Waypoint * other) const
+		bool operator==(const Waypoint & _waypoint) const
 		{
-			return Waypoint == other;
+			return Waypoint == _waypoint.GetArrayIndex();
+		}
+		bool operator==(const Waypoint * _waypoint) const
+		{
+			return Waypoint == _waypoint->GetArrayIndex();
 		}
 		bool operator<(const Connection & other) const
 		{
@@ -38,7 +42,7 @@ public:
 			return *this;
 		}
 
-		Waypoint * Waypoint = nullptr;
+		int Waypoint = -1;
 		float Cost = FLT_MAX;
 
 	private:
@@ -54,6 +58,9 @@ public:
 	Waypoint(float x = 0, float y = 0);
 	Waypoint(const sf::Vector2f & worldCoord);
 	Waypoint(const Waypoint & other);
+
+	void SetArrayIndex(int index) { m_arrayIndex = index; }
+	int GetArrayIndex() const { return m_arrayIndex; };
 
 	void SetWorldCoord(const sf::Vector2f & worldCoord);
 	void SetWorldCoord(float x, float y);
@@ -82,4 +89,5 @@ private:
 	int m_cluster = -1;
 	std::vector<Connection> m_connections;
 	bool m_visited = false;
+	int m_arrayIndex = -1;
 };

@@ -103,18 +103,18 @@ void Engine::Update(double dt)
 	float zoom = m_camera.GetPosition().z;
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		m_camera.Translate(CAMERA_MOVE_SPEED * zoom * dt, 0.0f);
+		m_camera.Translate(CAMERA_MOVE_SPEED * zoom * (float)dt, 0.0f);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		m_camera.Translate(-CAMERA_MOVE_SPEED * zoom * dt, 0.0f);
+		m_camera.Translate(-CAMERA_MOVE_SPEED * zoom * (float)dt, 0.0f);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		m_camera.Translate(0.0f, -CAMERA_MOVE_SPEED * zoom * dt);
+		m_camera.Translate(0.0f, -CAMERA_MOVE_SPEED * zoom * (float)dt);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		m_camera.Translate(0.0f, CAMERA_MOVE_SPEED * zoom * dt);
+		m_camera.Translate(0.0f, CAMERA_MOVE_SPEED * zoom * (float)dt);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-		m_camera.Translate(0.0f, 0.0f, -CAMERA_ZOOM_SPEED * dt);
+		m_camera.Translate(0.0f, 0.0f, -CAMERA_ZOOM_SPEED * (float)dt);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-		m_camera.Translate(0.0f, 0.0f, CAMERA_ZOOM_SPEED * dt);
+		m_camera.Translate(0.0f, 0.0f, CAMERA_ZOOM_SPEED * (float)dt);
 
 	bool mouseRightThisFrame = sf::Mouse::isButtonPressed(sf::Mouse::Right);
 
@@ -132,8 +132,6 @@ void Engine::Update(double dt)
 		sf::Vector2f clickWorld;
 		clickWorld.x = (((float)mousePos.x - (float)windowSize.x * 0.5f) * zoom) + m_camera.GetPosition().x;
 		clickWorld.y = (((float)mousePos.y - (float)windowSize.y * 0.5f) * zoom) + m_camera.GetPosition().y;
-
-		Timer pathTime;
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && !playerPath.empty())
 		{
@@ -173,7 +171,6 @@ void Engine::Draw(bool clearAndDisplay)
 {
 	if (clearAndDisplay)
 		m_pWindow->clear();
-	int startX, endX, startY, endY;
 	Camera * cam = Camera::GetActiveCamera();
 	sf::Vector3f camPos = cam->GetPosition();
 	sf::Vector2u wndSize = m_pWindow->getSize();
@@ -221,7 +218,7 @@ void Engine::_loadMap(const std::string & mapName)
 
 	while (std::getline(mapText, row))
 	{
-		xLevel = row.size();
+		xLevel = (int)row.size();
 
 		for (int i = 0; i < xLevel; i++)
 		{
@@ -268,7 +265,7 @@ void Engine::_loadMap(const std::string & mapName)
 	}
 
 
-	int size = std::max(yLevel, xLevel) * MAP_TILE_SIZE;
+	int size = std::max(yLevel, xLevel) * (int)MAP_TILE_SIZE;
 
 	m_quadTree.BuildTree(5, size, m_background.GetPosition());
 	m_quadTree.PlaceObjects(m_blocked);
@@ -350,18 +347,18 @@ void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vecto
 
 	Timer t;
 	t.Start();
-	for (int y = 0; y < m_mapHeight; y++)
+	for (unsigned int y = 0; y < m_mapHeight; y++)
 	{
-		for (int x = 0; x < m_mapWidth; x++)
+		for (unsigned int x = 0; x < m_mapWidth; x++)
 		{
 			int index = x + y * m_mapWidth;
 			if (map[index] /* This tile is blocked */ && !used[index])
 			{
 				
 				bool canContinue = true;
-				int stopIndex = m_mapWidth;
-				int x2;
-				int y2;
+				unsigned int stopIndex = m_mapWidth;
+				unsigned int x2;
+				unsigned int y2;
 				for (y2 = y; y2 < m_mapHeight; y2++)
 				{
 					int lol = x + y2 * m_mapWidth;
@@ -381,11 +378,11 @@ void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vecto
 					}
 				}
 
-				for (int y3 = y; y3 < y2; y3++)
+				for (unsigned int y3 = y; y3 < y2; y3++)
 				{
-					for (int x3 = x; x3 < x2; x3++)
+					for (unsigned int x3 = x; x3 < x2; x3++)
 					{
-						int subIndex = x3 + y3 * m_mapWidth;
+						unsigned int subIndex = x3 + y3 * m_mapWidth;
 						used[subIndex] = true;
 					}
 				}
@@ -405,9 +402,9 @@ void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vecto
 
 	std::cout << "Build blocks time: " << time << " ms\n";
 
-	for (int y = 0; y < m_mapHeight; y++)
+	for (unsigned int y = 0; y < m_mapHeight; y++)
 	{
-		for (int x = 0; x < m_mapWidth; x++)
+		for (unsigned int x = 0; x < m_mapWidth; x++)
 		{
 			sf::Vector2f lol = sf::Vector2f(x * MAP_TILE_SIZE, y* MAP_TILE_SIZE);
 
@@ -502,7 +499,10 @@ void Engine::_createWaypoints(std::vector<Waypoint>& waypoints, const std::vecto
 					}
 
 					if (canAdd)
+					{
+						wp.SetArrayIndex((int)waypoints.size());
 						waypoints.push_back(wp);
+					}
 				}
 			}
 		}
@@ -576,7 +576,7 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 {
 	using namespace DirectX;
 
-	int size = waypoints.size();
+	int size = (int)waypoints.size();
 
 	static const float CLUSTER_DIST = MAP_TILE_SIZE * 1.5f;
 
@@ -619,8 +619,8 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 					}
 					else
 					{
-						Waypoint::Connection c(&waypoints[j], length);
-						Waypoint::Connection c1(&waypoints[i], length);
+						Waypoint::Connection c(j, length);
+						Waypoint::Connection c1(i, length);
 
 						waypoints[i].AddConnection(c);
 						waypoints[j].AddConnection(c1);
