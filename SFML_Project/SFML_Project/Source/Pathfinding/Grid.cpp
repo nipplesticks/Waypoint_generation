@@ -540,6 +540,8 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 
 	while (!openList.empty())
 	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+			return std::vector<WpNode>();
 #pragma region Draw Path
 		if (wnd && Flag_Draw_Waypoint_Traversal)
 		{
@@ -595,6 +597,7 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 			drawTime += drawTimer.Stop(Timer::MILLISECONDS);
 		}
 #pragma endregion
+
 
 		std::sort(openList.begin(), openList.end());
 		current = openList.front();

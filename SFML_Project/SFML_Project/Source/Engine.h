@@ -109,6 +109,9 @@ private:
 
 	double m_pathFindingTime = 0.0;
 
+	Entity m_sourceTile, m_endTile;
+
+	
 	std::vector<Entity> m_blocked;
 	std::vector<Entity> m_field;
 	std::vector<Entity> m_waypoints;

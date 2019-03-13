@@ -6,7 +6,7 @@
 
 const bool DRAW_LINES = false;
 const bool DRAW_FIELDS = false;
-const bool CREATE_PATH = false;
+const bool CREATE_PATH = true;
 
 
 Engine::Engine(sf::RenderWindow * window)
@@ -78,12 +78,23 @@ Engine::Engine(sf::RenderWindow * window)
 
 	m_camera.SetPosition(0, 0);
 
+	m_sourceTile.SetColor(sf::Color::Cyan);
+	m_sourceTile.SetSize(MAP_TILE_SIZE, MAP_TILE_SIZE);
+	m_sourceTile.SetOutlineThickness(-3);
+	m_sourceTile.SetOutlineColor(sf::Color::Black);
+
+	m_endTile.SetColor(sf::Color::Magenta);
+	m_endTile.SetSize(MAP_TILE_SIZE, MAP_TILE_SIZE);
+	m_endTile.SetOutlineThickness(-3);
+	m_endTile.SetOutlineColor(sf::Color::Black);
+
+
 	Draw();
 
 	//_loadMap("SmallMap.txt");
 	//_loadMap("bigGameProjectGrid.txt");
-	//_loadMap("UMAP.txt");
-	_loadMap("bigGameProjectGridEdgy");
+	_loadMap("UMAP2.txt");
+	//_loadMap("bigGameProjectGridEdgy");
 	//_loadMap("bigGameProjectGridEdgy2");
 }
 
@@ -367,6 +378,10 @@ void Engine::Update(double dt)
 	if (s_runTest)
 	{
 		double d1, d2;
+
+		m_sourceTile.SetPosition(m_testPath[counter].first);
+		m_endTile.SetPosition(m_testPath[counter].second);
+
 		m_grid->FindPath(m_testPath[counter].first, m_testPath[counter].second, d1, d2, m_pWindow, this);
 
 		std::cout << "Path: " << counter + 1 << std::endl;
@@ -453,6 +468,9 @@ void Engine::Draw(bool clearAndDisplay)
 		l.Draw(m_pWindow);
 
 	m_player.Draw(m_pWindow);
+
+	m_sourceTile.Draw(m_pWindow);
+	m_endTile.Draw(m_pWindow);
 
 	for (int i = 0; i < _countof(m_buttons); i++)
 	{
