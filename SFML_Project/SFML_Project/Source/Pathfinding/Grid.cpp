@@ -9,6 +9,7 @@
 #define NUMBER_OF_THREADS 8
 
 bool Grid::Flag_Best_Grid_Path = true;
+bool Grid::Flag_Best_Waypoint_Path = false;
 
 Grid::Grid_Heuristic Grid::Flag_Grid_Heuristic = Grid::Pure_Distance;
 
@@ -676,7 +677,7 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 					}
 					else
 					{
-						if (nodes[m_waypoints[waypointConnections[i].Waypoint].GetArrayIndex()].parentIndex)
+						if (Grid::Flag_Best_Waypoint_Path || nodes[m_waypoints[waypointConnections[i].Waypoint].GetArrayIndex()].parentIndex)
 						{
 							earlyExploration.push_back(WpNode(waypointNodes.size() - 1, &m_waypoints[waypointConnections[i].Waypoint],
 								waypointConnections[i].Cost + current.gCost,
@@ -700,13 +701,16 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 			{
 				//std::sort(earlyExploration.begin(), earlyExploration.end());
 
-				/*for (int i = 0; i < earlyExploration.size(); i++)
+				if (Grid::Flag_Best_Waypoint_Path)
 				{
-					Waypoint * currentPtr = earlyExploration[i].ptr;
-					auto iterator = std::find(currentPtr->GetConnections().begin(), currentPtr->GetConnections().end(), current.ptr);
-					int index = iterator - currentPtr->GetConnections().begin();
-					nodes[currentPtr->GetArrayIndex()].visitedConnections[index] = true;
-				}*/
+					for (int i = 0; i < earlyExploration.size(); i++)
+					{
+						Waypoint * currentPtr = earlyExploration[i].ptr;
+						auto iterator = std::find(currentPtr->GetConnections().begin(), currentPtr->GetConnections().end(), current.ptr);
+						int index = iterator - currentPtr->GetConnections().begin();
+						nodes[currentPtr->GetArrayIndex()].visitedConnections[index] = true;
+					}
+				}
 
 				openList.insert(openList.end(), earlyExploration.begin(), earlyExploration.end());
 				earlyExploration.clear();
@@ -720,9 +724,6 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 float Grid::_calcWaypointHeuristic(const Waypoint * source, const Waypoint * destination)
 {
 	using namespace DirectX;
-
-	//auto p1 = TileFromWorldCoords(source->GetWorldCoord()).GetGridCoord();
-	//auto p2 = TileFromWorldCoords(destination->GetWorldCoord()).GetGridCoord();
 
 	auto p1 = source->GetWorldCoord();
 	auto p2 = destination->GetWorldCoord();

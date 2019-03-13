@@ -8,7 +8,6 @@ const bool DRAW_LINES = false;
 const bool DRAW_FIELDS = false;
 const bool CREATE_PATH = true;
 
-
 Engine::Engine(sf::RenderWindow * window)
 {
 	m_pWindow = window;
@@ -33,14 +32,15 @@ Engine::Engine(sf::RenderWindow * window)
 
 
 	m_strings[0] = "Best_Grid_Path : T";
-	m_strings[1] = "Grid_Heuristic : PD";
-	m_strings[2] = "Use_Waypoint_Traversal : T";
-	m_strings[3] = "Draw_Waypoint_Traversal : F";
-	m_strings[4] = "Flag_Draw_Grid_Traversal : F";
-	m_strings[5] = "ST_F_Wp_Traversal : 0";
-	m_strings[6] = "ST_D_Wp_Traversal : 0";
-	m_strings[7] = "ST_F_Grid_Traversal : 0";
-	m_strings[8] = "ST_D_Grid_Traversal : 0";
+	m_strings[1] = "Best_Wp_Path : F";
+	m_strings[2] = "Grid_Heuristic : PD";
+	m_strings[3] = "Use_Waypoint_Traversal : T";
+	m_strings[4] = "Draw_Waypoint_Traversal : F";
+	m_strings[5] = "Flag_Draw_Grid_Traversal : F";
+	m_strings[6] = "ST_F_Wp_Traversal : 0";
+	m_strings[7] = "ST_D_Wp_Traversal : 0";
+	m_strings[8] = "ST_F_Grid_Traversal : 0";
+	m_strings[9] = "ST_D_Grid_Traversal : 0";
 	
 	m_hArr[0] = Grid::Pure_Distance;
 	m_hArr[1] = Grid::Manhattan_Distance;
@@ -209,6 +209,18 @@ void Engine::Update(double dt)
 					}
 					break;
 				case 1:
+					if (pVal == 1)
+					{
+						Grid::Flag_Best_Waypoint_Path = false;
+						m_strings[1] = "Best_Wp_Path : F";
+					}
+					else
+					{
+						Grid::Flag_Best_Waypoint_Path = true;
+						m_strings[1] = "Best_Wp_Path : T";
+					}
+					break;
+				case 2:
 					if (!s_mouseLeftLastFrame)
 					{
 						if (pVal == 1)
@@ -219,57 +231,57 @@ void Engine::Update(double dt)
 						Grid::Flag_Grid_Heuristic = m_hArr[m_currentChoice];
 						
 						if (Grid::Flag_Grid_Heuristic == Grid::Pure_Distance)
-							m_strings[1] = "Grid_Heuristic : PD";
+							m_strings[2] = "Grid_Heuristic : PD";
 						else if (Grid::Flag_Grid_Heuristic == Grid::Manhattan_Distance)
-							m_strings[1] = "Grid_Heuristic : MD";
+							m_strings[2] = "Grid_Heuristic : MD";
 						else
-							m_strings[1] = "Grid_Heuristic : SD";
-					}
-					break;
-				case 2:
-					if (pVal == 1)
-					{
-						Grid::Flag_Use_Waypoint_Traversal = false;
-						m_strings[2] = "Use_Waypoint_Traversal : F";
-
-					}
-					else
-					{
-						Grid::Flag_Use_Waypoint_Traversal = true;
-						m_strings[2] = "Use_Waypoint_Traversal : T";
-
+							m_strings[2] = "Grid_Heuristic : SD";
 					}
 					break;
 				case 3:
 					if (pVal == 1)
 					{
+						Grid::Flag_Use_Waypoint_Traversal = false;
+						m_strings[3] = "Use_Waypoint_Traversal : F";
+
+					}
+					else
+					{
+						Grid::Flag_Use_Waypoint_Traversal = true;
+						m_strings[3] = "Use_Waypoint_Traversal : T";
+
+					}
+					break;
+				case 4:
+					if (pVal == 1)
+					{
 						Grid::Flag_Draw_Waypoint_Traversal = false;
-						m_strings[3] = "Draw_Waypoint_Traversal : F";
+						m_strings[4] = "Draw_Waypoint_Traversal : F";
 
 					}
 					else
 					{
 						Grid::Flag_Draw_Waypoint_Traversal = true;
-						m_strings[3] = "Draw_Waypoint_Traversal : T";
+						m_strings[4] = "Draw_Waypoint_Traversal : T";
 
 					}
 
 					break;
-				case 4:
+				case 5:
 					if (pVal == 1)
 					{
 						Grid::Flag_Draw_Grid_Traversal = false;
-						m_strings[4] = "Flag_Draw_Grid_Traversal : F";
+						m_strings[5] = "Flag_Draw_Grid_Traversal : F";
 
 					}
 					else
 					{
 						Grid::Flag_Draw_Grid_Traversal = true;
-						m_strings[4] = "Flag_Draw_Grid_Traversal : T";
+						m_strings[5] = "Flag_Draw_Grid_Traversal : T";
 
 					}
 					break;
-				case 5:
+				case 6:
 					if (pVal == 1)
 						Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal--;
 					else
@@ -277,19 +289,19 @@ void Engine::Update(double dt)
 
 					Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal = std::max(0, Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal);
 
-					m_strings[5] = "ST_F_Wp_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal);
+					m_strings[6] = "ST_F_Wp_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal);
 					break;
-				case 6:
+				case 7:
 					if (pVal == 1)
 						Grid::Flag_Sleep_Time_During_Waypoint_Traversal--;
 					else
 						Grid::Flag_Sleep_Time_During_Waypoint_Traversal++;
 
 					Grid::Flag_Sleep_Time_During_Waypoint_Traversal = std::max(0, Grid::Flag_Sleep_Time_During_Waypoint_Traversal);
-					m_strings[6] = "ST_D_Wp_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_During_Waypoint_Traversal);
+					m_strings[7] = "ST_D_Wp_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_During_Waypoint_Traversal);
 
 					break;
-				case 7:
+				case 8:
 					if (pVal == 1)
 						Grid::Flag_Sleep_Time_Finnished_Grid_Traversal--;
 					else
@@ -297,16 +309,16 @@ void Engine::Update(double dt)
 
 					Grid::Flag_Sleep_Time_Finnished_Grid_Traversal = std::max(0, Grid::Flag_Sleep_Time_Finnished_Grid_Traversal);
 
-					m_strings[7] = "ST_F_Grid_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_Finnished_Grid_Traversal);
+					m_strings[8] = "ST_F_Grid_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_Finnished_Grid_Traversal);
 					break;
-				case 8:
+				case 9:
 					if (pVal == 1)
 						Grid::Flag_Sleep_Time_During_Grid_Traversal--;
 					else
 						Grid::Flag_Sleep_Time_During_Grid_Traversal++;
 
 					Grid::Flag_Sleep_Time_During_Grid_Traversal = std::max(0, Grid::Flag_Sleep_Time_During_Grid_Traversal);
-					m_strings[8] = "ST_D_Grid_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_During_Grid_Traversal);
+					m_strings[9] = "ST_D_Grid_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_During_Grid_Traversal);
 					break;
 				}
 

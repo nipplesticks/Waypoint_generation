@@ -19,6 +19,7 @@ public:
 	};
 
 	static bool Flag_Best_Grid_Path;
+	static bool Flag_Best_Waypoint_Path;
 
 	static Grid_Heuristic Flag_Grid_Heuristic;
 
