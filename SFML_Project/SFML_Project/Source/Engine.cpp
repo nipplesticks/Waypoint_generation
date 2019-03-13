@@ -4,8 +4,6 @@
 #include <DirectXMath.h>
 #include <sstream>
 
-const bool DRAW_LINES = false;
-const bool DRAW_FIELDS = false;
 const bool CREATE_PATH = true;
 
 Engine::Engine(sf::RenderWindow * window)
@@ -41,6 +39,8 @@ Engine::Engine(sf::RenderWindow * window)
 	m_strings[7] = "ST_D_Wp_Traversal : 0";
 	m_strings[8] = "ST_F_Grid_Traversal : 0";
 	m_strings[9] = "ST_D_Grid_Traversal : 0";
+	m_strings[10] = "Draw_Connections : F";
+	m_strings[11] = "Draw_Fields : F";
 	
 	m_hArr[0] = Grid::Pure_Distance;
 	m_hArr[1] = Grid::Manhattan_Distance;
@@ -320,6 +320,30 @@ void Engine::Update(double dt)
 					Grid::Flag_Sleep_Time_During_Grid_Traversal = std::max(0, Grid::Flag_Sleep_Time_During_Grid_Traversal);
 					m_strings[9] = "ST_D_Grid_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_During_Grid_Traversal);
 					break;
+				case 10:
+					if (pVal == 1)
+					{
+						m_drawConnections = false;
+						m_strings[10] = "Draw_Connections : F";
+					}
+					else
+					{
+						m_drawConnections = true;
+						m_strings[10] = "Draw_Connections : T";
+					}
+					break;
+				case 11:
+					if (pVal == 1)
+					{
+						m_drawFields = false;
+						m_strings[11] = "Draw_Fields : F";
+					}
+					else
+					{
+						m_drawFields = true;
+						m_strings[11] = "Draw_Fields : T";
+					}
+					break;
 				}
 
 				for (int k = 0; k < _countof(m_strings); k++)
@@ -470,13 +494,20 @@ void Engine::Draw(bool clearAndDisplay)
 	for (auto & b : m_blocked)
 		b.Draw(m_pWindow);
 
-	for (auto & f : m_field)
-		f.Draw(m_pWindow);
+	if (m_drawFields)
+	{
+		for (auto & f : m_field)
+			f.Draw(m_pWindow);
+	}
 
 	for (auto & w : m_waypoints)
 		w.Draw(m_pWindow);
-	for (auto & l : m_lines)
-		l.Draw(m_pWindow);
+
+	if (m_drawConnections)
+	{
+		for (auto & l : m_lines)
+			l.Draw(m_pWindow);
+	}
 
 	m_player.Draw(m_pWindow);
 
@@ -609,6 +640,9 @@ void Engine::_loadMap(const std::string & mapName)
 	_createWaypoints(waypoints, map);
 	std::cout << "Time to createWaypoints: " << t.Stop(Timer::MILLISECONDS) << std::endl;
 
+
+	std::map<Waypoint*, sf::Color> conToColor;
+
 	for (auto & w: waypoints)
 	{
 		Entity e;
@@ -617,59 +651,67 @@ void Engine::_loadMap(const std::string & mapName)
 		e.SetColor(sf::Color::Black);
 		m_waypoints.push_back(e);
 
-		if (DRAW_LINES)
+		for (auto & c : w.GetConnections())
 		{
-			for (auto & c : w.GetConnections())
+			Line l;
+			l.SetLine(w.GetWorldCoord(), waypoints[c.Waypoint].GetWorldCoord());
+			sf::Color col;
+
+			Waypoint * wp = &waypoints[c.Waypoint];
+
+			auto it = conToColor.find(wp);
+			if (it == conToColor.end())
 			{
-				Line l;
-				l.SetLine(w.GetWorldCoord(), waypoints[c.Waypoint].GetWorldCoord());
-				l.SetColor(sf::Color::Blue);
-				m_lines.push_back(l);
+				col = sf::Color(rand() % 256, rand() % 256, rand() % 256);
+				conToColor.insert(conToColor.end(), std::pair(wp, col));
 			}
+			else
+			{
+				col = conToColor[wp];
+			}
+
+			l.SetColor(col);
+			m_lines.push_back(l);
 		}
 	}
 
 	m_grid->SetWaypoints(waypoints, &m_quadTree);
 
 
-	if (DRAW_FIELDS)
+	std::map<Waypoint *, sf::Color> wpToColor;
+
+	for (int y = 0; y < m_mapHeight; y++)
 	{
-		std::map<Waypoint *, sf::Color> wpToColor;
-
-		for (int y = 0; y < m_mapHeight; y++)
+		for (int x = 0; x < m_mapWidth; x++)
 		{
-			for (int x = 0; x < m_mapWidth; x++)
+			Tile t = m_grid->At(x, y);
+			Waypoint * wp;
+
+			if ((wp = t.GetFieldOwner()) != nullptr)
 			{
-				Tile t = m_grid->At(x, y);
-				Waypoint * wp;
+				Entity e;
+				e.SetPosition(t.GetWorldCoord());
+				e.SetSize(t.GetTileSize());
 
-				if ((wp = t.GetFieldOwner()) != nullptr)
+				sf::Color c;
+
+				auto it = wpToColor.find(wp);
+				if (it == wpToColor.end())
 				{
-					Entity e;
-					e.SetPosition(t.GetWorldCoord());
-					e.SetSize(t.GetTileSize());
-
-					sf::Color c;
-
-					auto it = wpToColor.find(wp);
-					if (it == wpToColor.end())
-					{
-						c = sf::Color(rand() % 256, rand() % 256, rand() % 256);
-						wpToColor.insert(wpToColor.end(), std::pair(wp, c));
-					}
-					else
-					{
-						c = wpToColor[wp];
-					}
-					e.SetColor(c);
-
-					m_field.push_back(e);
-
+					c = sf::Color(rand() % 256, rand() % 256, rand() % 256);
+					wpToColor.insert(wpToColor.end(), std::pair(wp, c));
 				}
+				else
+				{
+					c = wpToColor[wp];
+				}
+				e.SetColor(c);
+
+				m_field.push_back(e);
+
 			}
 		}
 	}
-
 	
 
 }

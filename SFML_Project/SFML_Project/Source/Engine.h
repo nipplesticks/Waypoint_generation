@@ -89,19 +89,22 @@ private:
 	Texture m_grassTexture;
 	Texture m_brickTexture;
 
+	bool m_drawFields = false;
+	bool m_drawConnections = false;
+
 	QuadTree m_quadTree;
 	
-	YesOrNo m_buttons[10];
+	YesOrNo m_buttons[12];
 
 	Grid::Grid_Heuristic m_hArr[3];
 	int m_currentChoice = 0;
 
 	sf::Font m_font;
-	sf::Text m_text[10];
+	sf::Text m_text[12];
 
 	sf::Text m_mousePosText;
 
-	std::string m_strings[10];
+	std::string m_strings[12];
 
 	std::pair<sf::Vector2f, sf::Vector2f> m_testPath[9];
 
