@@ -3,8 +3,8 @@
 #include <fstream>
 #include <DirectXMath.h>
 
-const bool DRAW_LINES = false;
-const bool DRAW_FIELDS = false;
+const bool DRAW_LINES = 0;
+const bool DRAW_FIELDS = 0;
 
 Engine::Engine(sf::RenderWindow * window)
 {
@@ -30,12 +30,12 @@ Engine::Engine(sf::RenderWindow * window)
 
 	m_camera.SetPosition(0, 0);
 
+	Draw();
 	//_loadMap("SmallMap.txt");
 	//_loadMap("bigGameProjectGrid.txt");
 	//_loadMap("UMAP.txt");
-
-	Draw();
-
+	//_loadMap("TotalyOpen.txt");
+	//_loadMap("AlmostTotalyOpen.txt");
 	_loadMap("bigGameProjectGridEdgy.txt");
 }
 
@@ -627,8 +627,13 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 				{
 					float length = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(lineEnd.x, lineEnd.y, 0.0f, 0.0f), XMVectorSet(lineStart.x, lineStart.y, 0.0f, 0.0f))));
 
+					Waypoint::Connection c(j, length);
+					Waypoint::Connection c1(i, length);
 
-					if (sqrt(length) < CLUSTER_DIST)
+					waypoints[i].AddConnection(c);
+					waypoints[j].AddConnection(c1);
+
+					/*if (sqrt(length) < CLUSTER_DIST)
 					{
 						if (waypoints[i].GetCluster() == -1 && waypoints[j].GetCluster() == -1)
 						{
@@ -652,7 +657,7 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 
 						waypoints[i].AddConnection(c);
 						waypoints[j].AddConnection(c1);
-					}
+					}*/
 				}
 			}
 		}
