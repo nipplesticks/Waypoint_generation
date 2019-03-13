@@ -8,6 +8,18 @@
 
 #define NUMBER_OF_THREADS 8
 
+bool Grid::Flag_Best_Grid_Path = false;
+
+bool Grid::Flag_Use_Waypoint_Traversal = true;
+
+bool Grid::Flag_Draw_Waypoint_Traversal = false;
+bool Grid::Flag_Draw_Grid_Traversal = false;
+
+int Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal = 0;
+int Grid::Flag_Sleep_Time_During_Waypoint_Traversal = 0;
+int Grid::Flag_Sleep_Time_Finnished_Grid_Traversal = 0;
+int Grid::Flag_Sleep_Time_During_Grid_Traversal = 0;
+
 Grid::Grid(const sf::Vector2i & size, const sf::Vector2f & gridStartPosition, const sf::Vector2f & tileSize)
 {
 	Tile::SetTileSize(tileSize);
@@ -45,7 +57,8 @@ std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f
 	std::vector<Tile> tileChain;
 	std::vector<Tile> path;
 	
-	_createTileChain(tileChain, source, destination, wnd, eng);
+	if (Flag_Use_Waypoint_Traversal)
+		_createTileChain(tileChain, source, destination, wnd, eng);
 
 	if (tileChain.size() > 1)
 	{
@@ -56,7 +69,7 @@ std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f
 			Timer t;
 			t.Start();
 			std::vector<Tile> partOfPath = _findPath(tileChain[i].GetWorldCoord(), tileChain[i + 1].GetWorldCoord(), wnd, eng);
-			//std::cout << "Part: " << i << ": " << t.Stop(Timer::MILLISECONDS) << " ms\n";
+			
 			path.insert(path.end(), partOfPath.begin(), partOfPath.end());
 		}
 	}
@@ -67,7 +80,6 @@ std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f
 		path = _findPath(source, destination, wnd, eng);
 	}
 
-	//return _findPath(source, destination, wnd, eng);
 	return path;
 }
 
@@ -187,16 +199,14 @@ void Grid::_checkNode(const Node & current,
 	{
 		Node newNode(parentIndex, nextTile.Get1DGridCoord(m_gridSize.x), current.gCost + addedGCost, _calcHValue(nextTile, destination));
 		openList.push_back(newNode);
-		closedList[nextTileIndex] = true;
+
+		if (!Flag_Best_Grid_Path)
+			closedList[nextTileIndex] = true;
 	}
 }
 
 std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
 {
-	static int static_counter = 0;
-	//std::ofstream pathFile;
-	//pathFile.open("Path" + std::to_string(static_counter++) + ".txt");
-
 	sf::Vector2f tileSize = Tile::GetTileSize();
 	sf::Vector2f gridStart = m_grid[0].GetWorldCoord();
 
@@ -218,10 +228,6 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 
 	Node nSource(-1, tileSource.Get1DGridCoord(m_gridSize.x), 0.f, _calcHValue(tileSource, tileDestination));
 
-	//pathFile << "Source: \n" + tileSource.ToString();
-	//pathFile << "Dest: \n" + tileDestination.ToString();
-
-
 	if (tileSource.GetSubGrid() != tileDestination.GetSubGrid() || !tileDestination.IsPathable() || !tileSource.IsPathable())
 		return std::vector<Tile>();
 
@@ -236,76 +242,66 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 
 	openList.push_back(currentNode);
 
-	int colorCounter = 0;
-
-	//std::cout << "********************************************************************************************************************" << std::endl;
 	while (!openList.empty() || earlyExplorationNode.parentIndex != -1)
 	{
 #pragma region DRAW PATH
-		//if (wnd)
-		//{
+		if (wnd && Flag_Draw_Grid_Traversal)
+		{
 
-		//	sf::Event event;
-		//	while (wnd->pollEvent(event))
-		//	{
-		//		if (event.type == sf::Event::Closed)
-		//			wnd->close();
-		//	}
+			sf::Event event;
+			while (wnd->pollEvent(event))
+			{
+				if (event.type == sf::Event::Closed)
+					wnd->close();
+			}
 
-		//	wnd->clear();
-		//	eng->Draw(false);
-
-
-		//	int counter = 0;
-
-		//	Node printMe = currentNode;
-		//	//Tile t = m_grid[printMe.gridTileIndex];
-		//	Entity e;
-		//	/*e.SetPosition(t.GetWorldCoord());
-		//	e.SetSize(32, 32);
-		//	e.SetColor(sf::Color::Red);
-		//	e.Draw(wnd);*/
-
-		//	for (auto & n : nodes)
-		//	{
-		//		Tile t = m_grid[n.gridTileIndex];
-		//		
-		//		e.SetPosition(t.GetWorldCoord());
-		//		e.SetSize(t.GetTileSize());
-		//		e.SetColor(sf::Color::Red);
-		//		e.SetOutlineColor(sf::Color::Black);
-		//		e.SetOutlineThickness(-1.0f);
-
-		//		//counter++;
-		//		//e.SetColor((colorCounter % 255), (colorCounter / 255) % 255, ((colorCounter / 255) / 255) % 255);
-		//		//colorCounter += 1;
-
-		//		e.Draw(wnd);
-		//	}
-
-		//	while (printMe.parentIndex != -1)
-		//	{
-		//		Tile t = m_grid[printMe.gridTileIndex];
-		//		printMe = nodes[printMe.parentIndex];
-
-		//		e.SetPosition(t.GetWorldCoord());
-		//		e.SetSize(t.GetTileSize());
-		//		e.SetColor(sf::Color::White);
-		//		e.SetOutlineColor(sf::Color::Black);
-		//		e.SetOutlineThickness(-1.0f);
-
-		//		e.Draw(wnd);
-		//	}
-
-		//	wnd->setTitle(std::to_string(nodes.size()));
-
-		//	wnd->display();
-		//}
+			wnd->clear();
+			eng->Draw(false);
 
 
-		//pathFile << "###########################################################################################\n";
-		//pathFile << "Iteration: " << std::to_string(counter++) << "\n";
+			int counter = 0;
+
+			Node printMe = currentNode;
+			
+			Entity e;
+
+			for (auto & n : nodes)
+			{
+				Tile t = m_grid[n.gridTileIndex];
+				
+				e.SetPosition(t.GetWorldCoord());
+				e.SetSize(t.GetTileSize());
+				e.SetColor(sf::Color::Red);
+				e.SetOutlineColor(sf::Color::Black);
+				e.SetOutlineThickness(-1.0f);
+
+				e.Draw(wnd);
+			}
+
+			while (printMe.parentIndex != -1)
+			{
+				Tile t = m_grid[printMe.gridTileIndex];
+				printMe = nodes[printMe.parentIndex];
+
+				e.SetPosition(t.GetWorldCoord());
+				e.SetSize(t.GetTileSize());
+				e.SetColor(sf::Color::White);
+				e.SetOutlineColor(sf::Color::Black);
+				e.SetOutlineThickness(-1.0f);
+
+				e.Draw(wnd);
+			}
+
+			wnd->setTitle(std::to_string(nodes.size()));
+
+			wnd->display();
+
+			if (Flag_Sleep_Time_During_Grid_Traversal)
+				Sleep(Flag_Sleep_Time_During_Grid_Traversal);
+		}
+
 #pragma endregion
+
 		if (earlyExplorationNode.parentIndex != -1)
 		{
 			currentNode = earlyExplorationNode;
@@ -318,10 +314,6 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 			openList.erase(openList.begin());
 		}
 		nodes.push_back(currentNode);
-
-		//std::cout << "CurrentTile:\n" << currentTile.ToString() << std::endl;
-
-		//pathFile << "CurrentTile:\n" << currentTile.ToString();
 
 		if (currentNode.gridTileIndex == tileDestination.Get1DGridCoord(m_gridSize.x))
 		{
@@ -336,16 +328,39 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 
 			std::reverse(path.begin(), path.end());
 			path.push_back(tileDestination);
-			//path.erase(path.begin());
 
-			//pathFile << "Final path:\n";
-			for (auto & t : path)
+			if (wnd && Flag_Draw_Grid_Traversal)
 			{
-				//pathFile << t.ToString();
+				sf::Event event;
+				while (wnd->pollEvent(event))
+				{
+					if (event.type == sf::Event::Closed)
+						wnd->close();
+				}
+
+				wnd->clear();
+				eng->Draw(false);
+
+				Entity e;
+				e.SetColor(sf::Color::Red);
+				e.SetOutlineColor(sf::Color::Black);
+				e.SetOutlineThickness(-1.0f);
+
+				for (int i = 0; i < path.size(); i++)
+				{
+					e.SetPosition(path[i].GetWorldCoord());
+					e.SetSize(path[i].GetTileSize());
+					e.Draw(wnd);
+				}
+
+				wnd->display();
+
+				if (Flag_Sleep_Time_Finnished_Grid_Traversal)
+					Sleep(Flag_Sleep_Time_Finnished_Grid_Traversal);
+
 			}
 
-			//pathFile.close();
-			//std::cout << "********************************************************************************************************************" << std::endl;
+
 			return path;
 		}
 		closedList[currentNode.gridTileIndex] = true;
@@ -434,8 +449,10 @@ float Grid::_calcHValue(const Tile & s, const Tile & d)
 {
 	using namespace DirectX;
 
-	auto p1 = s.GetWorldCoord();
-	auto p2 = d.GetWorldCoord();
+	//auto p1 = s.GetWorldCoord();
+	//auto p2 = d.GetWorldCoord();
+	auto p1 = s.GetGridCoord();
+	auto p2 = d.GetGridCoord();
 
 	float l = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(p2.x, p2.y, 0.0f, 0.0f), XMVectorSet(p1.x, p1.y, 0.0f, 0.0f))));
 
@@ -480,14 +497,12 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 	std::vector<WpNode> waypointNodes;
 	std::vector<WpNode> earlyExploration;
 
-
-
 	openList.push_back(current);
 
 	while (!openList.empty())
 	{
 #pragma region Draw Path
-		/*if (wnd)
+		if (wnd && Flag_Draw_Waypoint_Traversal)
 		{
 
 			sf::Event event;
@@ -532,9 +547,10 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 				}
 			}
 
-			wnd->display();*/
-			//Sleep(10);
-		//}
+			wnd->display();
+			if (Flag_Sleep_Time_During_Waypoint_Traversal)
+				Sleep(Flag_Sleep_Time_During_Waypoint_Traversal);
+		}
 #pragma endregion
 
 		std::sort(openList.begin(), openList.end());
@@ -554,10 +570,7 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 			}
 			std::reverse(waypointPath.begin(), waypointPath.end());
 
-
-			//std::cout << "A path!, Time: " << t.Stop(Timer::MILLISECONDS) << std::endl;
-
-			/*if (wnd)
+			if (wnd && Flag_Draw_Waypoint_Traversal)
 			{
 
 				sf::Event event;
@@ -570,8 +583,6 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 				wnd->clear();
 				eng->Draw(false);
 
-				int counter = 0;
-
 				WpNode printMe = current;
 				Line l;
 				l.SetColor(sf::Color::Red);
@@ -582,8 +593,10 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 					l.Draw(wnd);
 				}
 				wnd->display();
-				Sleep(2500);
-			}*/
+
+				if (Flag_Sleep_Time_Finnished_Waypoint_Traversal)
+					Sleep(Flag_Sleep_Time_Finnished_Waypoint_Traversal);
+			}
 
 			return waypointPath;
 		}
@@ -654,8 +667,8 @@ float Grid::_calcWaypointHeuristic(const Waypoint * source, const Waypoint * des
 {
 	using namespace DirectX;
 
-	auto p1 = source->GetWorldCoord();
-	auto p2 = destination->GetWorldCoord();
+	auto p1 = TileFromWorldCoords(source->GetWorldCoord()).GetGridCoord();
+	auto p2 = TileFromWorldCoords(destination->GetWorldCoord()).GetGridCoord();
 
 	float l = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(p2.x, p2.y, 0.0f, 0.0f), XMVectorSet(p1.x, p1.y, 0.0f, 0.0f))));
 

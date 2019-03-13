@@ -11,6 +11,19 @@ class Engine;
 class Grid
 {
 public:
+	static bool Flag_Best_Grid_Path;
+
+	static bool Flag_Use_Waypoint_Traversal;
+
+	static bool Flag_Draw_Waypoint_Traversal;
+	static bool Flag_Draw_Grid_Traversal;
+
+	static int	Flag_Sleep_Time_Finnished_Waypoint_Traversal;
+	static int	Flag_Sleep_Time_During_Waypoint_Traversal;
+	static int	Flag_Sleep_Time_Finnished_Grid_Traversal;
+	static int	Flag_Sleep_Time_During_Grid_Traversal;
+	
+public:
 	Grid(const sf::Vector2i & size, const sf::Vector2f & gridStartPosition, const sf::Vector2f & tileSize);
 	~Grid();
 
