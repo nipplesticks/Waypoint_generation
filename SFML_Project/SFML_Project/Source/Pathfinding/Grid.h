@@ -38,7 +38,7 @@ public:
 	Grid(const sf::Vector2i & size, const sf::Vector2f & gridStartPosition, const sf::Vector2f & tileSize);
 	~Grid();
 
-	std::vector<Tile> FindPath(const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd = nullptr, Engine * eng = nullptr);
+	std::vector<Tile> FindPath(const sf::Vector2f & source, const sf::Vector2f & destination, double & _outTimeWp, double & _outTimeGrid, sf::RenderWindow * wnd = nullptr, Engine * eng = nullptr);
 
 	void Block(const sf::Vector2i & coord);
 
@@ -149,15 +149,15 @@ private:
 		std::vector<bool> & closedList
 	);
 
-	std::vector<Tile> _findPath(const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng);
+	std::vector<Tile> _findPath(const sf::Vector2f & source, const sf::Vector2f & destination, double & _outTime, sf::RenderWindow * wnd, Engine * eng);
 	bool _isValid(const Tile & tile);
 	bool _isValidCoord(const sf::Vector2i & coord);
 
 	float _calcHValue(const Tile & s, const Tile & d);
 
 	// Waypoint tracing
-	void _createTileChain(std::vector<Tile> & tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng);
-	std::vector<WpNode> _findWaypointPath(Waypoint * source, Waypoint * destination, std::vector<WpNode> nodes, sf::RenderWindow * wnd, Engine * eng);
+	double _createTileChain(std::vector<Tile> & tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng);
+	std::vector<WpNode> _findWaypointPath(Waypoint * source, Waypoint * destination, std::vector<WpNode> nodes, double & _outTime, sf::RenderWindow * wnd, Engine * eng);
 
 	float _calcWaypointHeuristic(const Waypoint * source, const Waypoint * destination);
 };

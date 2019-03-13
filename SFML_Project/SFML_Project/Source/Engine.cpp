@@ -2,9 +2,12 @@
 #include <iostream>
 #include <fstream>
 #include <DirectXMath.h>
+#include <sstream>
 
 const bool DRAW_LINES = false;
 const bool DRAW_FIELDS = false;
+const bool CREATE_PATH = false;
+
 
 Engine::Engine(sf::RenderWindow * window)
 {
@@ -13,6 +16,22 @@ Engine::Engine(sf::RenderWindow * window)
 	sf::Vector2f bPos(0, 0);
 
 	m_font.loadFromFile("../Assets/ARLRDBD.TTF");
+
+	m_mousePosText.setFont(m_font);
+	m_mousePosText.setCharacterSize(16);
+	m_mousePosText.setFillColor(sf::Color::Red);
+	m_mousePosText.setOutlineThickness(5);
+	m_mousePosText.setOutlineColor(sf::Color::Black);
+
+	std::string tmpCoord = std::to_string(0.0f) + ", " + std::to_string(0.0f);
+	m_mousePosText.setString(tmpCoord);
+
+	auto bb = m_mousePosText.getLocalBounds();
+	sf::Vector2f origin(bb.width + 10.0f, 0);
+	m_mousePosText.setOrigin(origin);
+	m_mousePosText.setPosition(m_pWindow->getSize().x - 500, 0.0f);
+
+
 	m_strings[0] = "Best_Grid_Path : T";
 	m_strings[1] = "Grid_Heuristic : PD";
 	m_strings[2] = "Use_Waypoint_Traversal : T";
@@ -26,7 +45,6 @@ Engine::Engine(sf::RenderWindow * window)
 	m_hArr[0] = Grid::Pure_Distance;
 	m_hArr[1] = Grid::Manhattan_Distance;
 	m_hArr[2] = Grid::Stanford_Distance;
-
 
 	for (int i = 0; i < _countof(m_buttons); i++)
 	{
@@ -65,9 +83,8 @@ Engine::Engine(sf::RenderWindow * window)
 	//_loadMap("SmallMap.txt");
 	//_loadMap("bigGameProjectGrid.txt");
 	//_loadMap("UMAP.txt");
-
-
-	_loadMap("bigGameProjectGridEdgy.txt");
+	_loadMap("bigGameProjectGridEdgy");
+	//_loadMap("bigGameProjectGridEdgy2");
 }
 
 Engine::~Engine()
@@ -125,6 +142,8 @@ std::string sfVecToString(const sf::Vector2f & vec)
 void Engine::Update(double dt)
 {
 	static bool s_mouseLeftLastFrame = false;
+	static bool s_isPrinted = false;
+	static bool s_runTest = false;
 	static bool timerStart = false;
 	static Timer timer;
 
@@ -291,28 +310,99 @@ void Engine::Update(double dt)
 		}
 	}
 
+	sf::Vector2u windowSize = m_pWindow->getSize();
+	sf::Vector2f clickWorld;
+	clickWorld.x = (((float)mousePos.x - (float)windowSize.x * 0.5f) * zoom) + m_camera.GetPosition().x;
+	clickWorld.y = (((float)mousePos.y - (float)windowSize.y * 0.5f) * zoom) + m_camera.GetPosition().y;
+
+	std::string mpWorld = std::to_string(clickWorld.x) + ", " + std::to_string(clickWorld.y);
+
+	bool spacePressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
+		
+	static int counter = 0;
+
+	if (CREATE_PATH)
+	{
+		if (spacePressed && !s_isPrinted)
+		{
+			auto pPos = m_player.GetPosition();
+			std::string outStart = std::to_string(pPos.x) + " " + std::to_string(pPos.y) + " ";
+			std::string outDest = std::to_string(clickWorld.x) + " " + std::to_string(clickWorld.y) + "\n";
+			m_newPaths << outStart;
+			m_newPaths << outDest;
+			counter++;
+		}
+
+	
+		if (counter > 8 && m_newPaths.is_open())
+			m_newPaths.close();
+	}
+	else
+	{
+		if (spacePressed && !s_isPrinted)
+		{
+			s_runTest = true;
+			std::cout << "-- STARTING TEST -- \n";
+			std::cout << "Using Best Grid Path: " << (Grid::Flag_Best_Grid_Path ? "true" : "false") << std::endl;
+			std::cout << "Grid_Heuristic: ";
+
+			switch (Grid::Flag_Grid_Heuristic)
+			{
+			case 0:
+				std::cout << "Pure Distance\n";
+				break;
+			case 1:
+				std::cout << "Manhattan Distance\n";
+				break;
+			case 2:
+				std::cout << "Stanford Distance\n";
+				break;
+			}
+
+			std::cout << "Traversing waypoints: " << (Grid::Flag_Use_Waypoint_Traversal ? "true" : "false");
+			std::cout << "\n\n";
+		}
+	}
+
+	if (s_runTest)
+	{
+		double d1, d2;
+		m_grid->FindPath(m_testPath[counter].first, m_testPath[counter].second, d1, d2, m_pWindow, this);
+
+		std::cout << "Path: " << counter + 1 << std::endl;
+		std::cout << "WPPathTime: " << d1 << " ms\t GridPathTime: " << d2 << " ms\nTotal Time: " << d1 + d2 << " ms" << std::endl;
+		std::cout << "Source: [" << m_testPath[counter].first.x << " , " << m_testPath[counter].first.y << "] Destination: [" << m_testPath[counter].second.x << " , "<< m_testPath[counter].second.y << "]" << std::endl << std::endl;
+		
+		if (++counter > 8)
+		{
+			s_runTest = false;
+			counter = 0;
+			std::cout << "-- Test complete --\n";
+		}
+	}
+	s_isPrinted = spacePressed;
+
+	m_mousePosText.setString(mpWorld);
 
 	if (mouseRightThisFrame /* && !s_mouseRightLastFrame*/)
 	{
 		std::vector<Tile> playerPath = m_player.GetPath();
 		std::vector<Tile> newPath;
-		sf::Vector2u windowSize = m_pWindow->getSize();
 
-		sf::Vector2f clickWorld;
-		clickWorld.x = (((float)mousePos.x - (float)windowSize.x * 0.5f) * zoom) + m_camera.GetPosition().x;
-		clickWorld.y = (((float)mousePos.y - (float)windowSize.y * 0.5f) * zoom) + m_camera.GetPosition().y;
 
+
+		double dummy1, dummy2;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && !playerPath.empty())
 		{
 			
 			sf::Vector2f source = playerPath.back().GetWorldCoord();
-			newPath = m_grid->FindPath(source, clickWorld);
+			newPath = m_grid->FindPath(source, clickWorld, dummy1, dummy2);
 			newPath.insert(newPath.begin(), playerPath.begin(), playerPath.end());
 		}
 		else
 		{
 			
-			newPath = m_grid->FindPath(m_player.GetPosition() + m_player.GetSize() * 0.5f, clickWorld, m_pWindow, this);
+			newPath = m_grid->FindPath(m_player.GetPosition() + m_player.GetSize() * 0.5f, clickWorld, dummy1, dummy2, m_pWindow, this);
 
 		}
 		
@@ -370,6 +460,7 @@ void Engine::Draw(bool clearAndDisplay)
 		m_pWindow->draw(m_text[i]);
 	}
 
+	m_pWindow->draw(m_mousePosText);
 
 	if (clearAndDisplay)
 		m_pWindow->display();
@@ -385,10 +476,41 @@ void Engine::Terminate()
 	m_running = false;
 }
 
+void Engine::_loadTestPath(const std::string & pathName)
+{
+	std::ifstream mapPath;
+	mapPath.open("../Assets/" + pathName);
+
+	std::string line;
+
+	for (int i = 0; i < 9; i++)
+	{
+		std::getline(mapPath, line);
+		std::stringstream ss(line);
+		
+		std::pair<sf::Vector2f, sf::Vector2f> tmp;
+		
+		ss >> tmp.first.x;
+		ss >> tmp.first.y;
+		ss >> tmp.second.x;
+		ss >> tmp.second.y;
+
+		m_testPath[i] = tmp;
+	}
+
+	mapPath.close();
+}
+
 void Engine::_loadMap(const std::string & mapName)
 {
+	if (CREATE_PATH)
+		m_newPaths.open("../Assets/PATHS.txt");
+	else
+		_loadTestPath(mapName + "Paths.txt");
+
+
 	std::ifstream mapText;
-	mapText.open("../Assets/" + mapName);
+	mapText.open("../Assets/" + mapName + ".txt");
 
 	int yLevel = 0;
 	int xLevel = 0;

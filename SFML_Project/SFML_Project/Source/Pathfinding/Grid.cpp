@@ -47,8 +47,12 @@ Grid::~Grid()
 {
 }
 
-std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
+std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f & destination, double & _outTimeWp, double & _outTimeGrid, sf::RenderWindow * wnd, Engine * eng)
 {
+	_outTimeWp = 0.0;
+	_outTimeGrid = 0.0;
+
+
 	if (source.x < m_grid.front().GetWorldCoord().x || source.y < m_grid.front().GetWorldCoord().y ||
 		destination.x < m_grid.front().GetWorldCoord().x || destination.y < m_grid.front().GetWorldCoord().y ||
 		source.x > m_grid.back().GetWorldCoord().x + Tile::GetTileSize().x || source.y > m_grid.back().GetWorldCoord().y + Tile::GetTileSize().y ||
@@ -60,7 +64,7 @@ std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f
 	std::vector<Tile> path;
 	
 	if (Flag_Use_Waypoint_Traversal)
-		_createTileChain(tileChain, source, destination, wnd, eng);
+		_outTimeWp = _createTileChain(tileChain, source, destination, wnd, eng);
 
 	if (tileChain.size() > 1)
 	{
@@ -68,18 +72,17 @@ std::vector<Tile> Grid::FindPath(const sf::Vector2f & source, const sf::Vector2f
 
 		for (int i = 0; i < pathIterations; i++)
 		{
-			Timer t;
-			t.Start();
-			std::vector<Tile> partOfPath = _findPath(tileChain[i].GetWorldCoord(), tileChain[i + 1].GetWorldCoord(), wnd, eng);
-			
+			double time;
+			std::vector<Tile> partOfPath = _findPath(tileChain[i].GetWorldCoord(), tileChain[i + 1].GetWorldCoord(), time, wnd, eng);
 			path.insert(path.end(), partOfPath.begin(), partOfPath.end());
+			_outTimeGrid += time;
 		}
 	}
 	// Not sure if needed
 	// Might be an edge case if source and destination belong to the same waypoint
 	else
 	{
-		path = _findPath(source, destination, wnd, eng);
+		path = _findPath(source, destination, _outTimeGrid, wnd, eng);
 	}
 
 	return path;
@@ -207,8 +210,14 @@ void Grid::_checkNode(const Node & current,
 	}
 }
 
-std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
+std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2f & destination, double & _outTime, sf::RenderWindow * wnd, Engine * eng)
 {
+	_outTime = 0.0;
+	double drawTime = 0.0;
+	Timer totalTimer;
+	totalTimer.Start();
+
+
 	sf::Vector2f tileSize = Tile::GetTileSize();
 	sf::Vector2f gridStart = m_grid[0].GetWorldCoord();
 
@@ -234,9 +243,9 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 		return std::vector<Tile>();
 
 	std::vector<bool>	closedList(m_gridSize.x * m_gridSize.y);
+
 	std::vector<Node>	openList;
 	std::vector<Node>	earlyExploration;
-
 	std::vector<Node> nodes;
 
 	Node	currentNode = nSource;
@@ -249,7 +258,8 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 #pragma region DRAW PATH
 		if (wnd && Flag_Draw_Grid_Traversal)
 		{
-
+			Timer drawTimer;
+			drawTimer.Start();
 			sf::Event event;
 			while (wnd->pollEvent(event))
 			{
@@ -300,6 +310,8 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 
 			if (Flag_Sleep_Time_During_Grid_Traversal)
 				Sleep(Flag_Sleep_Time_During_Grid_Traversal);
+
+			drawTime += drawTimer.Stop(Timer::MILLISECONDS);
 		}
 
 #pragma endregion
@@ -336,6 +348,8 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 
 			if (wnd && Flag_Draw_Grid_Traversal)
 			{
+				Timer drawTimer;
+				drawTimer.Start();
 				sf::Event event;
 				while (wnd->pollEvent(event))
 				{
@@ -362,10 +376,11 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 
 				if (Flag_Sleep_Time_Finnished_Grid_Traversal)
 					Sleep(Flag_Sleep_Time_Finnished_Grid_Traversal);
-
+				drawTime += drawTimer.Stop(Timer::MILLISECONDS);
 			}
 
-
+			_outTime = totalTimer.Stop(Timer::MILLISECONDS);
+			_outTime -= drawTime;
 			return path;
 		}
 		closedList[currentNode.gridTileIndex] = true;
@@ -477,8 +492,9 @@ float Grid::_calcHValue(const Tile & s, const Tile & d)
 	}
 }
 
-void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
+double Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
 {
+	double time;
 	Tile sourceTile = TileFromWorldCoords(source);
 	Tile destinationTile = TileFromWorldCoords(destination);
 
@@ -486,9 +502,9 @@ void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & s
 	Waypoint * destinationWaypoint = destinationTile.GetFieldOwner();
 
 	if (sourceWaypoint == nullptr || destinationWaypoint == nullptr)
-		return;
+		return 0;
 
-	std::vector<WpNode> waypointPath = _findWaypointPath(sourceWaypoint, destinationWaypoint, m_wpNodes, wnd, eng);
+	std::vector<WpNode> waypointPath = _findWaypointPath(sourceWaypoint, destinationWaypoint, m_wpNodes, time, wnd, eng);
 	
 	tileChain.push_back(TileFromWorldCoords(source));
 
@@ -503,13 +519,18 @@ void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & s
 
 	tileChain.push_back(TileFromWorldCoords(destination));
 
+	return time;
 }
 
-std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * destination, std::vector<WpNode> nodes, sf::RenderWindow * wnd, Engine * eng)
+std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * destination, std::vector<WpNode> nodes, double & _outTime, sf::RenderWindow * wnd, Engine * eng)
 {
-	Timer t;
-	t.Start();
-	std::vector<Waypoint::Connection> waypointConnections;
+	_outTime = 0.0;
+
+	double drawTime = 0.0;
+
+	Timer totalTime;
+	totalTime.Start();
+
 	WpNode current = WpNode(-1, source, 0.f, _calcWaypointHeuristic(source, destination));
 	std::vector<WpNode> openList;
 	std::vector<WpNode> waypointNodes;
@@ -522,7 +543,8 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 #pragma region Draw Path
 		if (wnd && Flag_Draw_Waypoint_Traversal)
 		{
-
+			Timer drawTimer;
+			drawTimer.Start();
 			sf::Event event;
 			while (wnd->pollEvent(event))
 			{
@@ -568,6 +590,9 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 			wnd->display();
 			if (Flag_Sleep_Time_During_Waypoint_Traversal)
 				Sleep(Flag_Sleep_Time_During_Waypoint_Traversal);
+
+
+			drawTime += drawTimer.Stop(Timer::MILLISECONDS);
 		}
 #pragma endregion
 
@@ -590,7 +615,8 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 
 			if (wnd && Flag_Draw_Waypoint_Traversal)
 			{
-
+				Timer drawTimer;
+				drawTimer.Start();
 				sf::Event event;
 				while (wnd->pollEvent(event))
 				{
@@ -614,7 +640,12 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 
 				if (Flag_Sleep_Time_Finnished_Waypoint_Traversal)
 					Sleep(Flag_Sleep_Time_Finnished_Waypoint_Traversal);
+
+				drawTime += drawTimer.Stop(Timer::MILLISECONDS);
 			}
+
+			_outTime = totalTime.Stop(Timer::MILLISECONDS);
+			_outTime -= drawTime;
 
 			return waypointPath;
 		}
@@ -622,7 +653,7 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 		float lowestConnectionCost = FLT_MAX;
 		int goToWaypoint = -1;
 		int waypointIndex = 0;
-		waypointConnections = current.ptr->GetConnections();
+		const std::vector<Waypoint::Connection> & waypointConnections = current.ptr->GetConnections();
 
 		if (!waypointConnections.empty())
 		{
@@ -642,16 +673,21 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 					}
 					else
 					{
-						earlyExploration.push_back(WpNode(waypointNodes.size() - 1, &m_waypoints[waypointConnections[i].Waypoint],
-							waypointConnections[i].Cost + current.gCost,
-							_calcWaypointHeuristic(&m_waypoints[waypointConnections[i].Waypoint], destination)));
-
-						float connectionTraversalCost = _calcWaypointHeuristic(&m_waypoints[waypointConnections[i].Waypoint], destination) + waypointConnections[i].Cost;
-						if (connectionTraversalCost < lowestConnectionCost)
+						if (nodes[m_waypoints[waypointConnections[i].Waypoint].GetArrayIndex()].parentIndex)
 						{
-							lowestConnectionCost = connectionTraversalCost;
-							goToWaypoint = waypointConnections[i].Waypoint;
-							waypointIndex = i;
+							earlyExploration.push_back(WpNode(waypointNodes.size() - 1, &m_waypoints[waypointConnections[i].Waypoint],
+								waypointConnections[i].Cost + current.gCost,
+								_calcWaypointHeuristic(&m_waypoints[waypointConnections[i].Waypoint], destination)));
+
+							nodes[earlyExploration.back().ptr->GetArrayIndex()].parentIndex = 0;
+
+							float connectionTraversalCost = _calcWaypointHeuristic(&m_waypoints[waypointConnections[i].Waypoint], destination) + waypointConnections[i].Cost;
+							if (connectionTraversalCost < lowestConnectionCost)
+							{
+								lowestConnectionCost = connectionTraversalCost;
+								goToWaypoint = waypointConnections[i].Waypoint;
+								waypointIndex = i;
+							}
 						}
 					}
 				}
@@ -659,24 +695,21 @@ std::vector<Grid::WpNode> Grid::_findWaypointPath(Waypoint * source, Waypoint * 
 
 			if (goToWaypoint != -1)
 			{
-				std::sort(earlyExploration.begin(), earlyExploration.end());
+				//std::sort(earlyExploration.begin(), earlyExploration.end());
 
-				for (int i = 0; i < earlyExploration.size(); i++)
+				/*for (int i = 0; i < earlyExploration.size(); i++)
 				{
 					Waypoint * currentPtr = earlyExploration[i].ptr;
 					auto iterator = std::find(currentPtr->GetConnections().begin(), currentPtr->GetConnections().end(), current.ptr);
 					int index = iterator - currentPtr->GetConnections().begin();
 					nodes[currentPtr->GetArrayIndex()].visitedConnections[index] = true;
-				}
+				}*/
 
 				openList.insert(openList.end(), earlyExploration.begin(), earlyExploration.end());
 				earlyExploration.clear();
 			}
 		}
 	}
-
-
-	//std::cout << "No Path, Time: " << t.Stop(Timer::MILLISECONDS) << std::endl;
 
 	return std::vector<WpNode>();
 }

@@ -7,6 +7,8 @@
 #include "Pathfinding/Grid.h"
 #include "Pathfinding/QuadTree/QuadTree.h"
 #include "Entity/Line.h"
+#include <fstream>
+
 
 class Engine
 {
@@ -96,8 +98,14 @@ private:
 
 	sf::Font m_font;
 	sf::Text m_text[9];
+
+	sf::Text m_mousePosText;
+
 	std::string m_strings[9];
 
+	std::pair<sf::Vector2f, sf::Vector2f> m_testPath[9];
+
+	std::ofstream m_newPaths;
 
 	double m_pathFindingTime = 0.0;
 
@@ -112,6 +120,7 @@ private:
 
 private:
 
+	void _loadTestPath(const std::string & pathName);
 	void _loadMap(const std::string & mapName);
 	void _createWaypoints(std::vector<Waypoint> & waypoints, const std::vector<bool> & map);
 	bool _isInsideMap(const Waypoint & waypoint);
