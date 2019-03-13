@@ -626,33 +626,13 @@ void Engine::_connectWaypoints(std::vector<Waypoint>& waypoints)
 				if (e == nullptr)
 				{
 					float length = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(lineEnd.x, lineEnd.y, 0.0f, 0.0f), XMVectorSet(lineStart.x, lineStart.y, 0.0f, 0.0f))));
+				
+					Waypoint::Connection c(j, length);
+					Waypoint::Connection c1(i, length);
 
+					waypoints[i].AddConnection(c);
+					waypoints[j].AddConnection(c1);
 
-					if (sqrt(length) < CLUSTER_DIST)
-					{
-						if (waypoints[i].GetCluster() == -1 && waypoints[j].GetCluster() == -1)
-						{
-							waypoints[i].SetCluster(cluster);
-							waypoints[j].SetCluster(cluster);
-							cluster++;
-						}						
-						else if (waypoints[i].GetCluster() != -1)
-						{
-							waypoints[j].SetCluster(waypoints[i].GetCluster());
-						}
-						else if (waypoints[j].GetCluster() != -1)
-						{
-							waypoints[i].SetCluster(waypoints[j].GetCluster());
-						}
-					}
-					else
-					{
-						Waypoint::Connection c(j, length);
-						Waypoint::Connection c1(i, length);
-
-						waypoints[i].AddConnection(c);
-						waypoints[j].AddConnection(c1);
-					}
 				}
 			}
 		}

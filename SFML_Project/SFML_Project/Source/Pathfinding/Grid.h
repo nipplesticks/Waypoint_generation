@@ -11,7 +11,16 @@ class Engine;
 class Grid
 {
 public:
+	enum Grid_Heuristic
+	{
+		Pure_Distance = 0,
+		Manhattan_Distance,
+		Stanford_Distance
+	};
+
 	static bool Flag_Best_Grid_Path;
+
+	static Grid_Heuristic Flag_Grid_Heuristic;
 
 	static bool Flag_Use_Waypoint_Traversal;
 
@@ -22,6 +31,8 @@ public:
 	static int	Flag_Sleep_Time_During_Waypoint_Traversal;
 	static int	Flag_Sleep_Time_Finnished_Grid_Traversal;
 	static int	Flag_Sleep_Time_During_Grid_Traversal;
+
+
 	
 public:
 	Grid(const sf::Vector2i & size, const sf::Vector2f & gridStartPosition, const sf::Vector2f & tileSize);

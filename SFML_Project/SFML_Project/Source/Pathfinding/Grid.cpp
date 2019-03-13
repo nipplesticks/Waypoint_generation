@@ -8,15 +8,17 @@
 
 #define NUMBER_OF_THREADS 8
 
-bool Grid::Flag_Best_Grid_Path = false;
+bool Grid::Flag_Best_Grid_Path = true;
+
+Grid::Grid_Heuristic Grid::Flag_Grid_Heuristic = Grid::Pure_Distance;
 
 bool Grid::Flag_Use_Waypoint_Traversal = true;
 
-bool Grid::Flag_Draw_Waypoint_Traversal = false;
+bool Grid::Flag_Draw_Waypoint_Traversal = true;
 bool Grid::Flag_Draw_Grid_Traversal = false;
 
-int Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal = 0;
-int Grid::Flag_Sleep_Time_During_Waypoint_Traversal = 0;
+int Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal = 2500;
+int Grid::Flag_Sleep_Time_During_Waypoint_Traversal = 5;
 int Grid::Flag_Sleep_Time_Finnished_Grid_Traversal = 0;
 int Grid::Flag_Sleep_Time_During_Grid_Traversal = 0;
 
@@ -449,14 +451,27 @@ float Grid::_calcHValue(const Tile & s, const Tile & d)
 {
 	using namespace DirectX;
 
-	//auto p1 = s.GetWorldCoord();
-	//auto p2 = d.GetWorldCoord();
 	auto p1 = s.GetGridCoord();
 	auto p2 = d.GetGridCoord();
 
-	float l = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(p2.x, p2.y, 0.0f, 0.0f), XMVectorSet(p1.x, p1.y, 0.0f, 0.0f))));
+	auto deltaX = abs(p1.x - p2.x);
+	auto deltaY = abs(p1.y - p2.y);
 
-	return l;
+	switch (Flag_Grid_Heuristic)
+	{
+	case Grid::Pure_Distance:
+		return XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(p2.x, p2.y, 0.0f, 0.0f), XMVectorSet(p1.x, p1.y, 0.0f, 0.0f))));;
+		break;
+	case Grid::Manhattan_Distance:
+		return float(deltaX + deltaY);
+		break;
+	case Grid::Stanford_Distance:
+		return float(deltaX + deltaY) + (-0.414) * (float)std::min(deltaX, deltaY);
+		break;
+	default:
+		return 2.0f;
+		break;
+	}
 }
 
 void Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f & source, const sf::Vector2f & destination, sf::RenderWindow * wnd, Engine * eng)
@@ -667,8 +682,11 @@ float Grid::_calcWaypointHeuristic(const Waypoint * source, const Waypoint * des
 {
 	using namespace DirectX;
 
-	auto p1 = TileFromWorldCoords(source->GetWorldCoord()).GetGridCoord();
-	auto p2 = TileFromWorldCoords(destination->GetWorldCoord()).GetGridCoord();
+	//auto p1 = TileFromWorldCoords(source->GetWorldCoord()).GetGridCoord();
+	//auto p2 = TileFromWorldCoords(destination->GetWorldCoord()).GetGridCoord();
+
+	auto p1 = source->GetWorldCoord();
+	auto p2 = destination->GetWorldCoord();
 
 	float l = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(p2.x, p2.y, 0.0f, 0.0f), XMVectorSet(p1.x, p1.y, 0.0f, 0.0f))));
 
