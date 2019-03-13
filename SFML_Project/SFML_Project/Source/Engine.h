@@ -25,6 +25,50 @@ public:
 	void Terminate();
 
 private:
+	struct YesOrNo
+	{
+		YesOrNo()
+		{
+			no.setSize(sf::Vector2f(32, 32));
+			yes.setSize(no.getSize());
+			SetPosition(sf::Vector2f(0, 0));
+
+			no.setFillColor(sf::Color::Red);
+			no.setOutlineColor(sf::Color::Black);
+			no.setOutlineThickness(-2.0f);
+
+			yes.setFillColor(sf::Color::Green);
+			yes.setOutlineColor(sf::Color::Black);
+			yes.setOutlineThickness(-2.0f);
+		}
+
+		void Draw(sf::RenderWindow * wnd)
+		{
+			wnd->draw(no);
+			wnd->draw(yes);
+		}
+
+
+		void SetPosition(sf::Vector2f pos)
+		{
+			no.setPosition(pos);
+			yes.setPosition(pos + sf::Vector2f(34.0f, 0.0f));
+		}
+
+		int Pressed(sf::Vector2i mp)
+		{
+			if (no.getGlobalBounds().contains((sf::Vector2f)mp))
+				return 1;
+			else if (yes.getGlobalBounds().contains((sf::Vector2f)mp))
+				return 2;
+
+			return 0;
+		}
+
+		sf::RectangleShape no, yes;
+	};
+
+
 	Camera m_camera;
 	const float CAMERA_MOVE_SPEED = 1000.0f;
 	const float CAMERA_ZOOM_SPEED = 1.0f;
@@ -45,6 +89,16 @@ private:
 
 	QuadTree m_quadTree;
 	
+	YesOrNo m_buttons[9];
+
+	Grid::Grid_Heuristic m_hArr[3];
+	int m_currentChoice = 0;
+
+	sf::Font m_font;
+	sf::Text m_text[9];
+	std::string m_strings[9];
+
+
 	double m_pathFindingTime = 0.0;
 
 	std::vector<Entity> m_blocked;

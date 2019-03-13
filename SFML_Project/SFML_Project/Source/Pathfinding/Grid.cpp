@@ -17,8 +17,8 @@ bool Grid::Flag_Use_Waypoint_Traversal = true;
 bool Grid::Flag_Draw_Waypoint_Traversal = true;
 bool Grid::Flag_Draw_Grid_Traversal = false;
 
-int Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal = 2500;
-int Grid::Flag_Sleep_Time_During_Waypoint_Traversal = 5;
+int Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal = 0;
+int Grid::Flag_Sleep_Time_During_Waypoint_Traversal = 0;
 int Grid::Flag_Sleep_Time_Finnished_Grid_Traversal = 0;
 int Grid::Flag_Sleep_Time_During_Grid_Traversal = 0;
 

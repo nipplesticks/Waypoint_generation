@@ -10,6 +10,37 @@ Engine::Engine(sf::RenderWindow * window)
 {
 	m_pWindow = window;
 
+	sf::Vector2f bPos(0, 0);
+
+	m_font.loadFromFile("../Assets/ARLRDBD.TTF");
+	m_strings[0] = "Best_Grid_Path : T";
+	m_strings[1] = "Grid_Heuristic : PD";
+	m_strings[2] = "Use_Waypoint_Traversal : T";
+	m_strings[3] = "Draw_Waypoint_Traversal : F";
+	m_strings[4] = "Flag_Draw_Grid_Traversal : F";
+	m_strings[5] = "ST_F_Wp_Traversal : 0";
+	m_strings[6] = "ST_D_Wp_Traversal : 0";
+	m_strings[7] = "ST_F_Grid_Traversal : 0";
+	m_strings[8] = "ST_D_Grid_Traversal : 0";
+	
+	m_hArr[0] = Grid::Pure_Distance;
+	m_hArr[1] = Grid::Manhattan_Distance;
+	m_hArr[2] = Grid::Stanford_Distance;
+
+
+	for (int i = 0; i < _countof(m_buttons); i++)
+	{
+		m_buttons[i].SetPosition(bPos + sf::Vector2f(240, 0));
+		m_text[i].setFont(m_font);
+		m_text[i].setCharacterSize(16);
+		m_text[i].setFillColor(sf::Color::White);
+		m_text[i].setOutlineColor(sf::Color::Black);
+		m_text[i].setOutlineThickness(3.0f);
+		m_text[i].setPosition(bPos + sf::Vector2f(0, 6));
+		m_text[i].setString(m_strings[i]);
+		bPos.y += 34;
+	}
+
 	m_camera.SetAsActive();
 	sf::IntRect iRect(0, 0, 32, 32);
 
@@ -20,7 +51,6 @@ Engine::Engine(sf::RenderWindow * window)
 	m_background.SetTexture(&m_grassTexture);
 	m_background.SetSize((sf::Vector2f)m_pWindow->getSize());
 
-
 	m_background.SetPosition(0, 0);
 
 	m_player.SetPosition(0, 0);
@@ -30,11 +60,12 @@ Engine::Engine(sf::RenderWindow * window)
 
 	m_camera.SetPosition(0, 0);
 
+	Draw();
+
 	//_loadMap("SmallMap.txt");
 	//_loadMap("bigGameProjectGrid.txt");
 	//_loadMap("UMAP.txt");
 
-	Draw();
 
 	_loadMap("bigGameProjectGridEdgy.txt");
 }
@@ -93,15 +124,9 @@ std::string sfVecToString(const sf::Vector2f & vec)
 
 void Engine::Update(double dt)
 {
-	static bool s_mouseRightLastFrame = false;
+	static bool s_mouseLeftLastFrame = false;
 	static bool timerStart = false;
 	static Timer timer;
-
-	if (s_mouseRightLastFrame && !timerStart)
-	{
-		timer.Start();
-		timerStart = true;
-	}
 
 	float zoom = m_camera.GetPosition().z;
 
@@ -126,16 +151,151 @@ void Engine::Update(double dt)
 
 
 	bool mouseRightThisFrame = sf::Mouse::isButtonPressed(sf::Mouse::Right);
+	bool mouseLeftThisFrame = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
 	double time = 0;
 
 	Timer t;
 	t.Start();
+	sf::Vector2i mousePos = sf::Mouse::getPosition(*m_pWindow);
+	if (mouseLeftThisFrame)
+	{
+		for (int i = 0; i < _countof(m_buttons); i++)
+		{
+			int pVal = 0;
+			if (pVal = m_buttons[i].Pressed(mousePos))
+			{
+				switch (i)
+				{
+				case 0:
+					if (pVal == 1)
+					{
+						Grid::Flag_Best_Grid_Path = false;
+						m_strings[0] = "Best_Grid_Path : F";
+					}
+					else
+					{
+						Grid::Flag_Best_Grid_Path = true;
+						m_strings[0] = "Best_Grid_Path : T";
+					}
+					break;
+				case 1:
+					if (!s_mouseLeftLastFrame)
+					{
+						if (pVal == 1)
+							m_currentChoice--;
+						else
+							m_currentChoice++;
+						m_currentChoice = std::clamp(m_currentChoice, 0, 2);
+						Grid::Flag_Grid_Heuristic = m_hArr[m_currentChoice];
+						
+						if (Grid::Flag_Grid_Heuristic == Grid::Pure_Distance)
+							m_strings[1] = "Grid_Heuristic : PD";
+						else if (Grid::Flag_Grid_Heuristic == Grid::Manhattan_Distance)
+							m_strings[1] = "Grid_Heuristic : MD";
+						else
+							m_strings[1] = "Grid_Heuristic : SD";
+					}
+					break;
+				case 2:
+					if (pVal == 1)
+					{
+						Grid::Flag_Use_Waypoint_Traversal = false;
+						m_strings[2] = "Use_Waypoint_Traversal : F";
+
+					}
+					else
+					{
+						Grid::Flag_Use_Waypoint_Traversal = true;
+						m_strings[2] = "Use_Waypoint_Traversal : T";
+
+					}
+					break;
+				case 3:
+					if (pVal == 1)
+					{
+						Grid::Flag_Draw_Waypoint_Traversal = false;
+						m_strings[3] = "Draw_Waypoint_Traversal : F";
+
+					}
+					else
+					{
+						Grid::Flag_Draw_Waypoint_Traversal = true;
+						m_strings[3] = "Draw_Waypoint_Traversal : T";
+
+					}
+
+					break;
+				case 4:
+					if (pVal == 1)
+					{
+						Grid::Flag_Draw_Grid_Traversal = false;
+						m_strings[4] = "Flag_Draw_Grid_Traversal : F";
+
+					}
+					else
+					{
+						Grid::Flag_Draw_Grid_Traversal = true;
+						m_strings[4] = "Flag_Draw_Grid_Traversal : T";
+
+					}
+					break;
+				case 5:
+					if (pVal == 1)
+						Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal--;
+					else
+						Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal++;
+
+					Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal = std::max(0, Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal);
+
+					m_strings[5] = "ST_F_Wp_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal);
+					break;
+				case 6:
+					if (pVal == 1)
+						Grid::Flag_Sleep_Time_During_Waypoint_Traversal--;
+					else
+						Grid::Flag_Sleep_Time_During_Waypoint_Traversal++;
+
+					Grid::Flag_Sleep_Time_During_Waypoint_Traversal = std::max(0, Grid::Flag_Sleep_Time_During_Waypoint_Traversal);
+					m_strings[6] = "ST_D_Wp_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_During_Waypoint_Traversal);
+
+					break;
+				case 7:
+					if (pVal == 1)
+						Grid::Flag_Sleep_Time_Finnished_Grid_Traversal--;
+					else
+						Grid::Flag_Sleep_Time_Finnished_Grid_Traversal++;
+
+					Grid::Flag_Sleep_Time_Finnished_Grid_Traversal = std::max(0, Grid::Flag_Sleep_Time_Finnished_Grid_Traversal);
+
+					m_strings[7] = "ST_F_Grid_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_Finnished_Grid_Traversal);
+					break;
+				case 8:
+					if (pVal == 1)
+						Grid::Flag_Sleep_Time_During_Grid_Traversal--;
+					else
+						Grid::Flag_Sleep_Time_During_Grid_Traversal++;
+
+					Grid::Flag_Sleep_Time_During_Grid_Traversal = std::max(0, Grid::Flag_Sleep_Time_During_Grid_Traversal);
+					m_strings[8] = "ST_D_Grid_Traversal : " + std::to_string(Grid::Flag_Sleep_Time_During_Grid_Traversal);
+					break;
+				}
+
+				for (int k = 0; k < _countof(m_strings); k++)
+				{
+					m_text[k].setString(m_strings[k]);
+				}
+
+				break;
+			}
+		}
+	}
+
+
 	if (mouseRightThisFrame /* && !s_mouseRightLastFrame*/)
 	{
 		std::vector<Tile> playerPath = m_player.GetPath();
 		std::vector<Tile> newPath;
-		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_pWindow);
 		sf::Vector2u windowSize = m_pWindow->getSize();
 
 		sf::Vector2f clickWorld;
@@ -178,9 +338,7 @@ void Engine::Update(double dt)
 
 	m_player.Update(dt);
 
-	s_mouseRightLastFrame = mouseRightThisFrame;
-
-
+	s_mouseLeftLastFrame = mouseLeftThisFrame;
 }
 
 void Engine::Draw(bool clearAndDisplay)
@@ -205,6 +363,13 @@ void Engine::Draw(bool clearAndDisplay)
 		l.Draw(m_pWindow);
 
 	m_player.Draw(m_pWindow);
+
+	for (int i = 0; i < _countof(m_buttons); i++)
+	{
+		m_buttons[i].Draw(m_pWindow);
+		m_pWindow->draw(m_text[i]);
+	}
+
 
 	if (clearAndDisplay)
 		m_pWindow->display();
