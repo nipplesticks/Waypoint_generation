@@ -91,9 +91,8 @@ Engine::Engine(sf::RenderWindow * window)
 
 	Draw();
 
-	//_loadMap("SmallMap.txt");
-	//_loadMap("bigGameProjectGrid.txt");
-	_loadMap("UMAP2.txt");
+	
+	_loadMap("UMAP2");
 	//_loadMap("bigGameProjectGridEdgy");
 	//_loadMap("bigGameProjectGridEdgy2");
 }
