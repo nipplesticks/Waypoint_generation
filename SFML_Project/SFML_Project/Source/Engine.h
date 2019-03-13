@@ -95,6 +95,12 @@ private:
 	QuadTree m_quadTree;
 	
 	YesOrNo m_buttons[12];
+	sf::RectangleShape m_buttonGround;
+
+
+	bool m_drawGui = true;
+	sf::Text m_guiText;
+	YesOrNo m_hideGui;
 
 	Grid::Grid_Heuristic m_hArr[3];
 	int m_currentChoice = 0;

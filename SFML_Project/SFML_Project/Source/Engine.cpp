@@ -26,7 +26,7 @@ Engine::Engine(sf::RenderWindow * window)
 	auto bb = m_mousePosText.getLocalBounds();
 	sf::Vector2f origin(bb.width + 10.0f, 0);
 	m_mousePosText.setOrigin(origin);
-	m_mousePosText.setPosition(m_pWindow->getSize().x - 500, 0.0f);
+	m_mousePosText.setPosition(m_pWindow->getSize().x - 250, 0.0f);
 
 
 	m_strings[0] = "Best_Grid_Path : T";
@@ -46,6 +46,9 @@ Engine::Engine(sf::RenderWindow * window)
 	m_hArr[1] = Grid::Manhattan_Distance;
 	m_hArr[2] = Grid::Stanford_Distance;
 
+	m_buttonGround.setFillColor(sf::Color(0, 0, 0, 64));
+	m_buttonGround.setPosition(0, 0);
+
 	for (int i = 0; i < _countof(m_buttons); i++)
 	{
 		m_buttons[i].SetPosition(bPos + sf::Vector2f(240, 0));
@@ -58,6 +61,19 @@ Engine::Engine(sf::RenderWindow * window)
 		m_text[i].setString(m_strings[i]);
 		bPos.y += 34;
 	}
+	bPos.y += 3;
+	bPos.x = 243;
+	m_buttonGround.setSize(bPos);
+
+	sf::Vector2f hg(240, m_pWindow->getSize().y - 32);
+	m_guiText.setFont(m_font);
+	m_guiText.setCharacterSize(16);
+	m_guiText.setFillColor(sf::Color::White);
+	m_guiText.setOutlineColor(sf::Color::Black);
+	m_guiText.setOutlineThickness(3.0f);
+	m_guiText.setPosition(hg + sf::Vector2f(-240, 6));
+	m_guiText.setString("Draw_Gui: T");
+	m_hideGui.SetPosition(hg);
 
 	m_camera.SetAsActive();
 	sf::IntRect iRect(0, 0, 32, 32);
@@ -354,6 +370,19 @@ void Engine::Update(double dt)
 				break;
 			}
 		}
+
+		int bVal = m_hideGui.Pressed(mousePos);
+		if (bVal == 2)
+		{
+			m_drawGui = true;
+			m_guiText.setString("Draw_Gui: T");
+		}
+		else if (bVal == 1)
+		{
+			m_drawGui = false;
+			m_guiText.setString("Draw_Gui: F");
+		}
+
 	}
 
 	sf::Vector2u windowSize = m_pWindow->getSize();
@@ -514,11 +543,18 @@ void Engine::Draw(bool clearAndDisplay)
 	m_sourceTile.Draw(m_pWindow);
 	m_endTile.Draw(m_pWindow);
 
-	for (int i = 0; i < _countof(m_buttons); i++)
+	if (m_drawGui)
 	{
-		m_buttons[i].Draw(m_pWindow);
-		m_pWindow->draw(m_text[i]);
+		m_pWindow->draw(m_buttonGround);
+		for (int i = 0; i < _countof(m_buttons); i++)
+		{
+			m_buttons[i].Draw(m_pWindow);
+			m_pWindow->draw(m_text[i]);
+		}
 	}
+
+	m_pWindow->draw(m_guiText);
+	m_hideGui.Draw(m_pWindow);
 
 	m_pWindow->draw(m_mousePosText);
 
