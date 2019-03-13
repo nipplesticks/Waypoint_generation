@@ -304,6 +304,9 @@ std::vector<Tile> Grid::_findPath(const sf::Vector2f & source, const sf::Vector2
 
 #pragma endregion
 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+			return std::vector<Tile>();
+
 		if (earlyExplorationNode.parentIndex != -1)
 		{
 			currentNode = earlyExplorationNode;
