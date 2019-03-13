@@ -14,7 +14,7 @@ Grid::Grid_Heuristic Grid::Flag_Grid_Heuristic = Grid::Pure_Distance;
 
 bool Grid::Flag_Use_Waypoint_Traversal = true;
 
-bool Grid::Flag_Draw_Waypoint_Traversal = true;
+bool Grid::Flag_Draw_Waypoint_Traversal = false;
 bool Grid::Flag_Draw_Grid_Traversal = false;
 
 int Grid::Flag_Sleep_Time_Finnished_Waypoint_Traversal = 0;
