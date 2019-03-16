@@ -116,6 +116,10 @@ private:
 
 	std::ofstream m_newPaths;
 
+	std::ofstream m_dataSamples;
+	std::ofstream m_relevantData;
+
+
 	double m_pathFindingTime = 0.0;
 
 	Entity m_sourceTile, m_endTile;

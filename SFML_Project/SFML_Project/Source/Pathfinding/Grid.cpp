@@ -511,8 +511,8 @@ double Grid::_createTileChain(std::vector<Tile>& tileChain, const sf::Vector2f &
 
 	if (!waypointPath.empty())
 	{
-		int nrOfWaypoints = (int)waypointPath.size() - 1;
-		for (int i = 1; i < nrOfWaypoints; i++)
+		int nrOfWaypoints = (int)waypointPath.size();
+		for (int i = 0; i < nrOfWaypoints; i++)
 		{
 			tileChain.push_back(TileFromWorldCoords(waypointPath[i].ptr->GetWorldCoord()));
 		}
@@ -728,7 +728,32 @@ float Grid::_calcWaypointHeuristic(const Waypoint * source, const Waypoint * des
 	auto p1 = source->GetWorldCoord();
 	auto p2 = destination->GetWorldCoord();
 
+	auto deltaX = abs(p1.x - p2.x);
+	auto deltaY = abs(p1.y - p2.y);
+
+	switch (Flag_Grid_Heuristic)
+	{
+	case Grid::Pure_Distance:
+		return XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(p2.x, p2.y, 0.0f, 0.0f), XMVectorSet(p1.x, p1.y, 0.0f, 0.0f))));;
+		break;
+	case Grid::Manhattan_Distance:
+		return float(deltaX + deltaY);
+		break;
+	case Grid::Stanford_Distance:
+		return float(deltaX + deltaY) + (-0.414) * (float)std::min(deltaX, deltaY);
+		break;
+	default:
+		return 2.0f;
+		break;
+	}
+
+
+	/*using namespace DirectX;
+
+	auto p1 = source->GetWorldCoord();
+	auto p2 = destination->GetWorldCoord();
+
 	float l = XMVectorGetX(XMVector2LengthSq(XMVectorSubtract(XMVectorSet(p2.x, p2.y, 0.0f, 0.0f), XMVectorSet(p1.x, p1.y, 0.0f, 0.0f))));
 
-	return l;
+	return l;*/
 }

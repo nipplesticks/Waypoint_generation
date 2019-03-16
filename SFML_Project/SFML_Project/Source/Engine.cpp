@@ -4,7 +4,15 @@
 #include <DirectXMath.h>
 #include <sstream>
 
-const bool CREATE_PATH = true;
+const bool CREATE_PATH = false;
+const int TEST_SAMPLES = 100;
+double totalWpTime[9] = { 0.0 };
+double totalGridTime[9] = { 0.0 };
+
+//const std::string MAP = "bigGameProjectGridEdgy";
+//const std::string MAP = "UMAP2";
+const std::string MAP = "bigGameProjectGridEdgy2";
+
 
 Engine::Engine(sf::RenderWindow * window)
 {
@@ -34,7 +42,7 @@ Engine::Engine(sf::RenderWindow * window)
 	m_strings[2] = "Grid_Heuristic : PD";
 	m_strings[3] = "Use_Waypoint_Traversal : T";
 	m_strings[4] = "Draw_Waypoint_Traversal : F";
-	m_strings[5] = "Flag_Draw_Grid_Traversal : F";
+	m_strings[5] = "Draw_Grid_Traversal : F";
 	m_strings[6] = "ST_F_Wp_Traversal : 0";
 	m_strings[7] = "ST_D_Wp_Traversal : 0";
 	m_strings[8] = "ST_F_Grid_Traversal : 0";
@@ -108,16 +116,16 @@ Engine::Engine(sf::RenderWindow * window)
 	Draw();
 
 	
-	_loadMap("UMAP2");
-	//_loadMap("bigGameProjectGridEdgy");
-	//_loadMap("bigGameProjectGridEdgy2");
+
+
+	_loadMap(MAP);
 }
 
 Engine::~Engine()
 {
 	m_pWindow = nullptr;
 
-	delete[] m_grid;
+	delete m_grid;
 }
 
 void Engine::Run()
@@ -287,13 +295,13 @@ void Engine::Update(double dt)
 					if (pVal == 1)
 					{
 						Grid::Flag_Draw_Grid_Traversal = false;
-						m_strings[5] = "Flag_Draw_Grid_Traversal : F";
+						m_strings[5] = "Draw_Grid_Traversal : F";
 
 					}
 					else
 					{
 						Grid::Flag_Draw_Grid_Traversal = true;
-						m_strings[5] = "Flag_Draw_Grid_Traversal : T";
+						m_strings[5] = "Draw_Grid_Traversal : T";
 
 					}
 					break;
@@ -394,7 +402,8 @@ void Engine::Update(double dt)
 
 	bool spacePressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
 		
-	static int counter = 0;
+	static int whatTestCounter = 0;
+	static int whatSampleCounter = 0;
 
 	if (CREATE_PATH)
 	{
@@ -405,37 +414,50 @@ void Engine::Update(double dt)
 			std::string outDest = std::to_string(clickWorld.x) + " " + std::to_string(clickWorld.y) + "\n";
 			m_newPaths << outStart;
 			m_newPaths << outDest;
-			counter++;
+			whatTestCounter++;
 		}
 
 	
-		if (counter > 8 && m_newPaths.is_open())
+		if (whatTestCounter > 8 && m_newPaths.is_open())
 			m_newPaths.close();
 	}
 	else
 	{
 		if (spacePressed && !s_isPrinted)
 		{
+			static int testCounter = 0;
 			s_runTest = true;
-			std::cout << "-- STARTING TEST -- \n";
-			std::cout << "Using Best Grid Path: " << (Grid::Flag_Best_Grid_Path ? "true" : "false") << std::endl;
-			std::cout << "Grid_Heuristic: ";
 
+			std::cout << "-- STARTING TEST -- \n";
+			std::string fileName = "../Samples/" + MAP + "_data" + std::to_string(testCounter++);
+			m_dataSamples.open(fileName + ".txt");
+			m_relevantData.open(fileName + "_Relevant.txt");
+			
+			m_dataSamples << "Using Best Grid Path: " << (Grid::Flag_Best_Grid_Path ? "true" : "false") << std::endl;
+			m_dataSamples << "Using Waypoints: " << (Grid::Flag_Use_Waypoint_Traversal ? "true" : "false") << std::endl;
+			m_dataSamples << "Using Best Waypoint Path: " << (Grid::Flag_Best_Waypoint_Path ? "true" : "false") << std::endl;
+			m_dataSamples << "Heuristic: ";
+			
 			switch (Grid::Flag_Grid_Heuristic)
 			{
 			case 0:
-				std::cout << "Pure Distance\n";
+				m_dataSamples << "Pure Distance\n";
 				break;
 			case 1:
-				std::cout << "Manhattan Distance\n";
+				m_dataSamples << "Manhattan Distance\n";
 				break;
 			case 2:
-				std::cout << "Stanford Distance\n";
+				m_dataSamples << "Stanford Distance\n";
 				break;
 			}
 
-			std::cout << "Traversing waypoints: " << (Grid::Flag_Use_Waypoint_Traversal ? "true" : "false");
-			std::cout << "\n\n";
+			m_dataSamples << "\n\n";
+			for (int i = 0; i < 9; i++)
+			{
+				std::string number = std::to_string(i);
+				m_dataSamples << number << "_WaypointTraversalTime\t" << number << "_GridTraversalTime\t" << number << "_TotalTraversalTime\t";
+			}
+			m_dataSamples << "\n";
 		}
 	}
 
@@ -443,20 +465,47 @@ void Engine::Update(double dt)
 	{
 		double d1, d2;
 
-		m_sourceTile.SetPosition(m_testPath[counter].first);
-		m_endTile.SetPosition(m_testPath[counter].second);
+		m_sourceTile.SetPosition(m_testPath[whatTestCounter].first);
+		m_endTile.SetPosition(m_testPath[whatTestCounter].second);
 
-		m_grid->FindPath(m_testPath[counter].first, m_testPath[counter].second, d1, d2, m_pWindow, this);
+		m_grid->FindPath(m_testPath[whatTestCounter].first, m_testPath[whatTestCounter].second, d1, d2, m_pWindow, this);
 
-		std::cout << "Path: " << counter + 1 << std::endl;
-		std::cout << "WPPathTime: " << d1 << " ms\t GridPathTime: " << d2 << " ms\nTotal Time: " << d1 + d2 << " ms" << std::endl;
-		std::cout << "Source: [" << m_testPath[counter].first.x << " , " << m_testPath[counter].first.y << "] Destination: [" << m_testPath[counter].second.x << " , "<< m_testPath[counter].second.y << "]" << std::endl << std::endl;
+		totalWpTime[whatTestCounter] += d1;
+		totalGridTime[whatTestCounter] += d2;
+
+		m_dataSamples << d1 << "\t" << d2 << "\t" << d1 + d2 << "\t";
 		
-		if (++counter > 8)
+		std::cout << "\r" <<((double)whatSampleCounter / TEST_SAMPLES) * 100.0 << "%";
+
+
+		if (++whatTestCounter > 8)
+		{
+			m_dataSamples << "\n";
+			whatSampleCounter++;
+			whatTestCounter = 0;
+		}
+		if (whatSampleCounter > TEST_SAMPLES)
 		{
 			s_runTest = false;
-			counter = 0;
-			std::cout << "-- Test complete --\n";
+			whatSampleCounter = 0;
+			whatTestCounter = 0;
+
+			m_relevantData << "WP_AVG\t" << "GRID_AVG\t" << "TOTAL_AVG\n";
+
+			for (int i = 0; i < 9; i++)
+			{
+				double wpAverage = totalWpTime[i] / TEST_SAMPLES;
+				double gridAverage = totalGridTime[i] / TEST_SAMPLES;
+				double totalAverage = gridAverage + wpAverage;
+				
+				m_relevantData << i << "\t" << wpAverage << "\t" << gridAverage << "\t" << totalAverage << "\n";
+
+				totalGridTime[i] = 0.0;
+				totalWpTime[i] = 0.0;
+			}
+			m_dataSamples.close();
+			m_relevantData.close();
+			std::cout << "\n-- Test complete --\n";
 		}
 	}
 	s_isPrinted = spacePressed;
