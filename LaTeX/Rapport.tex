@@ -2,6 +2,7 @@
 %\usepackage[swedish]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{a4wide}
+\usepackage{appendix}
 %vid problem, testa någon av följande:
 %\usepackage[cp1252]{inputenc} under Windows
 %\usepackage[applemac]{inputenc} under MacOS 9 eller tidigare
@@ -9,8 +10,6 @@
 
 \usepackage[T1]{fontenc}
 \usepackage[pdftex]{graphicx}
-
-
 
 %\LaTeX\ är kul. Den senaste stora versionen heter \LaTeX2e och släpptes 1994~\cite{lamport94}.
 %\begin{equation}
@@ -66,11 +65,6 @@ Var noggrann och utförlig så att det går följa vad du gjort? \newline
 Motivera om du antar något \newline
 Diskutera begränsningar
 
-\section{Result}
-Bevisa att auto waypoints äger fett
-
-Bilder kan roteras med hjälp av en dator, se exempel i Figur~\ref{fig:Logo}.
-
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.9, angle=20]{bth_logo.jpg}
@@ -80,11 +74,14 @@ Bilder kan roteras med hjälp av en dator, se exempel i Figur~\ref{fig:Logo}.
 \label{fig:Logo}
 \end{figure}
 
+\section{Result}
+Bevisa att auto waypoints äger fett
+
+Bilder kan roteras med hjälp av en dator, se exempel i Figur~\ref{fig:Logo}.
+
 \section{Discussion}
 Discuss the results
 
-\section{References}
-References to RA
 \begin{thebibliography}{9}
 
 \bibitem{lamport94}
@@ -95,9 +92,12 @@ References to RA
   1994.
 
 \end{thebibliography}
-
-\section{Appendix and index}
-Man vet aldrik
-
-
+\appendix
+\cleardoublepage
+\section{Introduction}
+\section{Background}
+\section{Related work}
+\section{Method}
+\section{Result}
+\section{Discussion}
 \end{document}
