@@ -9,9 +9,9 @@ const int TEST_SAMPLES = 100;
 double totalWpTime[9] = { 0.0 };
 double totalGridTime[9] = { 0.0 };
 
-//const std::string MAP = "bigGameProjectGridEdgy";
+const std::string MAP = "bigGameProjectGridEdgy";
 //const std::string MAP = "UMAP2";
-const std::string MAP = "bigGameProjectGridEdgy2";
+//const std::string MAP = "bigGameProjectGridEdgy2";
 
 
 Engine::Engine(sf::RenderWindow * window)
@@ -92,6 +92,7 @@ Engine::Engine(sf::RenderWindow * window)
 
 	m_background.SetTexture(&m_grassTexture);
 	m_background.SetSize((sf::Vector2f)m_pWindow->getSize());
+	//m_background.SetColor(sf::Color::White);
 
 	m_background.SetPosition(0, 0);
 
@@ -679,6 +680,9 @@ void Engine::_loadMap(const std::string & mapName)
 	m_mapWidth = xLevel;
 	m_mapHeight = yLevel;
 
+	std::cout << "MapSize: " << m_mapWidth << " * " << m_mapHeight << " = " << m_mapWidth * m_mapHeight << std::endl;
+
+
 	mapText.close();
 	
 	m_grid = new Grid(sf::Vector2i(xLevel, yLevel), { 0.0f, 0.0f }, { 32.0f, 32.0f });
@@ -701,11 +705,13 @@ void Engine::_loadMap(const std::string & mapName)
 				e.SetPosition(m_grid->At(x, y).GetWorldCoord());
 				e.SetSize(MAP_TILE_SIZE, MAP_TILE_SIZE);
 				e.SetTexture(&m_brickTexture);
+				//e.SetColor(sf::Color::Black);
 				m_blocked.push_back(e);
 			}
 			else if (!placedPlayer)
 			{
 				m_player.SetPosition(m_grid->At(x, y).GetWorldCoord());
+				//m_player.SetColor(sf::Color(0, 0, 0, 0));
 				m_playerSpawn = m_player.GetPosition();
 				m_camera.SetPosition(m_player.GetPosition().x, m_player.GetPosition().y);
 				placedPlayer = true;
@@ -713,6 +719,7 @@ void Engine::_loadMap(const std::string & mapName)
 		}
 	}
 
+	std::cout << "Blocked Tiles: " << m_blocked.size() << ". Precentage: " << ((double)m_blocked.size() / (double)(m_mapWidth * m_mapHeight)) * 100.0 << std::endl;
 
 	int size = std::max(yLevel, xLevel) * (int)MAP_TILE_SIZE;
 
