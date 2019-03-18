@@ -1,0 +1,20 @@
+Map:			Edgy
+Res:			115, 79
+Size:			9085
+Blocked:		4226 (46.5 %)
+Waypoints:		214
+Connections:	2228
+
+Map:			Edgy2
+Res:			225, 118
+Size:			26550
+Blocked:		12854 (48.4 %)
+Waypoints:		658
+Connections:	6458
+
+Map:			UMAP2
+Res:			331, 108
+Size:			35748
+Blocked:		2890 (8 %)
+Waypoints:		179
+Connections:	2038
