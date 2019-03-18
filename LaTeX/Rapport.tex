@@ -40,6 +40,12 @@ Viktiga resultat och slutsatser Nyckelord
 \pagenumbering{arabic}
 \twocolumn
 \section{Introduction}
+Pathfinding is a fundamental part of games \cite{dynaPF15}\cite{roboGame15} and it is often supplemented by a waypoint graph to make traversal of a given region easier \cite{dynaPF15}. Every node in a waypoint graph is called a waypoint and they represent key locations in the region \cite{dynaPF15}. Each waypoint has edges towards other waypoints to where an object can travel through without risk of colliding with the surroundings \cite{dynaPF15}.\newline
+In this paper, we propose a method to reduce execution time of the A* pathfinding algorithm. We improve our previously implemented A* algorithm with automatically generated and connected waypoints in a two-dimensional grid coordinate system. The waypoint generation is done in two steps. First, we generate a waypoint for each corner of an obstacle. Second, we check connections for every waypoint by sending a ray towards all other waypoints in the region. The waypoints are connected if the rays path is unblocked. Our waypoint generation method is heavily influenced by the one suggested in the work of Weiping et al. \cite{dynaPF15}.\newline
+Executing pathfinding in dynamic environments is more challenging than in static environments \cite{dynaPF15}, and this study is therefore limited to completely static environments. The difference between the two terms path and shortest path is significant \cite{heuristicGame15}. We conducted studies of several pathfinding combinations, with and without waypoints, but we decided not to measure the time consumption of the shortest path with only A* pathfinding.
+
+
+
 This is introduction lol \newline
 Syfte \newline
 Frågeställning \newline
@@ -83,6 +89,24 @@ Bilder kan roteras med hjälp av en dator, se exempel i Figur~\ref{fig:Logo}.
 Discuss the results
 
 \begin{thebibliography}{9}
+
+\bibitem{dynaPF15}
+  Weiping Zhu, Daoyuan Jia, Hongyu Wan, Tuo Yang, Cheng Hu, Kechen Qin, Xiaohui Cui,
+  \textit{Waypoint Graph Based Fast Pathfinding in Dynamic Environment},
+  International Journal of Distributed Sensor Networks, vol. 2015, Article ID 238727, 12 pages,
+  August 2015. https://doi.org/10.1155/2015/238727.
+
+\bibitem{roboGame15}
+  Zeyad Abd Algfoor, Mohd Shahrizal Sunar, Hoshang Kolivand,
+  \textit{A Comprehensive Study on Pathfinding Techniques for Robotics and Video Games},
+  International Journal of Computer Games Technology, vol. 2015, Article ID 736138, 11 pages,
+  2015. https://doi.org/10.1155/2015/736138.
+
+\bibitem{heuristicGame15}
+  Geethu Elizebeth Mathew,
+  \textit{Direction Based Heuristic For Pathfinding In Video Games},
+  Procedia Computer Science, vol. 47, pp. 262-271,
+  2015.
 
 \bibitem{lamport94}
   Leslie Lamport,
