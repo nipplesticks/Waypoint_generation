@@ -31,9 +31,9 @@ Pathfinding is a fundamental part of games \cite{dynaPF15}\cite{roboGame15} and 
 	
 In this paper, we propose a method to reduce execution time of the A* pathfinding algorithm. We improve our previously implemented A* algorithm with automatically generated and connected waypoints in a two-dimensional grid coordinate system. The waypoint generation is done in two steps. First, we generate a waypoint for each corner of an obstacle. Second, we check connections for every waypoint by sending a ray towards all other waypoints in the region. The waypoints are connected if the rays path is unblocked. Our waypoint generation method is heavily influenced by the one suggested in the work of Weiping et al. \cite{dynaPF15}.
 	
-Executing pathfinding in dynamic environments is more challenging than in static environments \cite{dynaPF15}, and this study is therefore limited to completely static environments. The difference between the two terms path and shortest path is significant \cite{heuristicGame15}. We conducted studies of several pathfinding combinations, with and without waypoints, but we decided not to measure the time consumption of the shortest path with only A* pathfinding.
+Executing pathfinding in dynamic environments is more challenging than in static environments \cite{dynaPF15}, and this study is therefore limited to completely static environments. The difference between the two terms path and shortest path is significant \cite{heuristicGame15}. We conducted studies of several pathfinding combinations, with and without waypoints, but we decided not to measure the time consumption of the shortest path with only raw A* pathfinding.
 	
-A heurstic is a method/algorithm to choice next edge during the traversal of the grid.
+A heuristic is a method/algorithm to choice next edge during the traversal of the grid.
 
 This is introduction lol \newline
 Syfte \newline
@@ -70,18 +70,16 @@ We decided to remove the best waypoint path because we have nothing to compare t
 	
 We hav not taken into account that the paths may be "un natrual" for the viewer during this work. The goal was to find a way to find paths in a static enviroment in real time.
 
-\section{Result}
-
-The results show that traversing the grid with our automaticaly generated waypoint apporach is much more scalable than using the A* algorithm raw. This also holds true when changing the heuristics for the traversing algorithms.
+\section{Results}
+The results show that traversing the grid with our automatically generated waypoint approach, is much more scalable than using the raw A* algorithm. This also holds true when changing the heuristics for the traversing algorithms.
 	
-In the smallest map, Appendix~\ref{ap.edgy}, it is cheaper to simply use A* to generate the path due to the added overhead using waypoints. Waypoint traversal is superior to A* pathfinding when the maps increase in size and complexity.
+In the smallest map, Edgy (Appendix~\ref{ap.edgy}), when the Pure Distance heuristic is used, it is cheaper to simply use raw A* directly on the grid to generate the path due to the added overhead when using waypoints. The other heuristics show no significant gain with waypoints added to the map, except the P0-path as seen in Figure~\ref{fig:Edgy_cd}, but this path is a worst case scenario.
 	
-On the maps Edgy2, Appendix~\ref{ap.edgy2}, and UMAP2, Appendix~\ref{ap.umap2}, which are much greater in size compared to Edgy we see from the results that in almost all the paths traversing the waypoints first to direct the A* takes much less time on almost every path. In the charts we can see that in some of the paths
-A* is faster by itself than with use of waypoints. This is because these paths are short or straight, with no or few blocked tiles in the way of the pathing.
-		
-In the comparison diagrams the color green , purple and red boxes represents traversal with waypoints with the Pure Distance- , Manhattan Distance- and Standford distance heuristic.
-The color blue, cyan and brown colors represent traversal with pure A* tile traversal with the Pure Distance- , Manhattan Distance- and Standford distance heuristic.
-The  X-axis is the nine different paths and the Y-axis is time in milliseconds.
+While traversing the maps Edgy2 (Appendix~\ref{ap.edgy2}) and UMAP2 (Appendix~\ref{ap.umap2}), which are much greater in size compared to Edgy, the results shows that Waypoint traversal is superior to raw A* pathfinding. On almost all the paths tested, to traverse the waypoints first and direct the A*, gets a much smaller total time spent calculating the path. This proves that the waypoint traversal added are improving the total time spend calculating the path. Though the results show that in some cases using waypoints, the total time is increased compared with raw A*. This is because these paths are short or straight, with no or few blocked tiles in the way of the pathing.
+	
+In the comparison diagrams the color green, purple and red boxes represents traversal with waypoints with the Pure Distance- , Manhattan Distance- and Standford distance heuristic.
+The color blue, cyan and brown colors represent traversal with raw A* tile traversal with the Pure Distance- , Manhattan Distance- and Standford distance heuristic.
+The  X-axis is the nine different paths and the Y-axis is time in milliseconds spent calculating the path.
 
 \begin{figure}[h!]
 \centering
@@ -89,17 +87,17 @@ The  X-axis is the nine different paths and the Y-axis is time in milliseconds.
 \caption{Edgy Compare Diagram}
 \label{fig:Edgy_d2}
 \end{figure}
+
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.5\textwidth,height=\textheight,keepaspectratio]{ChartsAndFigures/Edgy_timeTable.png}
 \caption{Edgy Time Table}
-Delta time gain using waypoints in milliseconds.
+Total time gain using waypoints in milliseconds.
 \label{fig:Edgy_cd}
 \end{figure}
 
-
-On the Edgy map, in Figure \ref{fig:Edgy_d2}, we see all tests compared with eachother. Its easy to see that in most cases, using only tile traversal is better than using waypoint traversal.
-The average gain time can be seen in Figure \ref{fig:Edgy_cd} and in almost all cases we loose time when traversing with waypoints.
+On the map Edgy, in Figure \ref{fig:Edgy_d2}, we see all tests compared with each other. Its easy to see that in most cases, using only tile traversal is better than using the added waypoint traversal.
+The average gain time can be seen in Figure \ref{fig:Edgy_cd} and in almost all cases the total time increases when traversing with waypoints.
 	
 \begin{figure}[h!]
 \centering
@@ -115,33 +113,31 @@ The average gain time can be seen in Figure \ref{fig:Edgy_cd} and in almost all 
 \label{fig:UMAP2_d2}
 \end{figure}
 
-However it is clearly displayed that waypoint traversal is superior to A* pathfinding when the map complexity increases. Both Figure~\ref{fig:Edgy2_d2} and Figure~\ref{fig:UMAP2_d2} prove that the gain increases as the map grows.
-Waypoint traversal was up to and above 40 milliseconds faster then A* pathfinding on UMAP2 and this is due to the maps edge case layout. In most cases A* would get stack in one of the U-shapes while searching for the goal, whereas waypoint traversal would quickly exit the rabbit hole and continue in the right direction.
+However it is clearly displayed that waypoint traversal is superior to raw A* when the map size and complexity increases. Both Figure~\ref{fig:Edgy2_d2} and Figure~\ref{fig:UMAP2_d2} prove that the gain increases as the map grows.
+Waypoint traversal was up to and above 40 milliseconds faster then raw A* pathfinding on UMAP2 and this is due to the maps edge case layout. In most cases the raw A* would get stuck in one of the U-shapes while searching for the goal, whereas the added waypoint traversal would quickly guide the A* to exit the rabbit hole and continue in the right direction. The exact avarge gain can be seen in Figure \ref{fig:Edgy2_cd} and Figure \ref{fig:UMAP2_cd}.
+	
+The validity of the experiments have a P value way below 0.05, mostly closely to 0.00.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.5\textwidth,height=\textheight,keepaspectratio]{ChartsAndFigures/Edgy2_timeTable.png}
 \caption{Edgy2 Time Table}
-Delta time gain using waypoints in milliseconds.
+Total time gain using waypoints in milliseconds.
 \label{fig:Edgy2_cd}
 \end{figure}
-
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.5\textwidth,height=\textheight,keepaspectratio]{ChartsAndFigures/UMAP2_timeTable.png}
 \caption{UMAP2 Time Table}
-Delta time gain using waypoints in milliseconds.
+Total time gain using waypoints in milliseconds.
 \label{fig:UMAP2_cd}
 \end{figure}
 
-The exact avarge gain can be seen in Figure \ref{fig:Edgy2_cd} and Figure \ref{fig:UMAP2_cd}.
-	
-The validity of the experiemnts have a P value way below 0.05, mosly closely to 0.0.
-
 \section{Discussion}
 On smaller maps with a lot of waypoint connections, raw A* is quicker than with our generation of waypoints. But when the map starts to scale, waypoints are significantly better than just A* by itself.
-Our results are based on the first path the algorithm finds, not the quickest path. We made some samples when we used the quickest path for waypoint traversal and this were proven to take more time to calculate than using pure A* with the first path found.
-It was only on UMAP2 we could get the quickest path for waypoints to get less calcualtion time then just A*, but it is still not real time friendly.
+Our results are based on the first path the algorithm finds, not the quickest. In all our tests we also measured the time it took when using the quickest path for the waypoint traversal and this were proven to take more time than using raw A* with the first path found. It was only on UMAP2 we could get the quickest path for waypoints and still get less calculation time then just raw A*, but it were still not real time friendly. We got this result due to the real edge case layout of the map.
+	
+In the way the waypoints are generated there are no way of controlling how many there will be, it all depends of the complexity of the map. In future work there could be another approach of finding the waypoints based of the complexity of the map so that the average gain would always be positive.
 
 \newpage
 \begin{thebibliography}{9}
