@@ -52,12 +52,12 @@ Viktiga resultat och slutsatser Nyckelord
 \pagenumbering{arabic}
 \twocolumn
 \section{Introduction}
-Pathfinding is a fundamental part of games \cite{dynaPF15}\cite{roboGame15} and it is often supplemented by a waypoint graph to make traversal of a given region easier \cite{dynaPF15}. Every node in a waypoint graph is called a waypoint and they represent key locations in the region \cite{dynaPF15}. Each waypoint has edges towards other waypoints to where an object can travel through without risk of colliding with the surroundings \cite{dynaPF15}.\newline
-In this paper, we propose a method to reduce execution time of the A* pathfinding algorithm. We improve our previously implemented A* algorithm with automatically generated and connected waypoints in a two-dimensional grid coordinate system. The waypoint generation is done in two steps. First, we generate a waypoint for each corner of an obstacle. Second, we check connections for every waypoint by sending a ray towards all other waypoints in the region. The waypoints are connected if the rays path is unblocked. Our waypoint generation method is heavily influenced by the one suggested in the work of Weiping et al. \cite{dynaPF15}.\newline
+Pathfinding is a fundamental part of games \cite{dynaPF15}\cite{roboGame15} and it is often supplemented by a waypoint graph to make traversal of a given region easier \cite{dynaPF15}. Every node in a waypoint graph is called a waypoint and they represent key locations in the region \cite{dynaPF15}. Each waypoint has edges towards other waypoints to where an object can travel through without risk of colliding with the surroundings \cite{dynaPF15}.
+	
+In this paper, we propose a method to reduce execution time of the A* pathfinding algorithm. We improve our previously implemented A* algorithm with automatically generated and connected waypoints in a two-dimensional grid coordinate system. The waypoint generation is done in two steps. First, we generate a waypoint for each corner of an obstacle. Second, we check connections for every waypoint by sending a ray towards all other waypoints in the region. The waypoints are connected if the rays path is unblocked. Our waypoint generation method is heavily influenced by the one suggested in the work of Weiping et al. \cite{dynaPF15}.
+	
 Executing pathfinding in dynamic environments is more challenging than in static environments \cite{dynaPF15}, and this study is therefore limited to completely static environments. The difference between the two terms path and shortest path is significant \cite{heuristicGame15}. We conducted studies of several pathfinding combinations, with and without waypoints, but we decided not to measure the time consumption of the shortest path with only A* pathfinding.
-
-
-
+	
 This is introduction lol \newline
 Syfte \newline
 Frågeställning \newline
@@ -110,10 +110,6 @@ Diskutera begränsningar
 35748 tiles, 2890 blocked (8\%). 179 waypoints with 2038 connections
 \label{fig:UMAP2}
 \end{figure}
-
-
-
-
 
 \section{Result}
 Every experiment done has shown a P value below 0.5. The results show that the the waypoints prove to be helpful for the A* algorithm in form of speed, which is the initial purpose of this research, whith an exception of the smallest map Edgy.
