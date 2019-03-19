@@ -77,7 +77,7 @@ In the smallest map, Edgy (Appendix~\ref{ap.edgy}), when the Pure Distance heuri
 	
 While traversing the maps Edgy2 (Appendix~\ref{ap.edgy2}) and UMAP2 (Appendix~\ref{ap.umap2}), which are much greater in size compared to Edgy, the results shows that Waypoint traversal is superior to raw A* pathfinding. On almost all the paths tested, to traverse the waypoints first and direct the A*, gets a much smaller total time spent calculating the path. This proves that the waypoint traversal added are improving the total time spend calculating the path. Though the results show that in some cases using waypoints, the total time is increased compared with raw A*. This is because these paths are short or straight, with no or few blocked tiles in the way of the pathing.
 	
-In the comparison diagrams the color green , purple and red boxes represents traversal with waypoints with the Pure Distance- , Manhattan Distance- and Standford distance heuristic.
+In the comparison diagrams the color green, purple and red boxes represents traversal with waypoints with the Pure Distance- , Manhattan Distance- and Standford distance heuristic.
 The color blue, cyan and brown colors represent traversal with raw A* tile traversal with the Pure Distance- , Manhattan Distance- and Standford distance heuristic.
 The  X-axis is the nine different paths and the Y-axis is time in milliseconds spent calculating the path.
 
@@ -92,7 +92,7 @@ The  X-axis is the nine different paths and the Y-axis is time in milliseconds s
 \centering
 \includegraphics[width=0.5\textwidth,height=\textheight,keepaspectratio]{ChartsAndFigures/Edgy_timeTable.png}
 \caption{Edgy Time Table}
-Delta time gain using waypoints in milliseconds.
+Total time gain using waypoints in milliseconds.
 \label{fig:Edgy_cd}
 \end{figure}
 
@@ -116,20 +116,20 @@ The average gain time can be seen in Figure \ref{fig:Edgy_cd} and in almost all 
 However it is clearly displayed that waypoint traversal is superior to raw A* when the map size and complexity increases. Both Figure~\ref{fig:Edgy2_d2} and Figure~\ref{fig:UMAP2_d2} prove that the gain increases as the map grows.
 Waypoint traversal was up to and above 40 milliseconds faster then raw A* pathfinding on UMAP2 and this is due to the maps edge case layout. In most cases the raw A* would get stuck in one of the U-shapes while searching for the goal, whereas the added waypoint traversal would quickly guide the A* to exit the rabbit hole and continue in the right direction. The exact avarge gain can be seen in Figure \ref{fig:Edgy2_cd} and Figure \ref{fig:UMAP2_cd}.
 	
-The validity of the experiments have a P value way below 0.05, mosly closely to 0.00.
+The validity of the experiments have a P value way below 0.05, mostly closely to 0.00.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.5\textwidth,height=\textheight,keepaspectratio]{ChartsAndFigures/Edgy2_timeTable.png}
 \caption{Edgy2 Time Table}
-Delta time gain using waypoints in milliseconds.
+Total time gain using waypoints in milliseconds.
 \label{fig:Edgy2_cd}
 \end{figure}
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.5\textwidth,height=\textheight,keepaspectratio]{ChartsAndFigures/UMAP2_timeTable.png}
 \caption{UMAP2 Time Table}
-Delta time gain using waypoints in milliseconds.
+Total time gain using waypoints in milliseconds.
 \label{fig:UMAP2_cd}
 \end{figure}
 
