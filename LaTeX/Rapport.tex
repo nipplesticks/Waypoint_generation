@@ -31,24 +31,21 @@ Pathfinding is a fundamental part of games \cite{dynaPF15}\cite{roboGame15} and 
 	
 In this paper, we propose a method to reduce execution time of the A* pathfinding algorithm. We improve our previously implemented A* algorithm with automatically generated and connected waypoints in a two-dimensional grid coordinate system. The waypoint generation is done in two steps. First, we generate a waypoint for each corner of an obstacle. Second, we check connections for every waypoint by sending a ray towards all other waypoints in the region. The waypoints are connected if the rays path is unblocked. Our waypoint generation method is heavily influenced by the one suggested in the work of Weiping et al. \cite{dynaPF15}.
 	
-Executing pathfinding in dynamic environments is more challenging than in static environments \cite{dynaPF15}, and this study is therefore limited to completely static environments. The difference between the two terms path and shortest path is significant \cite{heuristicGame15}. We conducted studies of several pathfinding combinations, with and without waypoints, but we decided not to measure the time consumption of the shortest path with only raw A* pathfinding.
-	
-A heuristic is a method/algorithm to choice next edge during the traversal of the grid.
+Executing pathfinding in dynamic environments is more challenging than in static environments \cite{dynaPF15}, and this study is therefore limited to completely static environments. The difference between the two terms path and shortest path is significant \cite{heuristicGame15}. We conducted studies of several pathfinding combinations, with and without waypoints, but we decided not to measure and compare the time consumption of the shortest path with only A* pathfinding towards the shortest waypoint path. This due to the fact that the maps were so big and the paths so complex that the normal A* grid traversal was not even close to competing at any point with the shortest waypoint path. Differences in execution time of just finding a path is therefore our main focus in the results and we measured times with three different heuristics during the experiments. Different heuristics were used to reduce the chance that our maps did not favor waypoints just due to a poor choice of heuristic.
 
-This is introduction lol \newline
-Syfte \newline
-Frågeställning \newline
-Hypoteser \newline
-Avgränsningar
+
+TEXTENS DISPOSITION!!!!!!!
 
 \section{Related work}
-This work is based on Weiping et al. \cite{dynaPF15} work but we've done it in a static environment instead and mixed it with grid based traversal with A*.
+A waypoint graph is commonly used to facilitate pathfinding and Weiping et al. \cite{dynaPF15} suggests a method of how to automatically generate the waypoint graph. Waypoints are generated at every vertex and every waypoint is connected to all other visible waypoints. The connections between waypoints are called edges \cite{dynaPF15} and the creation of a connection is determined by drawing a line in between the waypoints. If no objects intersect with the line, then it is unblocked and the edge is created. This solution matched our purpose very well and our work is therefore heavily inspired by it.
+
+\section{Proposed work}
 
 \section{Method}
-The autogeneration of waypoints are very much inspired by the work done in \cite{dynaPF15}. Becouse our environment is 2D and all geometry are boxes, we place all boxes inside large boxes to devide the blocked parts of the maps into regions. Every corner of every region gets a waypoint, offseted with .5 of a tile size. If a waypoint shares a tile with another waypoint
-the second waypoint will not be added.
+The method for automatic generation of waypoints were developed with heavy inspiration from the work done in \cite{dynaPF15}. The method was developed in a two-dimensional environment with rectangles as the only geometry. A maps geometry is determined by an algorithm that divides all blocked regions of the map into rectangular shapes. The algorithm starts by picking the first unselected blocked grid tile and continues by expanding outwards and downwards until it reaches an unblocked tile, or the end of the map. The blocks width is determined by the block depth. A block cannot contain any unblocked tiles and might therefore be adjusted to fit the desired depth rather than the possible width.
+
+Every vertex of every geometry gets a waypoint, offseted by half a tile away from the vertex. If two vertices would create a waypoint in the exact same location then only one would be added to the collection of waypoints. Waypoints that are created outside of the map or in blocked tile locations are also not added to the waypoint collection. Edges are then created in between the waypoints as follows. A ray is shot from every waypoint towards all other waypoints. Quadtree traversal is utilized to determine any collision with geometry and an edge is created if a ray reaches another waypoint without an intersection. Each edge gets assigned a cost that is equal to the squared distance between the waypoints.
 	
-To connect the waypoint to eachother, we shoot a ray from every waypoint to every waypoint (sqr(n)) and traverse a qaudtree to find an intersection with geometry. If an intersection is found, no connection will be added. [EDGE REFERSEN FREDRIK PLES FIX]. Each edge gets assigned a cost that is equal to the distance between the waypoints squared.
 
 Now all unblocked tiles gets divided into subregions. Each subregion belongs to a waypoint and each tile gets assigned to the region with the closest visible waypoint. This is to know which waypoint to start the path from during the waypoint traversal thinghy.
 
@@ -57,9 +54,8 @@ When we have the tilechain we send theses "sub-paths" into the classic A* algori
 
 To sample our data we have done 27 different test on three different maps. These maps vary in size and structure. Edgy is a the smallest map with 9085 tiles and a blockrate of 46.5 \%, 214 waypoints with 2228 connections. Edgy2 is constructed the same as Edgy, but greater in size, 26550 tiles with a blockrate of 48.4 \%, 658 waypoints with 6458 connections, its basicaly Edgy but repeated. The biggest map is UMAP2, it is constructed as two "U"s faced away from eachother. This map has 335748 tiles with a blockrate of 8 \%, 179 waypoints with 2038 connections.
 
-On each map, we have selected nine different paths and done three test per path with different heuristics, Pure Distance, Manhattan Distnace (REFTO MH) and Stanford Distance (REF TO SD).
-Each setting on each path were tested 100 times each. To get the delta time changes between waypoint traversal and A* tile traversal we took the avarage total time of each test.
-The Pure Distance heuristic simply checks the pure distance to the goal to choose the next edge to traverse. The paths of choice is not biast, they are chosen to favor all pathfinding methods.
+On each map, we have selected nine different paths and done three test per path with different heuristics, Euclidean Distance \ref{heuristicRef}, Manhattan Distnace \ref{heuristicRef} and Stanford Distance \ref{heuristicRef}.
+Each setting on each path were tested 100 times each. To get the delta time changes between waypoint traversal and A* tile traversal we took the avarage total time of each test. The paths of choice were not biased, they were chosen to favor all pathfinding methods.
 
 We have discovered that our solution to waypoint generation gives a huge advantage on bigger maps. The waypoint traversal scales much better then raw A*. Also, waypoint traversal works excelent in edge cases, where A* compleatly fails.
 When traversing on a small map, the edge cases are not enoght motivation to implement automatilcly gnererated waypoints due to the overhead the waypoints adds to the algorithms.
@@ -73,12 +69,12 @@ We hav not taken into account that the paths may be "un natrual" for the viewer 
 \section{Results}
 The results show that traversing the grid with our automatically generated waypoint approach, is much more scalable than using the raw A* algorithm. This also holds true when changing the heuristics for the traversing algorithms.
 	
-In the smallest map, Edgy (Appendix~\ref{ap.edgy}), when the Pure Distance heuristic is used, it is cheaper to simply use raw A* directly on the grid to generate the path due to the added overhead when using waypoints. The other heuristics show no significant gain with waypoints added to the map, except the P0-path as seen in Figure~\ref{fig:Edgy_cd}, but this path is a worst case scenario.
+In the smallest map, Edgy (Appendix~\ref{ap.edgy}), when the Euclidean Distance heuristic is used, it is cheaper to simply use raw A* directly on the grid to generate the path due to the added overhead when using waypoints. The other heuristics show no significant gain with waypoints added to the map, except the P0-path as seen in Figure~\ref{fig:Edgy_cd}, but this path is a worst case scenario.
 	
 While traversing the maps Edgy2 (Appendix~\ref{ap.edgy2}) and UMAP2 (Appendix~\ref{ap.umap2}), which are much greater in size compared to Edgy, the results shows that Waypoint traversal is superior to raw A* pathfinding. On almost all the paths tested, to traverse the waypoints first and direct the A*, gets a much smaller total time spent calculating the path. This proves that the waypoint traversal added are improving the total time spend calculating the path. Though the results show that in some cases using waypoints, the total time is increased compared with raw A*. This is because these paths are short or straight, with no or few blocked tiles in the way of the pathing.
 	
-In the comparison diagrams the color green, purple and red boxes represents traversal with waypoints with the Pure Distance- , Manhattan Distance- and Standford distance heuristic.
-The color blue, cyan and brown colors represent traversal with raw A* tile traversal with the Pure Distance- , Manhattan Distance- and Standford distance heuristic.
+In the comparison diagrams the color green, purple and red boxes represents traversal with waypoints with the Euclidian Distance- , Manhattan Distance- and Standford distance heuristic.
+The color blue, cyan and brown colors represent traversal with raw A* tile traversal with the Euclidian Distance- , Manhattan Distance- and Standford distance heuristic.
 The  X-axis is the nine different paths and the Y-axis is time in milliseconds spent calculating the path.
 
 \begin{figure}[h!]
@@ -159,6 +155,13 @@ In the way the waypoints are generated there are no way of controlling how many 
   \textit{Direction Based Heuristic For Pathfinding In Video Games},
   Procedia Computer Science, vol. 47, pp. 262-271,
   2015.
+
+\bibitem{heuristicRef}
+   Patel, Amit,
+  \textit{Amit's Thoughts on Pathfinding},
+  2019-02-22,
+  http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html,
+  (Accessed 2019-03-20).
 
 \bibitem{lamport94}
   Leslie Lamport,
