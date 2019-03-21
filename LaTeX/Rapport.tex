@@ -15,12 +15,12 @@
 \newpage
 \thispagestyle{empty}
 \paragraph{Abstract--}
-Sammanfattar rapporten
-Varför är vår rapport värd att läsa?
-Syfte, metod
-Viktiga resultat och slutsatser Nyckelord
-“Tänk på att detta skall kunna läsas fristående”
-
+Pathfinding is a fundamental part of games and it is often supplemented by a waypoint graph to make traversal of a given region easier. The problem is that waypoints are usualy created during the development of the map
+and are placed manually by leveldesigners. In this paper we propose a method in which we automatically generate waypoints in key locations and accelerate the A* algorithm on tile based grid traversal.
+The 2700 tests done show that our method of using automatically generated waypoints are faster than using only A* grid traversal on large and complex maps.
+\newline
+\providecommand{\keywords}[1]{\textbf{\textit{Keywords--}} #1}
+\keywords{pathfinding, static environment, games, automaticaly generated, waypoints, A*}
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 \tableofcontents
 \listoffigures
